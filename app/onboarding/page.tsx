@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 
 interface OnboardingData {
   websiteUrl: string;
@@ -213,7 +212,7 @@ const deliveryOptions = [
 
 export default function Onboarding() {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const [checkingAccess, setCheckingAccess] = useState(true);
   const [currentStep, setCurrentStep] = useState(1);
   const [data, setData] = useState<OnboardingData>(initialData);
   const [customCompetitor, setCustomCompetitor] = useState("");
@@ -221,24 +220,7 @@ export default function Onboarding() {
   const [isAnalyzingCustom, setIsAnalyzingCustom] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
-
-  const isPaid = session?.user?.plan === "starter" || session?.user?.plan === "growth";
-
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login");
-    } else if (status === "authenticated" && !isPaid) {
-      router.push("/pricing");
-    }
-  }, [status, router, isPaid]);
-
-  if (status === "loading" || status === "unauthenticated" || !isPaid) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
+  const [isLoading, setIsLoading] = useState(false);
 
   const dynamicCompetitorOptions = analysisResult?.competitors?.map((comp, index) => ({
     name: comp.name,
@@ -262,9 +244,41 @@ export default function Onboarding() {
       </div>
     )
   })) || [];
-  const [isLoading, setIsLoading] = useState(false);
 
   const totalSteps = 7;
+
+  useEffect(() => {
+    async function checkAccess() {
+      try {
+        const res = await fetch("/api/auth/refresh-session", { method: "POST" });
+        if (!res.ok) {
+          router.push("/login");
+          return;
+        }
+        const data = await res.json();
+        if (data.plan !== "starter" && data.plan !== "growth") {
+          router.push("/pricing");
+          return;
+        }
+        if (data.onboardingCompleted) {
+          router.push("/dashboard/analysis");
+          return;
+        }
+        setCheckingAccess(false);
+      } catch {
+        router.push("/login");
+      }
+    }
+    checkAccess();
+  }, [router]);
+
+  if (checkingAccess) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   const handleNext = async () => {
     if (currentStep < totalSteps) {
@@ -298,7 +312,7 @@ export default function Onboarding() {
         }
 
         setTimeout(() => {
-          router.push("/login?from_onboarding=1");
+          router.push("/dashboard/analysis");
         }, 500);
       } catch (error) {
         console.error("Error saving onboarding:", error);

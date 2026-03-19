@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 import DashboardHeader from "@/components/DashboardHeader";
 import { SkeletonCard, SkeletonMetricCard } from "@/components/Skeleton";
 
@@ -99,7 +98,7 @@ function renderStars(rating: number): string {
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const [isLoading, setIsLoading] = useState(true);
   const [insights, setInsights] = useState<Insight[]>([]);
   const [isLoadingInsights, setIsLoadingInsights] = useState(true);
   const [selectedInsight, setSelectedInsight] = useState<Insight | null>(null);
@@ -107,24 +106,6 @@ export default function DashboardPage() {
   const [isLoadingReviews, setIsLoadingReviews] = useState(false);
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [isLoadingStats, setIsLoadingStats] = useState(true);
-
-  const isPaid = session?.user?.plan === "starter" || session?.user?.plan === "growth";
-
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login");
-    } else if (status === "authenticated" && !isPaid) {
-      router.push("/pricing");
-    }
-  }, [status, router, isPaid]);
-
-  if (status === "loading" || status === "unauthenticated" || !isPaid) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
 
   const fetchDashboardData = useCallback(async () => {
     setIsLoadingStats(true);
@@ -184,6 +165,31 @@ export default function DashboardPage() {
   }, []);
 
   useEffect(() => {
+    async function checkAccess() {
+      try {
+        const res = await fetch("/api/auth/refresh-session", { method: "POST" });
+        if (!res.ok) {
+          router.push("/login");
+          return;
+        }
+        const data = await res.json();
+        if (data.plan !== "starter" && data.plan !== "growth") {
+          router.push("/pricing");
+          return;
+        }
+        if (!data.onboardingCompleted) {
+          router.push("/onboarding");
+          return;
+        }
+        setIsLoading(false);
+      } catch {
+        router.push("/login");
+      }
+    }
+    checkAccess();
+  }, [router]);
+
+  useEffect(() => {
     fetchDashboardData();
   }, [fetchDashboardData]);
 
@@ -215,6 +221,14 @@ export default function DashboardPage() {
     setSelectedInsight(null);
     setSelectedReviews([]);
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   const hasData = insights.length > 0;
 

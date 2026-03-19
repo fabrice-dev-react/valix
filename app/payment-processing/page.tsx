@@ -38,7 +38,7 @@ function PaymentProcessingContent() {
         setProcessing(false);
 
         setTimeout(() => {
-          router.push("/login");
+          router.push("/dashboard");
         }, 1500);
       } catch {
         setError("An error occurred while processing your payment");
