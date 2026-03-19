@@ -185,9 +185,9 @@ export default function Home() {
 
           <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold leading-[1.07] mb-5 md:mb-7">
             <span className="bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800 bg-clip-text text-transparent block">
-              Turn Your Competitors' Weakness
+              Turn Your Competitors' Weakness Into Your 
             </span>
-            <span className="gradient-text block">Into Your Greatest Strength</span>
+            <span className="gradient-text block">Greatest Strength</span>
           </h1>
 
           <p className="text-slate-600 text-base md:text-lg max-w-xl mx-auto leading-relaxed mb-8">
