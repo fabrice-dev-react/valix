@@ -1,17 +1,28 @@
-import nodemailer from "nodemailer";
-
-const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST,
-  port: Number(process.env.EMAIL_PORT) || 587,
-  secure: process.env.EMAIL_SECURE === "true",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
-
 export async function sendVerificationEmail(email: string, token: string) {
   const verifyUrl = `${process.env.NEXTAUTH_URL}/api/auth/verify-email?token=${token}`;
+
+  if (process.env.EMAIL_MODE === "log") {
+    console.log("=".repeat(60));
+    console.log("📧 EMAIL VERIFICATION (LOG MODE)");
+    console.log("=".repeat(60));
+    console.log(`To: ${email}`);
+    console.log(`Subject: Verify your email - Valix`);
+    console.log(`Verification URL: ${verifyUrl}`);
+    console.log("=".repeat(60));
+    return;
+  }
+
+  const nodemailer = (await import("nodemailer")).default;
+  
+  const transporter = nodemailer.createTransport({
+    host: process.env.EMAIL_HOST,
+    port: Number(process.env.EMAIL_PORT) || 587,
+    secure: process.env.EMAIL_SECURE === "true",
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
 
   await transporter.sendMail({
     from: process.env.EMAIL_FROM || `"Valix" <${process.env.EMAIL_USER}>`,
@@ -47,4 +58,4 @@ export async function sendVerificationEmail(email: string, token: string) {
   });
 }
 
-export default transporter;
+export default null;
