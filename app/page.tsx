@@ -31,7 +31,7 @@ const steps = [
     icon: "🎯",
     color: "bg-blue-50",
     title: "Add Your Competitors",
-    desc: "Enter any competitor — a business name or URL. Rivalix automatically finds and tracks their reviews across all major platforms. Works for any type of business.",
+    desc: "Enter any competitor — a business name or URL. Valix automatically finds and tracks their reviews across all major platforms. Works for any type of business.",
   },
   {
     num: "02",
@@ -62,11 +62,11 @@ const features = [
   { icon: "📢", title: "Win-Rate Messaging Generator", desc: "Turn competitor weaknesses into ad copy, headlines, and sales talking points. Know exactly what to say to steal their unhappy customers.", tag: "Marketing Edge" },
   { icon: "📊", title: "Weakness Severity Scoring", desc: "Rank each weakness by frequency and frustration level — so you focus where it matters most and act at the perfect moment.", tag: "Prioritization" },
   { icon: "📋", title: "Competitor Reports", desc: "Export polished PDF reports comparing multiple competitors side by side. Perfect for sales decks, board meetings, and investor updates.", tag: "Reporting" },
-  { icon: "🎯", title: "Feature Gap Roadmap", desc: "Based on what customers consistently wish your competitors had, Rivalix recommends exactly which features to build next.", tag: "Product Strategy" },
+  { icon: "🎯", title: "Feature Gap Roadmap", desc: "Based on what customers consistently wish your competitors had, Valix recommends exactly which features to build next.", tag: "Product Strategy" },
 ];
 
 const faqs = [
-  { q: "Does this work for my type of business?", a: "Yes. Rivalix works for any business with competitors that have online reviews — SaaS, e-commerce, restaurants, local services, agencies, and more. If your competitors have reviews anywhere online, we analyze them." },
+  { q: "Does this work for my type of business?", a: "Yes. Valix works for any business with competitors that have online reviews — SaaS, e-commerce, restaurants, local services, agencies, and more. If your competitors have reviews anywhere online, we analyze them." },
   { q: "How does the daily monitoring work?", a: "Every day our system crawls all monitored review platforms for your competitors. When we detect a new complaint pattern or a spike in a specific issue, we send you a notification with the opportunity summary and recommended action." },
   { q: "What review platforms do you cover?", a: "We monitor Google Business, G2, Capterra, Trustpilot, Crozdesk, GetApp, Yelp, Amazon, and more. We're continuously adding new platforms based on user demand." },
   { q: "How fast do I get results?", a: "Most users see their first competitor insights within 3 minutes of adding a competitor. Daily monitoring begins immediately after setup." },
@@ -187,7 +187,7 @@ export default function Home() {
             <span className="bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800 bg-clip-text text-transparent block">
               Turn Your Competitors' Weakness Into Your 
             </span>
-            <span className="gradient-text block">Greatest Strength</span>
+            <span className="gradient-text block"> Strength</span>
           </h1>
 
           <p className="text-slate-600 text-base md:text-lg max-w-xl mx-auto leading-relaxed mb-8">
@@ -298,7 +298,7 @@ export default function Home() {
               <span className="gradient-text">You get notified of every opportunity.</span>
             </h2>
             <p className="text-slate-500 text-base max-w-xl mx-auto">
-              You don't need to check anything manually. Rivalix runs 24/7 and pushes you an alert the moment a competitor's weakness creates an opening for you.
+              You don't need to check anything manually. Valix runs 24/7 and pushes you an alert the moment a competitor's weakness creates an opening for you.
             </p>
           </RevealDiv>
 
@@ -391,7 +391,7 @@ export default function Home() {
           <RevealDiv className="mb-10">
             <p className="text-blue-600 text-xs font-bold uppercase tracking-widest mb-3">Comparison</p>
             <h2 className="text-2xl md:text-4xl font-extrabold text-slate-900 leading-tight">
-              Why businesses choose Rivalix
+              Why businesses choose Valix
             </h2>
           </RevealDiv>
           <RevealDiv>
@@ -400,7 +400,7 @@ export default function Home() {
                 <thead>
                   <tr className="bg-slate-50">
                     <th className="text-left px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Capability</th>
-                    <th className="px-6 py-4 text-xs font-bold text-blue-600 uppercase tracking-wider border-b border-slate-100 text-center">Rivalix</th>
+                    <th className="px-6 py-4 text-xs font-bold text-blue-600 uppercase tracking-wider border-b border-slate-100 text-center">Valix</th>
                     <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100 text-center">Manual Research</th>
                     <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100 text-center">Generic Analytics</th>
                   </tr>
@@ -415,10 +415,10 @@ export default function Home() {
                     ["Google Business Reviews", "✓", "Manual", "✗"],
                     ["Works for any business type", "✓", "✓", "✗"],
                     ["Time to first insight", "3 min", "Weeks", "Days"],
-                  ].map(([cap, rivalix, manual, generic], i) => (
+                  ].map(([cap, valix, manual, generic], i) => (
                     <tr key={i} className="compare-row border-t border-slate-100">
                       <td className="px-6 py-4 text-sm text-slate-700">{cap}</td>
-                      <td className="px-6 py-4 text-center font-bold text-blue-600 text-base">{rivalix}</td>
+                      <td className="px-6 py-4 text-center font-bold text-blue-600 text-base">{valix}</td>
                       <td className="px-6 py-4 text-center text-slate-400 text-sm">{manual}</td>
                       <td className="px-6 py-4 text-center text-slate-400 text-sm">{generic}</td>
                     </tr>
@@ -448,7 +448,7 @@ export default function Home() {
           <div className="grid md:grid-cols-3 gap-5">
             {[
               { stars: 5, text: "We discovered our main competitor's users constantly complained about slow onboarding. We made '1-day setup' our headline. Trial-to-paid conversion went up 34% in one month.", name: "Marcus K.", role: "Founder, B2B SaaS", initials: "MK", bg: "from-blue-600 to-blue-800" },
-              { stars: 5, text: "I run a restaurant group. Rivalix pulled Yelp and Google reviews for all three competitors and showed me exactly what diners hated. I fixed those things. Now I'm the top-rated spot.", name: "Sofia R.", role: "Restaurant Owner", initials: "SR", bg: "from-purple-600 to-purple-800" },
+              { stars: 5, text: "I run a restaurant group. Valix pulled Yelp and Google reviews for all three competitors and showed me exactly what diners hated. I fixed those things. Now I'm the top-rated spot.", name: "Sofia R.", role: "Restaurant Owner", initials: "SR", bg: "from-purple-600 to-purple-800" },
               { stars: 5, text: "The messaging generator alone is worth 10x the price. The daily alerts caught a competitor's support meltdown before we did. We ran targeted ads that week. Our CTR doubled.", name: "James L.", role: "Head of Marketing, E-commerce", initials: "JL", bg: "from-emerald-600 to-emerald-800" },
             ].map((t, i) => (
               <RevealDiv key={i} delay={i * 100} className="bg-white/5 border border-white/10 rounded-2xl p-7 hover:bg-white/8 transition-colors">
@@ -516,7 +516,7 @@ export default function Home() {
               <br />Will they find you?
             </h2>
             <p className="text-slate-600 text-base md:text-lg max-w-xl mx-auto mb-8 leading-relaxed">
-              Every frustrated review left about a competitor is a customer raising their hand. Rivalix makes sure you're the first to answer — every single day.
+              Every frustrated review left about a competitor is a customer raising their hand. Valix makes sure you're the first to answer — every single day.
             </p>
             <div className="flex flex-wrap justify-center gap-3 mb-5">
               <button onClick={handleCTA} className="btn-glow px-10 py-4 rounded-full bg-gradient-to-r from-blue-600 via-blue-500 to-blue-700 text-white font-bold text-base">
@@ -540,7 +540,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 mb-10">
             <div className="col-span-2 md:col-span-1">
-              <span className="text-xl font-extrabold text-white block mb-3">Rivalix</span>
+              <span className="text-xl font-extrabold text-white block mb-3">Valix</span>
               <p className="text-sm leading-relaxed max-w-xs">
                 AI-powered competitive intelligence for every type of business. Know your competitors' weaknesses — every day.
               </p>
@@ -556,8 +556,8 @@ export default function Home() {
             <div>
               <h4 className="text-white/80 text-xs font-bold uppercase tracking-widest mb-4">Company</h4>
               <ul className="space-y-2.5">
-                <li><a href="#why" className="text-sm hover:text-blue-400 transition-colors">Why Rivalix</a></li>
-                <li><a href="mailto:niyomutabazifabrice100@gmail.com?subject=Feedback%20for%20Rivalix" className="text-sm hover:text-blue-400 transition-colors">Contact</a></li>
+                <li><a href="#why" className="text-sm hover:text-blue-400 transition-colors">Why Valix</a></li>
+                <li><a href="mailto:niyomutabazifabrice100@gmail.com?subject=Feedback%20for%20Valix" className="text-sm hover:text-blue-400 transition-colors">Contact</a></li>
               </ul>
             </div>
             <div>
@@ -569,9 +569,9 @@ export default function Home() {
             </div>
           </div>
           <div className="border-t border-white/10 pt-7 flex flex-col md:flex-row items-center justify-between gap-3">
-            <p className="text-xs">© 2026 Rivalix. All rights reserved.</p>
+            <p className="text-xs">© 2026 Valix. All rights reserved.</p>
             <a
-              href="mailto:niyomutabazifabrice100@gmail.com?subject=Feedback%20for%20Rivalix&body=Hi%20Rivalix%20team%2C%0A%0AI%20have%20some%20feedback%20about%20your%20platform..."
+              href="mailto:niyomutabazifabrice100@gmail.com?subject=Feedback%20for%20Valix&body=Hi%20Valix%20team%2C%0A%0AI%20have%20some%20feedback%20about%20your%20platform..."
               className="text-white/30 hover:text-blue-400 transition-colors"
               title="Contact us via Email"
             >

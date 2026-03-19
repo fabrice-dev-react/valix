@@ -21,7 +21,7 @@ async function fetchWebsiteContent(url: string): Promise<string> {
     const cleanUrl = url.startsWith("http") ? url : `https://${url}`;
     const response = await fetch(cleanUrl, {
       headers: {
-        "User-Agent": "Mozilla/5.0 (compatible; RivalixBot/1.0; +https://rivalix.com/bot)",
+        "User-Agent": "Mozilla/5.0 (compatible; ValixBot/1.0; +https://valix.com/bot)",
       },
     });
     const html = await response.text();
@@ -87,8 +87,8 @@ Example response:
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-        "HTTP-Referer": "https://rivalix.com",
-        "X-Title": "Rivalix",
+        "HTTP-Referer": "https://valix.com",
+        "X-Title": "Valix",
       },
       body: JSON.stringify({
         model: "anthropic/claude-3-haiku",

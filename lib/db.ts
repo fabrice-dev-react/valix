@@ -4,7 +4,7 @@ const explicitUri = process.env.MONGODB_URI;
 const explicitUser = process.env.MONGODB_USER;
 const explicitPassword = process.env.MONGODB_PASSWORD;
 const explicitHost = process.env.MONGODB_HOST;
-const explicitDb = process.env.MONGODB_DB || "rivalix";
+const explicitDb = process.env.MONGODB_DB || "valix";
 const explicitOptions = process.env.MONGODB_OPTIONS || "retryWrites=true&w=majority";
 
 const buildMongoUri = () => {

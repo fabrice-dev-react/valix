@@ -31,7 +31,7 @@ export default function DashboardLayout({
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
-            <span className="font-bold text-slate-800">Rivalix</span>
+            <span className="font-bold text-slate-800">Valix</span>
             <div className="w-10"></div>
           </div>
 

@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Rivalix - AI Competitive Intelligence for SaaS",
+  title: "Valix - AI Competitive Intelligence for SaaS",
   description: "Discover what customers complain about your competitors. Turn competitor weaknesses into your growth strategy.",
 };
 

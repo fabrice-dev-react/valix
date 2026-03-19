@@ -14,9 +14,9 @@ export async function sendVerificationEmail(email: string, token: string) {
   const verifyUrl = `${process.env.NEXTAUTH_URL}/api/auth/verify-email?token=${token}`;
 
   await transporter.sendMail({
-    from: process.env.EMAIL_FROM || `"nexrank" <${process.env.EMAIL_USER}>`,
+    from: process.env.EMAIL_FROM || `"Valix" <${process.env.EMAIL_USER}>`,
     to: email,
-    subject: "Verify your email - nexrank",
+    subject: "Verify your email - Valix",
     html: `
       <!DOCTYPE html>
       <html>
@@ -30,7 +30,7 @@ export async function sendVerificationEmail(email: string, token: string) {
         </head>
         <body>
           <div class="container">
-            <h1>Welcome to nexrank!</h1>
+            <h1>Welcome to Valix!</h1>
             <p>Thank you for signing up. Please verify your email address by clicking the button below:</p>
             <p style="margin: 30px 0;">
               <a href="${verifyUrl}" style="display: inline-block; padding: 12px 24px; background: #2563eb; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600;">Verify Email</a>

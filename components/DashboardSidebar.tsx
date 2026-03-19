@@ -45,12 +45,12 @@ export default function DashboardSidebar() {
         <Link href="/" className="flex items-center gap-3">
           <Image 
             src="/images/favicon.png" 
-            alt="Rivalix logo" 
+            alt="Valix logo" 
             width={40} 
             height={40}
             className="w-10 h-10"
           />
-          <span className="font-bold text-xl text-slate-800">Rivalix</span>
+          <span className="font-bold text-xl text-slate-800">Valix</span>
         </Link>
       </div>
 

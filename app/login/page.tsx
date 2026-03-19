@@ -142,13 +142,13 @@ function LoginContent() {
           <Link href="/" className="inline-flex items-center gap-2">
             <Image
               src="/images/favicon.png"
-              alt="rivalix logo"
+              alt="valix logo"
               width={40}
               height={40}
               className="w-10 h-10"
             />
             <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-              Rivalix
+              Valix
             </span>
           </Link>
         </div>
@@ -262,13 +262,13 @@ function LoginLoading() {
           <Link href="/" className="inline-flex items-center gap-2">
             <Image
               src="/images/favicon.png"
-              alt="rivalix logo"
+              alt="valix logo"
               width={40}
               height={40}
               className="w-10 h-10"
             />
             <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-              Rivalix
+              Valix
             </span>
           </Link>
         </div>

@@ -74,20 +74,20 @@ export default function Signup() {
           <Link href="/" className="inline-flex items-center gap-2">
             <Image 
               src="/images/favicon.png" 
-              alt="rivalix logo" 
+              alt="valix logo" 
               width={40} 
               height={40}
               className="w-10 h-10"
             />
             <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-              nexrank
+              Valix
             </span>
           </Link>
         </div>
 
         <div className="bg-white rounded-2xl p-8">
           <h1 className="text-2xl font-bold text-slate-800 mb-2">Create an account</h1>
-          <p className="text-slate-500 mb-8">Start scanning and fixing your website SEO today</p>
+          <p className="text-slate-500 mb-8">Discover competitor weaknesses and win their customers</p>
 
           {success && (
             <div className="mb-4 p-3 bg-green-50 text-green-600 text-sm rounded-lg">

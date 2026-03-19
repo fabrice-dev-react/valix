@@ -46,8 +46,8 @@ async function callAI(prompt: string, maxTokens = 1000): Promise<string | null> 
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${apiKey}`,
-        "HTTP-Referer": "https://rivalix.com",
-        "X-Title": "Rivalix",
+        "HTTP-Referer": "https://valix.com",
+        "X-Title": "Valix",
       },
       body: JSON.stringify({
         model: DEFAULT_MODEL,

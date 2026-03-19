@@ -20,13 +20,13 @@ export default function Header() {
           <Link href="/" className="flex items-center gap-2 md:gap-3">
             <Image 
               src="/images/favicon.png" 
-              alt="rivalix logo" 
+              alt="valix logo" 
               width={32} 
               height={32}
               className="w-7 h-7 md:w-8 md:h-8"
             />
             <span className="text-lg md:text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-              Rivalix
+              Valix
             </span>
           </Link>
           
