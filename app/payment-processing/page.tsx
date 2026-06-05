@@ -9,9 +9,9 @@ function PaymentProcessingContent() {
   const [processing, setProcessing] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const rawPlan = searchParams.get("plan");
-  const plan = (rawPlan === "starter" || rawPlan === "growth" || rawPlan === "book") ? rawPlan : null;
-  const success = !!rawPlan;
+  const paid = searchParams.get("paid") === "true";
+  const plan = paid ? "book" : null;
+  const success = paid;
 
   useEffect(() => {
     async function processPayment() {
@@ -83,8 +83,6 @@ function PaymentProcessingContent() {
     );
   }
 
-  const planLabel = plan === "book" ? "Book" : plan === "growth" ? "Growth" : "Starter";
-
   return (
     <div className="min-h-screen bg-white flex items-center justify-center">
       <div className="text-center max-w-md px-4">
@@ -94,11 +92,7 @@ function PaymentProcessingContent() {
           </svg>
         </div>
         <h1 className="text-2xl font-bold text-slate-800 mb-2">Payment Successful!</h1>
-        <p className="text-slate-600 mb-2">
-          {plan === "book"
-            ? "You now have access to the trading strategy book."
-            : `You now have ${planLabel} plan access.`}
-        </p>
+        <p className="text-slate-600 mb-2">You now have access to the trading strategy book.</p>
         <p className="text-slate-500 text-sm">Redirecting to your dashboard...</p>
       </div>
     </div>

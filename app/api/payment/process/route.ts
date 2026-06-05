@@ -18,21 +18,17 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Payment not completed" }, { status: 400 });
     }
 
-    if (!plan || !["starter", "growth", "book"].includes(plan)) {
+    if (plan !== "book") {
       return NextResponse.json({ error: "Invalid request" }, { status: 400 });
     }
 
     await connectDB();
 
-    const nextReset = new Date();
-    nextReset.setMonth(nextReset.getMonth() + 1);
-
     const updatedUser = await User.findByIdAndUpdate(
       session.user.id,
       {
-        plan,
+        plan: "book",
         paymentDate: new Date(),
-        nextResetDate: nextReset,
       },
       { new: true }
     );
@@ -45,7 +41,6 @@ export async function POST(request: Request) {
       success: true,
       plan: updatedUser.plan,
       paymentDate: updatedUser.paymentDate,
-      nextResetDate: updatedUser.nextResetDate,
     });
   } catch (error: unknown) {
     console.error("Payment processing error:", error instanceof Error ? error.message : error);
