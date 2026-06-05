@@ -1,7 +1,5 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { Mail } from "lucide-react";
@@ -13,21 +11,6 @@ function SignupSuccessContent() {
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-6">
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2">
-            <Image 
-              src="/images/favicon.png" 
-              alt="valix logo" 
-              width={40} 
-              height={40}
-              className="w-10 h-10"
-            />
-            <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-              Valix
-            </span>
-          </Link>
-        </div>
-
         <div className="bg-white rounded-2xl p-8 border border-slate-200">
           <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6">
             <Mail className="w-8 h-8 text-blue-600" />
@@ -65,29 +48,7 @@ function SignupSuccessContent() {
 function SignupSuccessLoading() {
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-6">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2">
-            <Image 
-              src="/images/favicon.png" 
-              alt="valix logo" 
-              width={40} 
-              height={40}
-              className="w-10 h-10"
-            />
-            <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-              Valix
-            </span>
-          </Link>
-        </div>
-        <div className="bg-white rounded-2xl p-8 border border-slate-200">
-          <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Mail className="w-8 h-8 text-blue-600" />
-          </div>
-          <div className="h-6 bg-slate-100 rounded w-3/4 mx-auto mb-3"></div>
-          <div className="h-4 bg-slate-100 rounded w-1/2 mx-auto"></div>
-        </div>
-      </div>
+      <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
     </div>
   );
 }

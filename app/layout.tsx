@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Valix - Master NASDAQ & S&P500 Trading",
+  title: "9:30 Precision Playbook — NASDAQ & S&P500 Trading Strategy",
   description: "Learn a proven trading strategy for indices. Download our comprehensive PDF book and start trading NASDAQ and S&P500 with confidence.",
 };
 

@@ -82,7 +82,8 @@ export default function Home() {
             <div className="mt-8 max-w-md mx-auto md:mx-0">
               <div className="bg-white/70 backdrop-blur rounded-xl border border-slate-200 p-5">
                 <p className="text-sm text-slate-600 leading-relaxed">
-                  If you're not yet profitable — or you run a business or work a job and don't want to spend all day in front of charts — this system is built for you.
+                If you're not yet profitable, run a business, work a full-time job, or are a student and don't want to spend all day in front of charts, this system is built for you.
+
                 </p>
                 <p className="text-sm text-slate-600 leading-relaxed mt-3">
                   Just <span className="text-blue-600 font-semibold">1 hour per day</span> from your phone or laptop, anywhere in the world. 

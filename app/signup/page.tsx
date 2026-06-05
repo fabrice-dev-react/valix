@@ -1,23 +1,12 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { signIn, useSession } from "next-auth/react";
-import { UserPlus } from "lucide-react";
-import Button from "@/components/Button";
+import { useRouter } from "next/navigation";
 
 export default function Signup() {
   const router = useRouter();
   const { data: session } = useSession();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (session) {
@@ -25,88 +14,23 @@ export default function Signup() {
     }
   }, [session, router]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setSuccess("");
-
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
-
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters");
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      const res = await fetch("/api/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || "Something went wrong");
-      } else {
-        router.push(`/signup-success?email=${encodeURIComponent(email)}`);
-      }
-    } catch {
-      setError("Something went wrong");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleGoogleSignIn = () => {
     signIn("google", { callbackUrl: "/pricing" });
   };
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-6">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2">
-            <Image 
-              src="/images/favicon.png" 
-              alt="valix logo" 
-              width={40} 
-              height={40}
-              className="w-10 h-10"
-            />
-            <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-              Valix
-            </span>
-          </Link>
-        </div>
-
+      <div className="w-full max-w-sm">
         <div className="bg-white rounded-2xl p-8">
-          <div className="text-center">
+          <div className="text-center mb-8">
             <h1 className="text-2xl font-bold text-slate-800 mb-2">Create your account</h1>
-            <p className="text-slate-500 mb-8">Sign up to access the trading strategy book</p>
+            <p className="text-slate-500">Sign up to access the trading strategy book</p>
           </div>
 
-          {success && (
-            <div className="mb-4 p-3 bg-green-50 text-green-600 text-sm rounded-lg">
-              {success} <Link href="/login" className="font-medium underline">Go to Login</Link>
-            </div>
-          )}
-
-          {error && (
-            <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg">
-              {error}
-            </div>
-          )}
-
-          <button 
-            type="button" 
+          <button
+            type="button"
             onClick={handleGoogleSignIn}
-            className="w-full mb-4 py-2 px-4 border border-slate-300 bg-white text-slate-700 font-semibold rounded-lg transition-all duration-300 flex items-center justify-center gap-2 hover:bg-slate-50"
+            className="w-full py-2.5 px-4 border border-slate-300 bg-white text-slate-700 font-semibold rounded-lg transition-all duration-300 flex items-center justify-center gap-2 hover:bg-slate-50"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -117,77 +41,10 @@ export default function Signup() {
             Continue with Google
           </button>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-2">
-                Full Name
-              </label>
-              <input
-                type="text"
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Enter your full name"
-                required
-                className="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all placeholder:text-slate-400 text-slate-800"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                required
-                className="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all placeholder:text-slate-400 text-slate-800"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-2">
-                Password
-              </label>
-              <input
-                type="password"
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Create a password"
-                required
-                className="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all placeholder:text-slate-400 text-slate-800"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-slate-700 mb-2">
-                Confirm Password
-              </label>
-              <input
-                type="password"
-                id="confirmPassword"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Confirm your password"
-                required
-                className="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all placeholder:text-slate-400 text-slate-800"
-              />
-            </div>
-
-            <Button type="submit" className="w-full" disabled={loading}>
-              <UserPlus className="w-4 h-4" />
-              {loading ? "Creating account..." : "Sign Up"}
-            </Button>
-          </form>
-
-          <div className="mt-6 text-center">
-            <span className="text-slate-500">Already have an account? </span>
-            <Link href="/login" className="text-blue-600 hover:text-blue-700 font-medium">Login</Link>
-          </div>
+          <p className="mt-6 text-center text-sm text-slate-500">
+            Already have an account?{" "}
+            <a href="/login" className="text-blue-600 hover:text-blue-700 font-medium">Login</a>
+          </p>
         </div>
       </div>
     </div>

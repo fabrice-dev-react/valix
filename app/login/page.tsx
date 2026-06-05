@@ -1,28 +1,13 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
-import { useState, useEffect, Suspense } from "react";
+import { useEffect, Suspense } from "react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { LogIn } from "lucide-react";
-import Button from "@/components/Button";
 
 function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { data: session, status } = useSession();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (searchParams.get("verified") === "true") {
-      setSuccess("Email verified successfully! Please login.");
-    }
-  }, [searchParams]);
 
   useEffect(() => {
     if (status === "loading") return;
@@ -53,72 +38,8 @@ function LoginContent() {
     }
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-
-    try {
-      const result = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-      });
-
-      if (result?.error) {
-        setError(result.error);
-      } else {
-        const res = await fetch("/api/auth/refresh-session", { method: "POST" });
-        if (res.ok) {
-          const data = await res.json();
-          const isPaid = data.plan === "starter" || data.plan === "growth" || data.plan === "book";
-          if (!isPaid) {
-            router.push("/pricing");
-          } else {
-            router.push("/dashboard");
-          }
-        } else {
-          router.push("/pricing");
-        }
-      }
-    } catch {
-      setError("Something went wrong");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleGoogleSignIn = () => {
     signIn("google", { callbackUrl: "/pricing" });
-  };
-
-  const handleResendVerification = async () => {
-    if (!email) {
-      setError("Please enter your email first");
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const res = await fetch("/api/auth/verify-email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        setSuccess("Verification email sent! Check your inbox.");
-        setError("");
-      } else {
-        setError(data.error || "Failed to send verification email");
-      }
-    } catch {
-      setError("Something went wrong");
-    } finally {
-      setLoading(false);
-    }
   };
 
   if (status === "loading") {
@@ -131,44 +52,17 @@ function LoginContent() {
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-6">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2">
-            <Image
-              src="/images/favicon.png"
-              alt="valix logo"
-              width={40}
-              height={40}
-              className="w-10 h-10"
-            />
-            <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-              Valix
-            </span>
-          </Link>
-        </div>
-
+      <div className="w-full max-w-sm">
         <div className="bg-white rounded-2xl p-8">
-          <div className="text-center">
+          <div className="text-center mb-8">
             <h1 className="text-2xl font-bold text-slate-800 mb-2">Welcome back</h1>
-            <p className="text-slate-500 mb-8">Login to access your trading strategy book</p>
+            <p className="text-slate-500">Sign in to access your book</p>
           </div>
-
-          {success && (
-            <div className="mb-4 p-3 bg-green-50 text-green-600 text-sm rounded-lg">
-              {success}
-            </div>
-          )}
-
-          {error && (
-            <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg">
-              {error}
-            </div>
-          )}
 
           <button
             type="button"
             onClick={handleGoogleSignIn}
-            className="w-full mb-4 py-2 px-4 border border-slate-300 bg-white text-slate-700 font-semibold rounded-lg transition-all duration-300 flex items-center justify-center gap-2 hover:bg-slate-50"
+            className="w-full py-2.5 px-4 border border-slate-300 bg-white text-slate-700 font-semibold rounded-lg transition-all duration-300 flex items-center justify-center gap-2 hover:bg-slate-50"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -178,63 +72,6 @@ function LoginContent() {
             </svg>
             Continue with Google
           </button>
-
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                required
-                className="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all placeholder:text-slate-400 text-slate-800"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-2">
-                Password
-              </label>
-              <input
-                type="password"
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
-                required
-                className="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all placeholder:text-slate-400 text-slate-800"
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <label className="flex items-center gap-2">
-                <input type="checkbox" className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
-                <span className="text-sm text-slate-600">Remember me</span>
-              </label>
-              <button
-                type="button"
-                onClick={handleResendVerification}
-                className="text-sm text-blue-600 hover:text-blue-700"
-                disabled={loading}
-              >
-                Resend verification
-              </button>
-            </div>
-
-            <Button type="submit" className="w-full" disabled={loading}>
-              <LogIn className="w-4 h-4" />
-              {loading ? "Logging in..." : "Login"}
-            </Button>
-          </form>
-
-          <div className="mt-6 text-center">
-            <span className="text-slate-500">Don&apos;t have an account? </span>
-            <Link href="/signup" className="text-blue-600 hover:text-blue-700 font-medium">Sign up</Link>
-          </div>
         </div>
       </div>
     </div>
@@ -244,30 +81,7 @@ function LoginContent() {
 function LoginLoading() {
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-6">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2">
-            <Image
-              src="/images/favicon.png"
-              alt="valix logo"
-              width={40}
-              height={40}
-              className="w-10 h-10"
-            />
-            <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-              Valix
-            </span>
-          </Link>
-        </div>
-        <div className="bg-white rounded-2xl p-8">
-          <div className="animate-pulse space-y-4">
-            <div className="h-4 bg-slate-200 rounded w-1/3"></div>
-            <div className="h-10 bg-slate-200 rounded"></div>
-            <div className="h-10 bg-slate-200 rounded"></div>
-            <div className="h-10 bg-slate-200 rounded"></div>
-          </div>
-        </div>
-      </div>
+      <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
     </div>
   );
 }
