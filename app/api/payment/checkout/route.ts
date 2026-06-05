@@ -5,6 +5,7 @@ import { getToken } from "next-auth/jwt";
 
 const PADDLE_URL_STARTER = process.env.PADDLE_URL_STARTER || "https://sandbox-pay.paddle.io/hsc_01kkxsk2d92ergtk5yv6tebgz1_p4w8h55pttr6y3fgfxbd5v0hyesmqe5p";
 const PADDLE_URL_GROWTH = process.env.PADDLE_URL_GROWTH || "https://sandbox-pay.paddle.io/hsc_01kkxsm16v5gn0z9dmpym8g7fa_gn0gm78fq6cww9t4x3t6zrawk5z70nkn";
+const PADDLE_URL_BOOK = process.env.PADDLE_URL_BOOK || "https://sandbox-pay.paddle.io/hsc_01kkxsk2d92ergtk5yv6tebgz1_p4w8h55pttr6y3fgfxbd5v0hyesmqe5p";
 const NEXT_PUBLIC_APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
 export async function POST(request: Request) {
@@ -25,14 +26,19 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { plan } = body;
 
-    if (!plan || !["starter", "growth"].includes(plan)) {
+    if (!plan || !["starter", "growth", "book"].includes(plan)) {
       return NextResponse.json(
         { error: "Invalid plan selected" },
         { status: 400 }
       );
     }
 
-    const checkoutUrl = plan === "starter" ? PADDLE_URL_STARTER : PADDLE_URL_GROWTH;
+    let checkoutUrl: string;
+    if (plan === "book") {
+      checkoutUrl = PADDLE_URL_BOOK;
+    } else {
+      checkoutUrl = plan === "starter" ? PADDLE_URL_STARTER : PADDLE_URL_GROWTH;
+    }
 
     const successUrl = `${NEXT_PUBLIC_APP_URL}/payment-processing?plan=${plan}`;
     const cancelUrl = `${NEXT_PUBLIC_APP_URL}/pricing?cancelled=true`;

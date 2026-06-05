@@ -21,7 +21,7 @@ export default function Signup() {
 
   useEffect(() => {
     if (session) {
-      router.push("/dashboard");
+      router.push("/pricing");
     }
   }, [session, router]);
 
@@ -88,7 +88,7 @@ export default function Signup() {
         <div className="bg-white rounded-2xl p-8">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-slate-800 mb-2">Create your account</h1>
-            <p className="text-slate-500 mb-8">Sign up with Google to get started</p>
+            <p className="text-slate-500 mb-8">Sign up to access the trading strategy book</p>
           </div>
 
           {success && (
@@ -117,36 +117,72 @@ export default function Signup() {
             Continue with Google
           </button>
 
-          {/* <div className="relative my-6">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-slate-300"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-white text-slate-500">or</span>
-              </div>
-            </div> */}
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-2">
+                Full Name
+              </label>
+              <input
+                type="text"
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter your full name"
+                required
+                className="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all placeholder:text-slate-400 text-slate-800"
+              />
+            </div>
 
-            {/* <form onSubmit={handleSubmit} className="space-y-5">
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-2">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Enter your full name"
-                  required
-                  className="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all placeholder:text-slate-400 text-slate-800"
-                />
-              </div>
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">
+                Email
+              </label>
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
+                required
+                className="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all placeholder:text-slate-400 text-slate-800"
+              />
+            </div>
 
-              <Button type="submit" className="w-full" disabled={loading}>
-                <UserPlus className="w-4 h-4" />
-                {loading ? "Creating account..." : "Sign Up"}
-              </Button>
-            </form> */}
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-2">
+                Password
+              </label>
+              <input
+                type="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Create a password"
+                required
+                className="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all placeholder:text-slate-400 text-slate-800"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-slate-700 mb-2">
+                Confirm Password
+              </label>
+              <input
+                type="password"
+                id="confirmPassword"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm your password"
+                required
+                className="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all placeholder:text-slate-400 text-slate-800"
+              />
+            </div>
+
+            <Button type="submit" className="w-full" disabled={loading}>
+              <UserPlus className="w-4 h-4" />
+              {loading ? "Creating account..." : "Sign Up"}
+            </Button>
+          </form>
 
           <div className="mt-6 text-center">
             <span className="text-slate-500">Already have an account? </span>

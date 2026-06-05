@@ -17,13 +17,13 @@ function SignupSuccessContent() {
           <Link href="/" className="inline-flex items-center gap-2">
             <Image 
               src="/images/favicon.png" 
-              alt="nexrank logo" 
+              alt="valix logo" 
               width={40} 
               height={40}
               className="w-10 h-10"
             />
             <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-              nexrank
+              Valix
             </span>
           </Link>
         </div>
@@ -46,7 +46,7 @@ function SignupSuccessContent() {
           </div>
 
           <p className="text-slate-600 mb-6 text-center leading-relaxed">
-            Click the link in the email to activate your account. After verification, you&apos;ll be redirected to complete your profile setup.
+            Click the link in the email to activate your account. After verification, you&apos;ll be redirected to purchase the trading strategy book.
           </p>
 
           <div className="bg-slate-50 rounded-lg p-4 text-sm text-slate-600">
@@ -70,13 +70,13 @@ function SignupSuccessLoading() {
           <Link href="/" className="inline-flex items-center gap-2">
             <Image 
               src="/images/favicon.png" 
-              alt="nexrank logo" 
+              alt="valix logo" 
               width={40} 
               height={40}
               className="w-10 h-10"
             />
             <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-              nexrank
+              Valix
             </span>
           </Link>
         </div>

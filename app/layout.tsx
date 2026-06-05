@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Valix - AI Competitive Intelligence for SaaS",
-  description: "Discover what customers complain about your competitors. Turn competitor weaknesses into your growth strategy.",
+  title: "Valix - Master NASDAQ & S&P500 Trading",
+  description: "Learn a proven trading strategy for indices. Download our comprehensive PDF book and start trading NASDAQ and S&P500 with confidence.",
 };
 
 export default function RootLayout({

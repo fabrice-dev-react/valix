@@ -5,12 +5,11 @@ import { useSession } from "next-auth/react";
 
 export default function SettingsPage() {
   const { data: session } = useSession();
-  const [activeTab, setActiveTab] = useState("notifications");
+  const [activeTab, setActiveTab] = useState("account");
 
   const tabs = [
-    { id: "notifications", label: "Notifications" },
-    { id: "billing", label: "Billing" },
     { id: "account", label: "Account" },
+    { id: "billing", label: "Billing" },
   ];
 
   return (
@@ -39,79 +38,29 @@ export default function SettingsPage() {
 
       {/* Content */}
       <div className="bg-white rounded-xl border border-slate-200">
-        {activeTab === "notifications" && (
-          <div className="p-6">
-            <h2 className="text-lg font-bold text-slate-800 mb-6">Notification Preferences</h2>
-            
-            <div className="space-y-4">
-              {[
-                { label: "Email notifications", description: "Receive updates via email", enabled: true },
-                { label: "Weekly digest", description: "Get a weekly summary of competitor reviews", enabled: true },
-                { label: "New review alerts", description: "Get notified when new reviews appear", enabled: false },
-                { label: "Complaint alerts", description: "Get notified when complaints are detected", enabled: true },
-              ].map((item, index) => (
-                <div key={index} className="flex items-center justify-between p-4 border border-slate-100 rounded-lg">
-                  <div>
-                    <p className="font-medium text-slate-800">{item.label}</p>
-                    <p className="text-slate-500 text-sm">{item.description}</p>
-                  </div>
-                  <button
-                    className={`w-12 h-6 rounded-full transition-colors ${
-                      item.enabled ? "bg-blue-500" : "bg-slate-200"
-                    }`}
-                  >
-                    <div
-                      className={`w-5 h-5 bg-white rounded-full shadow transition-transform ${
-                        item.enabled ? "translate-x-6" : "translate-x-0.5"
-                      }`}
-                    />
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
         {activeTab === "billing" && (
           <div className="p-6">
-            <h2 className="text-lg font-bold text-slate-800 mb-6">Billing & Plan</h2>
-            
+            <h2 className="text-lg font-bold text-slate-800 mb-6">Billing</h2>
+
             <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg mb-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-semibold text-blue-800">Current Plan: Starter</p>
-                  <p className="text-blue-600 text-sm">$79/month • 10 competitors</p>
+                  <p className="font-semibold text-blue-800">NASDAQ & S&P500 Trading Strategy Book</p>
+                  <p className="text-blue-600 text-sm">$59 • One-time payment • Lifetime updates</p>
                 </div>
-                <button className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm font-medium">
-                  Upgrade
-                </button>
               </div>
             </div>
 
-            <div>
-              <h3 className="font-semibold text-slate-800 mb-4">Payment Method</h3>
-              <div className="flex items-center justify-between p-4 border border-slate-200 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-8 bg-slate-100 rounded flex items-center justify-center">
-                    <span className="text-slate-600 text-xs font-bold">VISA</span>
-                  </div>
-                  <div>
-                    <p className="font-medium text-slate-800">•••• •••• •••• 4242</p>
-                    <p className="text-slate-400 text-sm">Expires 12/26</p>
-                  </div>
-                </div>
-                <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-                  Edit
-                </button>
-              </div>
-            </div>
+            <p className="text-slate-500 text-sm">
+              This is a one-time purchase. You have lifetime access to the book and all future updates.
+            </p>
           </div>
         )}
 
         {activeTab === "account" && (
           <div className="p-6">
             <h2 className="text-lg font-bold text-slate-800 mb-6">Account Settings</h2>
-            
+
             <div className="space-y-6">
               <div className="p-4 border border-slate-200 rounded-lg">
                 <h3 className="font-semibold text-slate-800 mb-2">Change Password</h3>

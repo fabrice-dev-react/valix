@@ -52,7 +52,7 @@ const userSchema = new mongoose.Schema({
   },
   plan: {
     type: String,
-    enum: ["free", "starter", "growth"],
+    enum: ["free", "starter", "growth", "book"],
     default: "free",
   },
   paymentDate: {

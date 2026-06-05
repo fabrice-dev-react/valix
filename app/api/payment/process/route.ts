@@ -18,7 +18,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Payment not completed" }, { status: 400 });
     }
 
-    if (!plan || !["starter", "growth"].includes(plan)) {
+    if (!plan || !["starter", "growth", "book"].includes(plan)) {
       return NextResponse.json({ error: "Invalid request" }, { status: 400 });
     }
 

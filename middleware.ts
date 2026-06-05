@@ -25,7 +25,6 @@ export async function middleware(request: NextRequest) {
   const isApiAuth = pathname.startsWith("/api/auth");
   const isApiRoute = pathname.startsWith("/api/");
   const isDashboard = pathname.startsWith("/dashboard");
-  const isOnboarding = pathname.startsWith("/onboarding");
 
   if (!isPublic && !isApiAuth && !isApiRoute && !token) {
     const loginUrl = new URL("/login", request.nextUrl);
@@ -33,10 +32,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  if (isDashboard || isOnboarding) {
-    if (!token) {
-      return NextResponse.redirect(new URL("/login", request.nextUrl));
-    }
+  if (isDashboard && !token) {
+    return NextResponse.redirect(new URL("/login", request.nextUrl));
   }
 
   return NextResponse.next();

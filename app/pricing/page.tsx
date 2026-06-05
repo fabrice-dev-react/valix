@@ -7,7 +7,9 @@ export default function PricingPage() {
   return (
     <div className="min-h-screen bg-white">
       <Header />
-      <Pricing />
+      <div className="pt-12">
+        <Pricing />
+      </div>
     </div>
   );
 }

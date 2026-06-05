@@ -32,16 +32,17 @@ export default function Header() {
           
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-6 md:gap-8 px-4">
-            <a href="#how" className="text-slate-600 hover:text-blue-600 transition-colors font-medium text-sm">How It Works</a>
-            <a href="#features" className="text-slate-600 hover:text-blue-600 transition-colors font-medium text-sm">Features</a>
-            <Link href="/pricing" className="text-slate-600 hover:text-blue-600 transition-colors font-medium text-sm">Pricing</Link>
+            <a href="#benefits" className="text-slate-600 hover:text-blue-600 transition-colors font-medium text-sm">Benefits</a>
+            <a href="#contents" className="text-slate-600 hover:text-blue-600 transition-colors font-medium text-sm">What&apos;s Inside</a>
+            <a href="#faq" className="text-slate-600 hover:text-blue-600 transition-colors font-medium text-sm">FAQ</a>
+            <Link href="/pricing" className="text-slate-600 hover:text-blue-600 transition-colors font-medium text-sm">Buy Now</Link>
           </div>
           
           {/* Desktop Buttons */}
           <div className="hidden md:flex items-center gap-3">
             {isLoggedIn ? (
               <Link href="/dashboard" className="px-3 md:px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 font-medium text-sm transition-colors rounded-md">
-                Dashboard
+                My Book
               </Link>
             ) : (
               <>
@@ -74,12 +75,13 @@ export default function Header() {
         {mobileMenuOpen && (
           <div className="md:hidden border-t border-slate-100 py-4 px-2">
             <div className="flex flex-col gap-3">
-              <a href="#how" className="text-slate-600 hover:text-blue-600 transition-colors font-medium text-sm py-2">How It Works</a>
-              <a href="#features" className="text-slate-600 hover:text-blue-600 transition-colors font-medium text-sm py-2">Features</a>
-              <Link href="/pricing" className="text-slate-600 hover:text-blue-600 transition-colors font-medium text-sm py-2">Pricing</Link>
+              <a href="#benefits" className="text-slate-600 hover:text-blue-600 transition-colors font-medium text-sm py-2">Benefits</a>
+              <a href="#contents" className="text-slate-600 hover:text-blue-600 transition-colors font-medium text-sm py-2">What&apos;s Inside</a>
+              <a href="#faq" className="text-slate-600 hover:text-blue-600 transition-colors font-medium text-sm py-2">FAQ</a>
+              <Link href="/pricing" className="text-slate-600 hover:text-blue-600 transition-colors font-medium text-sm py-2">Buy Now</Link>
               <div className="flex gap-3 mt-2">
                 {isLoggedIn ? (
-                  <Link href="/dashboard" className="flex-1 px-4 py-2 text-center text-white font-medium text-sm transition-colors bg-blue-600 rounded-md">Dashboard</Link>
+                  <Link href="/dashboard" className="flex-1 px-4 py-2 text-center text-white font-medium text-sm transition-colors bg-blue-600 rounded-md">My Book</Link>
                 ) : (
                   <>
                     <Link href="/login" className="flex-1 px-4 py-2 text-center text-slate-600 hover:text-blue-600 font-medium text-sm transition-colors border border-slate-300 rounded-md">Login</Link>

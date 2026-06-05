@@ -21,14 +21,8 @@ export default function DashboardHeader({ title }: DashboardHeaderProps) {
   return (
     <div className="flex items-center justify-between mb-6">
       <h1 className="text-xl md:text-2xl font-bold text-slate-800">
-        {title || `${getGreeting()}, ${session?.user?.name?.split(" ")[0] || "User"} 👋`}
+        {title || `${getGreeting()}, ${session?.user?.name?.split(" ")[0] || "Trader"} 👋`}
       </h1>
-      <button 
-        onClick={() => router.push("/dashboard/competitors")}
-        className="px-3 py-2 md:px-4 md:py-2 bg-blue-500 text-white text-sm md:text-base font-medium rounded-lg hover:bg-blue-600 transition-colors"
-      >
-        + Add Competitor
-      </button>
     </div>
   );
 }
