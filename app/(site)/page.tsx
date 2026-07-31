@@ -193,6 +193,7 @@ export default function Home() {
   const { data: session, status } = useSession();
   const isLoggedIn = status === "authenticated" && session;
   const [showcaseImages, setShowcaseImages] = useState<string[]>([]);
+  const [heroUrl, setHeroUrl] = useState("");
 
   useEffect(() => {
     fetch("/api/images")
@@ -208,6 +209,20 @@ export default function Home() {
   const handleCTA = () => {
     if (isLoggedIn) {
       router.push("/dashboard");
+    } else {
+      router.push("/login");
+    }
+  };
+
+  const handleGenerate = (e: React.FormEvent) => {
+    e.preventDefault();
+    let trimmed = heroUrl.trim();
+    if (!trimmed) return;
+    if (!/^https?:\/\//i.test(trimmed)) {
+      trimmed = `https://${trimmed}`;
+    }
+    if (isLoggedIn) {
+      router.push(`/analyzing?url=${encodeURIComponent(trimmed)}`);
     } else {
       router.push("/login");
     }
@@ -247,28 +262,45 @@ export default function Home() {
                 just pick the winner.
               </p>
 
-              <div className="mt-9 flex flex-col sm:flex-row items-center justify-center gap-3">
-                <button
-                  onClick={handleCTA}
-                  className="group inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-ink text-white text-[15px] font-semibold hover:bg-black transition-all duration-200 shadow-[0_1px_0_rgba(255,255,255,0.1)_inset,0_16px_32px_-16px_rgba(22,19,17,0.5)]"
-                >
-                  Generate your first ads
+              <form
+                onSubmit={handleGenerate}
+                className="mt-9 max-w-xl mx-auto flex flex-col sm:flex-row items-center gap-2 rounded-2xl sm:rounded-full border border-line bg-paper p-1.5 sm:p-2 shadow-[0_8px_24px_-16px_rgba(22,19,17,0.25)] transition-colors duration-200 focus-within:border-signal/50 w-full"
+              >
+                <div className="flex items-center flex-1 gap-2.5 px-3 sm:px-4 w-full">
                   <svg
-                    className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5"
+                    className="w-4 h-4 text-ink-soft shrink-0"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101M10.172 13.828a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+                    />
+                  </svg>
+                  <input
+                    type="text"
+                    inputMode="url"
+                    autoCapitalize="none"
+                    autoCorrect="off"
+                    value={heroUrl}
+                    onChange={(e) => setHeroUrl(e.target.value)}
+                    placeholder="yourwebsite.com"
+                    className="w-full bg-transparent py-3 text-[15px] font-medium text-ink outline-none placeholder:text-ink-soft/60"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-ink text-white text-[14px] font-semibold hover:bg-black transition-all duration-200"
+                >
+                  Generate ads
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14m-7-7l7 7-7 7" />
                   </svg>
                 </button>
-                <a
-                  href="#how-it-works"
-                  className="inline-flex items-center justify-center px-8 py-4 rounded-full border border-line bg-paper text-[15px] font-semibold text-ink hover:border-ink/30 transition-colors"
-                >
-                  See how it works
-                </a>
-              </div>
+              </form>
 
               <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8">
                 <div className="flex items-center gap-2.5">
@@ -279,7 +311,7 @@ export default function Home() {
                 </div>
                 <div className="hidden sm:block h-4 w-px bg-line" />
                 <p className="text-[13px] text-ink-soft">
-                  One-time <span className="font-semibold text-ink">$39</span> · pay once, use forever
+                  Trained on 800 ads that actually worked
                 </p>
               </div>
             </div>
