@@ -38,18 +38,18 @@ const steps = [
   },
   {
     number: "02",
-    title: "Watch it get read",
-    desc: "It pulls the offer, the tone, the proof points and the calls-to-action into one clean brief. You can edit any of it before the ads run.",
+    title: "It gets what you sell",
+    desc: "Valix figures out your offer, your customers and the pain point that sells them — no briefs, no explaining, no guessing.",
   },
   {
     number: "03",
-    title: "Get four ads, not one",
-    desc: "Copy, headlines and creative in the right sizes for Facebook, Instagram, Stories and Reels. One ad is a guess; four give you a test.",
+    title: "Ten ads, ten angles",
+    desc: "Beautiful, ready-to-publish Facebook & Instagram ads, each with a different angle — correct sizes, clear copy, your voice.",
   },
   {
     number: "04",
-    title: "Launch and learn",
-    desc: "Export straight to Ads Manager or hand the brief to your team. Every run records what you generated so you can double down on winners.",
+    title: "Pick the winner",
+    desc: "Launch straight to Ads Manager or hand the brief to your team. You choose which ad earns the test budget.",
   },
 ];
 
@@ -61,17 +61,17 @@ const features = [
   },
   {
     title: "Hooks people don't swipe past",
-    desc: "Headline options that don't sound like every other ad in the feed. Pattern-matched from thousands of creatives that actually drove sales.",
+    desc: "Headline options that don't sound like every other ad in the feed. Pattern-matched from 800 creatives that actually drove sales.",
     span: "",
   },
   {
     title: "Right size, right length",
-    desc: "Correct dimensions and copy length for Facebook, Instagram feed, Stories and Reels. No more 'oops, this was made for the wrong format'.",
+    desc: "Correct dimensions and copy length for Facebook and Instagram. No more 'oops, this was made for the wrong format'.",
     span: "",
   },
   {
-    title: "Four variations, never one",
-    desc: "Every run ships four angles — different hooks, different proof, different CTAs. Because you can't A/B test a single idea.",
+    title: "Ten variations, never one",
+    desc: "Every run ships ten angles — different hooks, different proof, different CTAs. Because you can't A/B test a single idea.",
     span: "",
   },
   {
@@ -94,9 +94,9 @@ const plans = [
     cta: "Pay $39 and start generating",
     features: [
       "Unlimited ad generations",
-      "Four ad variations per run",
+      "Ten ad variations per run",
       "Facebook + Instagram sizes",
-      "Stories & Reels included",
+      "Static image ads, ready to publish",
       "Copy in your brand's voice",
       "Export as images & copy",
     ],
@@ -139,11 +139,11 @@ const faqs = [
   },
   {
     q: "Which platforms and formats do you support?",
-    a: "Facebook feed and right-column, Instagram feed, Stories, and Reels. Each format gets its own dimensions and copy-length rules, because what works in a story is not what works in the feed. More platforms are on the roadmap.",
+    a: "Static image ads for Facebook and Instagram — feed and Stories. No motion, no editing, just ads you can make in seconds and run anywhere. Each format gets its own dimensions and copy-length rules, because what works in a story is not what works in the feed.",
   },
   {
     q: "What's different from other AI ad tools?",
-    a: "Most tools generate from a text prompt and return generic copy. Valix generates from your actual site, keeps your phrasing, and returns four tested angles per run rather than one. It's built for people who run ads every week, not for one-off experiments.",
+    a: "Most tools generate from a text prompt and return generic copy. Valix generates from your actual site, keeps your phrasing, and returns ten tested angles per run rather than one. It's built for people who run ads every week, not for one-off experiments.",
   },
   {
     q: "Can I try it before paying?",
@@ -151,7 +151,7 @@ const faqs = [
   },
   {
     q: "What kind of results should I expect?",
-    a: "Most teams cut creative production time from days to minutes, and the four-variation output makes testing far cheaper. CTR improvements depend on your offer and market — but the ads are only ever as good as the offer behind them.",
+    a: "Most teams cut creative production time from days to minutes, and the ten-variation output makes testing far cheaper. CTR improvements depend on your offer and market — but the ads are only ever as good as the offer behind them.",
   },
 ];
 
@@ -187,126 +187,6 @@ function FAQItem({ q, a }: { q: string; a: string }) {
   );
 }
 
-function HeroVisual() {
-  return (
-    <div className="relative animate-fade-up">
-      <div
-        className="absolute -inset-10 pointer-events-none opacity-60"
-        style={{
-          backgroundImage: "radial-gradient(circle, rgba(22,19,17,0.08) 1px, transparent 1px)",
-          backgroundSize: "22px 22px",
-        }}
-      />
-      <div className="absolute -top-6 -right-4 w-28 h-28 bg-signal/10 rounded-full blur-3xl pointer-events-none" />
-
-      {/* Main generator panel */}
-      <div className="relative bg-paper border border-line rounded-2xl shadow-[0_32px_64px_-24px_rgba(22,19,17,0.25)] overflow-hidden">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-line">
-          <div>
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink-soft">
-              New generation
-            </p>
-            <p className="text-sm font-semibold text-ink mt-0.5">valix.app → 4 ads</p>
-          </div>
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-signal-soft text-signal-dark text-[11px] font-semibold">
-            <span className="w-1.5 h-1.5 rounded-full bg-signal animate-pulse" />
-            Running
-          </span>
-        </div>
-
-        <div className="px-5 py-4 space-y-2.5">
-          {[
-            { label: "Reading your website", state: "done" as const },
-            { label: "Pulling offer, tone & proof", state: "done" as const },
-          ].map((s) => (
-            <div key={s.label} className="flex items-center gap-3">
-              <span className="w-5 h-5 rounded-full bg-moss/10 flex items-center justify-center">
-                <svg className="w-3 h-3 text-moss" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                </svg>
-              </span>
-              <span className="text-[13px] font-medium text-ink-soft">{s.label}</span>
-            </div>
-          ))}
-
-          <div className="flex items-start gap-3">
-            <span className="w-5 h-5 mt-0.5 rounded-full border-2 border-signal flex items-center justify-center">
-              <span className="w-1.5 h-1.5 rounded-full bg-signal animate-pulse" />
-            </span>
-            <div className="flex-1">
-              <p className="text-[13px] font-medium text-ink">Writing 4 headlines</p>
-              <div className="mt-2 space-y-1.5">
-                <div className="skeleton-bar h-2 rounded-full w-[92%]" />
-                <div className="skeleton-bar h-2 rounded-full w-[76%]" />
-                <div className="skeleton-bar h-2 rounded-full w-[84%]" />
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3 opacity-45">
-            <span className="w-5 h-5 rounded-full border-2 border-line" />
-            <span className="text-[13px] font-medium text-ink-soft">Designing creatives</span>
-          </div>
-        </div>
-
-        <div className="px-5 py-4 border-t border-line flex items-center justify-between">
-          <div className="flex-1 h-1.5 bg-mist rounded-full overflow-hidden mr-4">
-            <div className="h-full w-[72%] bg-signal rounded-full" />
-          </div>
-          <span className="font-mono text-xs text-ink-soft">72%</span>
-        </div>
-      </div>
-
-      {/* Floating Instagram card */}
-      <div className="absolute -top-8 -left-3 sm:-left-8 w-36 bg-ink rounded-xl overflow-hidden shadow-xl shadow-ink/30 animate-float">
-        <div className="px-3 pt-3 pb-2 flex items-center gap-2">
-          <span className="w-6 h-6 rounded-full bg-gradient-to-br from-signal to-amber-500 flex items-center justify-center text-[9px] font-bold text-white">
-            V
-          </span>
-          <div className="flex-1">
-            <p className="text-[10px] font-semibold text-white leading-tight">valix.app</p>
-            <p className="text-[8px] text-white/50">Sponsored</p>
-          </div>
-          <svg className="w-3 h-3 text-white/60" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 8a2 2 0 100 4 2 2 0 000-4zM5 8a2 2 0 100 4 2 2 0 000-4zm14 0a2 2 0 100 4 2 2 0 000-4z" />
-          </svg>
-        </div>
-        <div className="h-24 bg-gradient-to-br from-signal/80 to-amber-600/80 flex items-center justify-center">
-          <div className="text-center px-4">
-            <p className="text-[10px] font-bold text-white leading-snug">&ldquo;Ads people don&apos;t skip.&rdquo;</p>
-            <p className="text-[8px] text-white/70 mt-0.5">www.valix.app</p>
-          </div>
-        </div>
-        <div className="px-3 py-2 flex items-center gap-2 text-white/70">
-          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 21s-6.7-4.35-9.33-8.11C.9 10.4 1.98 7 5.2 7c1.9 0 3.1 1.05 3.8 2.05C9.7 8.05 10.9 7 12.8 7c3.22 0 4.3 3.4 2.53 5.89C18.7 16.65 12 21 12 21z" />
-          </svg>
-          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 2a10 10 0 1010 10A10 10 0 0012 2zm4 12h-3v3a1 1 0 01-2 0v-3H8a1 1 0 010-2h3V9a1 1 0 012 0v3h3a1 1 0 010 2z" />
-          </svg>
-          <svg className="w-3 h-3 ml-auto" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M6 2l14 4-4 12-4-3-3 4-2-7-5-3z" />
-          </svg>
-        </div>
-      </div>
-
-      {/* Floating score chip */}
-      <div className="absolute -bottom-6 -right-2 sm:-right-6 bg-paper border border-line rounded-xl shadow-xl shadow-ink/10 px-4 py-3 animate-float">
-        <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-ink-soft">Ad score</p>
-        <div className="flex items-end gap-2">
-          <p className="text-2xl font-extrabold text-ink leading-none">94</p>
-          <div className="flex-1 flex items-end gap-0.5 mb-0.5">
-            <span className="w-1.5 h-3 rounded-sm bg-mist" />
-            <span className="w-1.5 h-4 rounded-sm bg-mist" />
-            <span className="w-1.5 h-5 rounded-sm bg-mist" />
-            <span className="w-1.5 h-6 rounded-sm bg-signal" />
-            <span className="w-1.5 h-7 rounded-sm bg-signal" />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export default function Home() {
   const router = useRouter();
@@ -336,66 +216,72 @@ export default function Home() {
   return (
     <div className="bg-cream text-ink overflow-x-clip">
       {/* ============ HERO ============ */}
-      <section className="relative pt-28 md:pt-40 pb-16 md:pb-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-            <div className="lg:col-span-6">
-              <div className="animate-fade-up">
-                <div className="flex items-center gap-3">
-                  <span className="h-px w-8 bg-signal" />
-                  <Eyebrow>Paste a URL. Get ads.</Eyebrow>
-                </div>
-                <h1 className="mt-5 text-[40px] sm:text-6xl lg:text-[64px] font-extrabold tracking-[-0.03em] leading-[1.02] text-ink">
-                  Great ads, straight
-                  <br />
-                  from a{" "}
-                  <span className="relative inline-block">
-                    <span className="relative z-10">website URL.</span>
-                    <span className="absolute left-0 -bottom-1 right-0 h-[10px] bg-signal/25 -rotate-1 rounded-sm z-0" />
-                  </span>
-                </h1>
-                <p className="mt-6 text-base sm:text-lg leading-relaxed text-ink-soft max-w-lg">
-                  Valix reads your whole site, pulls the offer, the tone and the
-                  proof, then writes and designs Facebook &amp; Instagram ads in
-                  your voice. Four ready-to-publish variations per run. No
-                  briefs, no designers, no ten rounds of revisions.
-                </p>
+      <section className="relative pt-28 md:pt-36 pb-16 md:pb-24 overflow-hidden">
+        <div
+          className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 h-[420px] w-[680px] max-w-full rounded-full bg-signal/10 blur-3xl"
+          aria-hidden="true"
+        />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="animate-fade-up">
+              <div className="inline-flex items-center gap-2 rounded-full border border-line bg-paper px-4 py-1.5 shadow-sm">
+                <span className="w-1.5 h-1.5 rounded-full bg-signal animate-pulse" />
+                <Eyebrow>Paste a URL. Get ads.</Eyebrow>
+              </div>
 
-                <div className="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                  <button
-                    onClick={handleCTA}
-                    className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-ink text-white text-[15px] font-semibold hover:bg-black transition-all duration-200 shadow-[0_1px_0_rgba(255,255,255,0.1)_inset,0_16px_32px_-16px_rgba(22,19,17,0.5)]"
-                  >
-                    Generate your first ads
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14m-7-7l7 7-7 7" />
-                    </svg>
-                  </button>
-                  <a
-                    href="#how-it-works"
-                    className="inline-flex items-center justify-center px-7 py-3.5 rounded-full border border-line bg-paper text-[15px] font-semibold text-ink hover:border-ink/30 transition-colors"
-                  >
-                    See how it works
-                  </a>
-                </div>
+              <h1 className="mt-7 text-[36px] sm:text-5xl md:text-[56px] lg:text-[62px] font-extrabold tracking-[-0.03em] leading-[1.08] text-ink">
+                Generate{" "}
+                <span className="relative inline-block whitespace-nowrap align-baseline">
+                  <span className="relative z-10 text-signal">viral &amp; converting</span>
+                  <span className="absolute left-0 bottom-[0.06em] right-0 h-[0.16em] bg-signal/20 rounded-sm z-0" />
+                </span>
+                <br />
+                static ads from a website URL.
+              </h1>
 
-                <div className="mt-8 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
-                  <div className="flex items-center gap-2.5">
-                    <Stars />
-                    <p className="text-[13px] text-ink-soft">
-                      <span className="font-semibold text-ink">4.9</span> from 2,400+ marketers
-                    </p>
-                  </div>
-                  <div className="hidden sm:block h-4 w-px bg-line" />
+              <p className="mt-7 text-base sm:text-lg leading-relaxed text-ink-soft max-w-2xl mx-auto">
+                Paste any URL. Valix understands what you offer, who you&apos;re
+                selling to and the pain point that sells them — then turns it
+                into 10 beautiful static Facebook &amp; Instagram ads, each a different
+                angle, ready to publish. Trained on 800 ads that worked. You
+                just pick the winner.
+              </p>
+
+              <div className="mt-9 flex flex-col sm:flex-row items-center justify-center gap-3">
+                <button
+                  onClick={handleCTA}
+                  className="group inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-ink text-white text-[15px] font-semibold hover:bg-black transition-all duration-200 shadow-[0_1px_0_rgba(255,255,255,0.1)_inset,0_16px_32px_-16px_rgba(22,19,17,0.5)]"
+                >
+                  Generate your first ads
+                  <svg
+                    className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14m-7-7l7 7-7 7" />
+                  </svg>
+                </button>
+                <a
+                  href="#how-it-works"
+                  className="inline-flex items-center justify-center px-8 py-4 rounded-full border border-line bg-paper text-[15px] font-semibold text-ink hover:border-ink/30 transition-colors"
+                >
+                  See how it works
+                </a>
+              </div>
+
+              <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8">
+                <div className="flex items-center gap-2.5">
+                  <Stars />
                   <p className="text-[13px] text-ink-soft">
-                    One-time $39 · pay once, use forever
+                    <span className="font-semibold text-ink">4.9</span> from 2,400+ marketers
                   </p>
                 </div>
+                <div className="hidden sm:block h-4 w-px bg-line" />
+                <p className="text-[13px] text-ink-soft">
+                  One-time <span className="font-semibold text-ink">$39</span> · pay once, use forever
+                </p>
               </div>
-            </div>
-
-            <div className="lg:col-span-6">
-              <HeroVisual />
             </div>
           </div>
         </div>
@@ -407,27 +293,27 @@ export default function Home() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center gap-3">
               <span className="h-px w-8 bg-signal" />
-              <Eyebrow>Made in seconds, from one URL</Eyebrow>
+              <Eyebrow>See ads that Valix generated</Eyebrow>
             </div>
             <h2 className="mt-5 text-3xl sm:text-4xl lg:text-[44px] font-extrabold tracking-[-0.03em] leading-[1.05] text-ink max-w-xl">
-              Ads that already look like they work
+              Real ads, generated by Valix
             </h2>
             <p className="mt-5 text-[15px] sm:text-base leading-relaxed text-ink-soft max-w-lg">
-              Paste a link, get four variations — hooks, proof and CTAs
-              written in your voice, sized for feed, Stories and Reels.
+              Static Facebook &amp; Instagram ads Valix generated from real
+              website URLs — different angles, your voice, ready to publish.
             </p>
 
-            <div className="mt-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
+            <div className="mt-12 columns-2 md:columns-3 lg:columns-4 gap-4 sm:gap-5">
               {showcaseImages.map((image) => (
                 <div
                   key={image}
-                  className="rounded-2xl bg-cream border border-line overflow-hidden p-2.5"
+                  className="mb-4 sm:mb-5 break-inside-avoid rounded-2xl bg-cream border border-line overflow-hidden p-2.5"
                 >
                   <img
                     src={image}
                     alt="Valix generated creative"
                     loading="lazy"
-                    className="block w-full aspect-[4/5] object-cover rounded-lg"
+                    className="block w-full h-auto rounded-lg bg-mist"
                   />
                 </div>
               ))}
@@ -583,7 +469,7 @@ export default function Home() {
                     {[
                       "Stop outsourcing your ads to generic AI.",
                       "Hooks that match how your best customer talks.",
-                      "We found the 4 ads your audience actually clicks.",
+                      "We found the 10 ads your audience actually clicks.",
                     ].map((h, j) => (
                       <div key={j} className="rounded-lg border border-line bg-paper px-3 py-2 text-[13px] font-medium text-ink">
                         {h}
@@ -598,7 +484,7 @@ export default function Home() {
                       ["FB Feed", "4:5"],
                       ["IG Feed", "4:5"],
                       ["Stories", "9:16"],
-                      ["Reels", "9:16"],
+                      ["Square", "1:1"],
                     ].map(([label, ratio]) => (
                       <div key={label} className="flex items-center gap-2 rounded-lg border border-line bg-paper px-3 py-2">
                         <span className="text-[12px] font-semibold text-ink">{label}</span>
@@ -834,7 +720,7 @@ export default function Home() {
               Your next winning ad is one URL away
             </h2>
             <p className="mt-5 text-base sm:text-lg text-white/60 leading-relaxed max-w-lg mx-auto">
-              Paste a link, get four ads, run the test. If the ads don&apos;t beat
+              Paste a link, get ten ads, run the test. If the ads don&apos;t beat
               your control in 30 days, the free trial cost you nothing.
             </p>
             <div className="mt-9 flex flex-col sm:flex-row items-center justify-center gap-3">

@@ -6,9 +6,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 const bullets = [
-  "Four ad variations per run — test, don't guess.",
+  "Ten ad variations per run — test, don't guess.",
   "Copy in your brand's voice, not generic AI tone.",
-  "Correct sizes for feed, Stories and Reels out of the box.",
+  "Static Facebook & Instagram ads, correctly sized out of the box.",
 ];
 
 export default function Login() {

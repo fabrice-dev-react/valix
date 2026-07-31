@@ -21,7 +21,7 @@ const steps = [
   },
   {
     label: "Designing creatives",
-    detail: "Building four variants for feed, Stories and Reels",
+    detail: "Building ten static ads for Facebook & Instagram",
   },
 ];
 

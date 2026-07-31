@@ -7,8 +7,8 @@ import Link from "next/link";
 
 const features = [
   "Unlimited ad generations",
-  "Four ad variations per run",
-  "Facebook + Instagram, Stories & Reels sizes",
+  "Ten ad variations per run",
+  "Static Facebook + Instagram ads, ready to publish",
   "Copy in your brand's voice",
   "Export as images & copy",
 ];
