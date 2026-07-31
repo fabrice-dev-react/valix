@@ -147,7 +147,7 @@ export default function Login() {
           <p className="mt-3 text-[15px] leading-relaxed text-ink-soft">
             New here? Your account is created automatically when you continue
             with Google — same button for your first visit and every visit
-            after. You&apos;ll unlock the dashboard with a one-time $39 payment.
+            after. You&apos;ll unlock the dashboard with a $39/month subscription.
           </p>
 
           <form
@@ -180,7 +180,7 @@ export default function Login() {
             </div>
             <div className="relative flex justify-center">
               <span className="bg-cream px-3 font-mono text-[11px] uppercase tracking-[0.18em] text-ink-soft">
-                $39 one-time · no subscription
+                $39/month · cancel anytime
               </span>
             </div>
           </div>

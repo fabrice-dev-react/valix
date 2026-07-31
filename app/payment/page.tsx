@@ -180,14 +180,14 @@ function PaymentPageContent() {
               }}
             />
             <p className="relative font-mono text-[10px] uppercase tracking-[0.22em] text-white/60">
-              Valix Pro · one-time
+              Valix Pro · monthly
             </p>
             <div className="relative mt-2 flex items-baseline gap-1.5">
               <span className="text-[44px] font-extrabold tracking-tight leading-none">$39</span>
-              <span className="text-sm text-white/60">one-time payment</span>
+              <span className="text-sm text-white/60">/month</span>
             </div>
             <p className="relative mt-1 text-[13px] text-white/60">
-              Pay once. No subscription, no renewal, no surprises.
+              Billed monthly. Cancel anytime, no questions asked.
             </p>
           </div>
 
@@ -215,7 +215,7 @@ function PaymentPageContent() {
               onClick={startCheckout}
               className="mt-7 w-full h-12 rounded-full bg-ink text-white text-[15px] font-semibold hover:bg-black active:scale-[0.99] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
-              Pay $39 and unlock Valix
+              Subscribe for $39/month and unlock Valix
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14m-7-7l7 7-7 7" />
               </svg>

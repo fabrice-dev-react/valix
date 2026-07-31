@@ -91,7 +91,7 @@ const plans = [
     name: "Pro",
     tagline: "Everything Valix does, in one plan",
     price: 39,
-    cta: "Pay $39 and start generating",
+    cta: "Start for $39/month",
     features: [
       "Unlimited ad generations",
       "Ten ad variations per run",
@@ -147,7 +147,7 @@ const faqs = [
   },
   {
     q: "Can I try it before paying?",
-    a: "Valix is a one-time purchase — you pay $39 once to unlock it. There's no free trial and no monthly fee, so you never lose access because of a subscription expiring.",
+    a: "Valix is $39/month. Start a subscription and you get everything from day one — unlimited generations, all ten variations, every format. Cancel anytime, no questions asked.",
   },
   {
     q: "What kind of results should I expect?",
@@ -590,8 +590,8 @@ export default function Home() {
               One plan. One price. No surprises.
             </h2>
             <p className="mt-5 text-[15px] sm:text-base text-ink-soft max-w-md mx-auto">
-              Pay $39 once and unlock everything Valix does — no monthly
-              subscription, no seat fees, no usage caps.
+              One simple plan at $39/month — no seat fees, no usage caps,
+              cancel anytime.
             </p>
           </div>
 
@@ -613,10 +613,10 @@ export default function Home() {
                   <span className="text-[52px] font-extrabold tracking-tight leading-none">
                     ${plan.price}
                   </span>
-                  <span className="text-sm text-white/60">one-time</span>
+                  <span className="text-sm text-white/60">/month</span>
                 </div>
                 <p className="mt-1 text-xs text-white/50">
-                  No subscription · lifetime access
+                  Billed monthly · cancel anytime
                 </p>
 
                 <ul className="mt-7 space-y-3 flex-1">
@@ -767,7 +767,7 @@ export default function Home() {
               </button>
             </div>
             <p className="mt-4 text-[13px] text-white/40">
-              $39 one-time · no subscription · lifetime access
+              $39/month · cancel anytime
             </p>
           </div>
         </div>
