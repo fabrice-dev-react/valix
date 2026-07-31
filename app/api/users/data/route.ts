@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/db";
 import User from "@/models/User";
-import Competitor from "@/models/Competitor";
 import { getAuthenticatedUser, unauthorizedResponse } from "@/lib/authHelpers";
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
     let user;
     try {
@@ -15,19 +14,17 @@ export async function GET(request: Request) {
 
     await connectDB();
 
-    const competitors = await Competitor.find({ userId: user._id }).sort({ createdAt: -1 });
+    const userData = await User.findById(user._id);
 
     return NextResponse.json({
-      name: user.name || "",
-      email: user.email || "",
-      competitors: competitors || [],
-      onboardingCompleted: user.onboardingCompleted || false,
-      plan: user.plan || "free",
-      paymentDate: user.paymentDate || null,
-      nextResetDate: user.nextResetDate || null,
+      name: userData?.name || user.name || "",
+      email: userData?.email || user.email || "",
+      websiteUrl: userData?.websiteUrl || "",
+      productName: userData?.productName || "",
+      onboardingCompleted: userData?.onboardingCompleted || false,
     });
-  } catch (error: any) {
-    console.error("Get user data error:", error.message);
+  } catch (error: unknown) {
+    console.error("Get user data error:", error instanceof Error ? error.message : error);
     return NextResponse.json(
       { error: "Unable to fetch user data. Please try again." },
       { status: 503 }

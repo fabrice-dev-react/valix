@@ -1,103 +1,178 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { getRuns } from "@/lib/clientRuns";
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { data: session } = useSession();
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasBook, setHasBook] = useState(false);
+  const { data: session, status } = useSession();
+  const [url, setUrl] = useState("");
+  const [runs, setRuns] = useState(() => getRuns());
 
   useEffect(() => {
-    async function checkAccess() {
-      try {
-        const res = await fetch("/api/auth/refresh-session", { method: "POST" });
-        if (!res.ok) {
-          router.push("/login");
-          return;
-        }
-        const data = await res.json();
-        if (data.plan === "book") {
-          setHasBook(true);
-        }
-        setIsLoading(false);
-      } catch {
-        router.push("/login");
-      }
+    if (status === "unauthenticated") {
+      router.push("/login");
     }
-    checkAccess();
-  }, [router]);
+  }, [status, router]);
 
-  if (isLoading) {
+  useEffect(() => {
+    const refresh = () => setRuns(getRuns());
+    window.addEventListener("focus", refresh);
+    window.addEventListener("valix:runs", refresh as EventListener);
+    return () => {
+      window.removeEventListener("focus", refresh);
+      window.removeEventListener("valix:runs", refresh as EventListener);
+    };
+  }, []);
+
+  if (status === "loading") {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-
-  if (!hasBook) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-6">
-        <div className="bg-white rounded-2xl p-8 md:p-12 border border-slate-200 max-w-lg mx-auto text-center">
-          <div className="text-6xl mb-6">📘</div>
-          <h1 className="text-2xl font-bold text-slate-800 mb-3">You haven&apos;t purchased the book yet</h1>
-          <p className="text-slate-600 mb-6">
-            Get instant access to the complete NASDAQ & S&P500 trading strategy.
-          </p>
-          <button
-            onClick={() => router.push("/pricing")}
-            className="px-8 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Buy the Book — $59
-          </button>
+        <div className="flex items-center gap-3">
+          <span className="w-6 h-6 border-2 border-ink border-t-transparent rounded-full animate-spin" />
+          <span className="font-mono text-xs uppercase tracking-[0.18em] text-ink-soft">
+            One moment
+          </span>
         </div>
       </div>
     );
   }
+
+  if (!session) return null;
+
+  const firstName = session.user?.name?.split(" ")[0] || "there";
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6">
-      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden w-full max-w-lg">
-        <div className="p-6 md:p-8">
-          <div className="flex flex-col items-center text-center">
-            <div className="w-40 md:w-48 rounded-lg overflow-hidden shadow-lg bg-gradient-to-br from-blue-600 to-blue-900 mb-6">
-              <img
-                src="/images/cover.png"
-                alt="Trading Strategy Book Cover"
-                className="w-full h-auto object-cover"
-              />
-            </div>
-            <h2 className="text-xl font-bold text-slate-800 mb-1">
-              9:30 Precision Playbook
-            </h2>
-            <p className="text-slate-500 text-sm mb-4">
-              Complete NASDAQ & S&P500 Trading System
-            </p>
-
-            <div className="flex flex-wrap gap-2 justify-center mb-6">
-              {["Entry Rules", "Risk Management", "1 Hour/Day", "Real Trades"].map((tag) => (
-                <span key={tag} className="px-3 py-1 bg-blue-50 text-blue-600 text-xs font-medium rounded-full">
-                  {tag}
-                </span>
-              ))}
-            </div>
-
-            <a
-              href="/book/9_30_Precision_Playbook-1.pdf"
-              download
-              className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              Download PDF
-            </a>
-          </div>
+    <div>
+      {/* Header */}
+      <div className="flex items-end justify-between gap-4 pt-6 lg:pt-10">
+        <div>
+          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-signal-dark font-semibold">
+            Overview
+          </p>
+          <h1 className="mt-2 text-2xl sm:text-3xl font-extrabold tracking-[-0.03em] text-ink">
+            Hey {firstName},
+          </h1>
+          <p className="mt-2 text-[15px] text-ink-soft">
+            Drop a URL below — Valix will read it and build your ads.
+          </p>
         </div>
       </div>
+
+      {/* Generator card */}
+      <section className="mt-8 rounded-3xl bg-paper border border-line p-6 sm:p-8">
+        <div className="flex items-center gap-3">
+          <span className="w-2 h-2 rounded-full bg-signal" />
+          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink-soft font-semibold">
+            New creative run
+          </p>
+        </div>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (url.trim()) router.push(`/analyzing?url=${encodeURIComponent(url.trim())}`);
+          }}
+          className="mt-5"
+        >
+          <label htmlFor="url" className="block text-sm font-semibold text-ink">
+            Your landing page
+          </label>
+          <p className="mt-1 text-[13px] text-ink-soft">
+            Any page works — homepage, product page, a live campaign.
+          </p>
+          <div className="mt-4 flex flex-col sm:flex-row gap-3">
+            <input
+              id="url"
+              type="url"
+              required
+              placeholder="https://your-store.com/product"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              className="flex-1 h-12 px-4 rounded-xl bg-cream border border-line text-[15px] text-ink placeholder:text-ink-soft/50 outline-none transition-colors focus:border-ink/40 focus:bg-white"
+            />
+            <button
+              type="submit"
+              className="h-12 px-6 rounded-full bg-ink text-white text-[15px] font-semibold hover:bg-ink/90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 shrink-0"
+            >
+              Generate ads
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14m-7-7l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        </form>
+        <p className="mt-4 text-[12px] text-ink-soft">
+          Four ad variations · Facebook &amp; Instagram · ready in under a minute
+        </p>
+      </section>
+
+      {/* Recent generations */}
+      <section className="mt-6 rounded-3xl bg-paper border border-line p-6 sm:p-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink-soft font-semibold">
+              Recent generations
+            </p>
+          </div>
+          {runs.length > 0 && (
+            <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-soft/70 rounded-full bg-mist px-2.5 py-1">
+              {runs.length} saved
+            </span>
+          )}
+        </div>
+
+        {runs.length === 0 ? (
+          <div className="mt-6 flex flex-col items-center justify-center py-10 text-center">
+            <div className="w-12 h-12 rounded-2xl bg-signal-soft flex items-center justify-center">
+              <svg className="w-6 h-6 text-signal-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+              </svg>
+            </div>
+            <p className="mt-4 text-[15px] font-semibold text-ink">
+              No ads generated yet
+            </p>
+            <p className="mt-1.5 text-[13px] text-ink-soft max-w-xs">
+              Your first run of four ad variations will show up here.
+            </p>
+            <button
+              onClick={() => router.push("/analyzing")}
+              className="mt-6 h-11 px-5 rounded-full bg-ink text-white text-[14px] font-semibold hover:bg-ink/90 active:scale-[0.98] transition-all"
+            >
+              Create your first ad
+            </button>
+          </div>
+        ) : (
+          <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {runs.map((run) => (
+              <button
+                key={run.runId}
+                onClick={() => router.push(`/analyzing?run=${run.runId}`)}
+                className="text-left rounded-2xl border border-line bg-cream overflow-hidden hover:border-ink/25 hover:shadow-[0_8px_24px_-12px_rgba(22,19,17,0.2)] transition-all group"
+              >
+                <div className="relative aspect-square w-full bg-ink overflow-hidden">
+                  <img
+                    src={run.heroImagePath || "/fallback/fallback.svg"}
+                    alt={run.brand}
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                  <p className="absolute bottom-2.5 left-3 right-3 text-[13px] font-bold text-white leading-tight line-clamp-2">
+                    {run.ads[0]?.primary || run.brand}
+                  </p>
+                </div>
+                <div className="px-3.5 py-3">
+                  <p className="text-[13px] font-semibold text-ink truncate">{run.brand}</p>
+                  <p className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-ink-soft truncate">
+                    {run.domain} · {run.ads.length} ads
+                  </p>
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
+      </section>
     </div>
   );
 }

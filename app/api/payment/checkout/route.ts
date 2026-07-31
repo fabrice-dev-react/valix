@@ -1,32 +1,59 @@
-import { NextResponse, NextRequest } from "next/server";
+import { NextResponse } from "next/server";
+import { headers } from "next/headers";
 import { getToken } from "next-auth/jwt";
+import { NextRequest } from "next/server";
+import connectDB from "@/lib/db";
+import User from "@/models/User";
+import { createCheckoutSession, PaymentError } from "@/lib/payments";
 
-const PADDLE_URL_BOOK = process.env.PADDLE_URL_BOOK;
+export const dynamic = "force-dynamic";
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
-    const token = await getToken({ req: request });
+    const headersList = await headers();
+    const host = headersList.get("host") || "localhost:3000";
+    const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
+    const req = new NextRequest(`${protocol}://${host}`, {
+      headers: { cookie: headersList.get("cookie") || "" },
+    });
 
-    if (!token?.id) {
+    const token = await getToken({ req });
+
+    if (!token?.id || !token?.email) {
       return NextResponse.json({ error: "Please log in to continue" }, { status: 401 });
     }
 
-    if (!PADDLE_URL_BOOK) {
-      return NextResponse.json({ error: "Payment not configured" }, { status: 503 });
+    await connectDB();
+    const user = await User.findById(token.id);
+
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const origin = process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin;
-    const successUrl = `${origin}/payment-processing?paid=true`;
-    const cancelUrl = `${origin}/pricing?cancelled=true`;
+    if (user.hasPaid) {
+      return NextResponse.json({ alreadyPaid: true });
+    }
 
-    const separator = PADDLE_URL_BOOK.includes("?") ? "&" : "?";
-    const fullCheckoutUrl = `${PADDLE_URL_BOOK}${separator}success_url=${encodeURIComponent(successUrl)}&cancel_url=${encodeURIComponent(cancelUrl)}`;
+    const session = await createCheckoutSession({
+      email: token.email,
+      name: (token.name as string) || undefined,
+      userId: token.id,
+    });
+
+    if (session.session_id) {
+      user.dodoCheckoutSessionId = session.session_id;
+      await user.save();
+    }
 
     return NextResponse.json({
-      checkoutUrl: fullCheckoutUrl,
+      sessionId: session.session_id,
+      checkoutUrl: session.checkout_url,
     });
   } catch (error: unknown) {
     console.error("Payment checkout error:", error instanceof Error ? error.message : error);
+    if (error instanceof PaymentError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     return NextResponse.json(
       { error: "Unable to create payment. Please try again." },
       { status: 503 }

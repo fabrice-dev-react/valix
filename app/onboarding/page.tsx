@@ -14,12 +14,7 @@ export default function OnboardingRedirect() {
           router.push("/login");
           return;
         }
-        const data = await res.json();
-        if (data.plan === "book") {
-          router.push("/dashboard");
-        } else {
-          router.push("/pricing");
-        }
+        router.push("/dashboard");
       } catch {
         router.push("/login");
       }
@@ -28,8 +23,13 @@ export default function OnboardingRedirect() {
   }, [router]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
-      <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+    <div className="min-h-screen bg-cream flex items-center justify-center">
+      <div className="flex items-center gap-3">
+        <span className="w-6 h-6 border-2 border-ink border-t-transparent rounded-full animate-spin" />
+        <span className="font-mono text-xs uppercase tracking-[0.18em] text-ink-soft">
+          One moment
+        </span>
+      </div>
     </div>
   );
 }

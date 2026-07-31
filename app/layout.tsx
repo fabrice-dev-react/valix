@@ -1,21 +1,14 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/components/AuthProvider";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
-  title: "9:30 Precision Playbook — NASDAQ & S&P500 Trading Strategy",
-  description: "Learn a proven trading strategy for indices. Download our comprehensive PDF book and start trading NASDAQ and S&P500 with confidence.",
+  title: "Valix — Great Ads, Straight From a Website URL",
+  description: "Paste a URL. Valix reads your site, pulls the offer, tone and proof, then writes and designs Facebook & Instagram ads in your voice. Four ready-to-publish variations per run.",
+  openGraph: {
+    title: "Valix — Great Ads, Straight From a URL",
+    description: "Turn any website into publishable Facebook & Instagram ads. No briefs, no designers, no guesswork.",
+  },
 };
 
 export default function RootLayout({
@@ -26,7 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className="antialiased"
       >
         <AuthProvider>
           {children}

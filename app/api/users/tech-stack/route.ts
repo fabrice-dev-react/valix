@@ -32,10 +32,10 @@ export async function PUT(request: Request) {
       message: "Tech stack updated successfully",
       techStack: user.techStack,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Update tech stack error:", error);
     return NextResponse.json(
-      { error: error.message || "Something went wrong" },
+      { error: error instanceof Error ? error.message : "Something went wrong" },
       { status: 500 }
     );
   }

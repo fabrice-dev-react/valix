@@ -1,36 +1,41 @@
 import mongoose from "mongoose";
 
-const explicitUri = process.env.MONGODB_URI;
-const explicitUser = process.env.MONGODB_USER;
-const explicitPassword = process.env.MONGODB_PASSWORD;
-const explicitHost = process.env.MONGODB_HOST;
-const explicitDb = process.env.MONGODB_DB || "valix";
-const explicitOptions = process.env.MONGODB_OPTIONS || "retryWrites=true&w=majority";
+interface MongooseCache {
+  conn: typeof mongoose | null;
+  promise: Promise<typeof mongoose> | null;
+}
+
+const globalWithMongoose = global as typeof global & { mongoose?: MongooseCache };
 
 const buildMongoUri = () => {
-  if (explicitUri) {
-    return explicitUri;
+  if (process.env.MONGODB_URI) {
+    return process.env.MONGODB_URI;
   }
 
-  if (!explicitUser || !explicitPassword || !explicitHost) {
-    throw new Error(
-      "Please define MONGODB_URI or provide MONGODB_USER, MONGODB_PASSWORD, and MONGODB_HOST"
-    );
+  const user = process.env.MONGODB_USER;
+  const password = process.env.MONGODB_PASSWORD;
+  const host = process.env.MONGODB_HOST;
+  const db = process.env.MONGODB_DB || "valix";
+
+  if (user && password && host) {
+    const credentials = `${encodeURIComponent(user)}:${encodeURIComponent(password)}`;
+    const options = process.env.MONGODB_OPTIONS || "retryWrites=true&w=majority";
+    return `mongodb+srv://${credentials}@${host}/${db}?${options}`;
   }
 
-  const credentials = `${encodeURIComponent(explicitUser)}:${encodeURIComponent(
-    explicitPassword
-  )}`;
-  return `mongodb+srv://${credentials}@${explicitHost}/${explicitDb}?${explicitOptions}`;
+  return "mongodb://localhost:27017/valix";
 };
 
 const MONGODB_URI = buildMongoUri();
 
-let cached = (global as any).mongoose;
-
-if (!cached) {
-  cached = (global as any).mongoose = { conn: null, promise: null };
+function getCache(): MongooseCache {
+  if (!globalWithMongoose.mongoose) {
+    globalWithMongoose.mongoose = { conn: null, promise: null };
+  }
+  return globalWithMongoose.mongoose;
 }
+
+const cached = getCache();
 
 async function connectDB() {
   try {

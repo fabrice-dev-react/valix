@@ -36,6 +36,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# generated ad assets
+/public/generated
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

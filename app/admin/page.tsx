@@ -3,12 +3,24 @@
 import { useState } from "react";
 import Link from "next/link";
 
+type AdminUser = {
+  email: string;
+  name?: string | null;
+  createdAt: string;
+};
+
+type AdminStats = {
+  totalUsers: number;
+  verifiedUsers: number;
+  users: AdminUser[];
+};
+
 export default function AdminPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
-  const [stats, setStats] = useState<any>(null);
+  const [stats, setStats] = useState<AdminStats | null>(null);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,18 +61,10 @@ export default function AdminPage() {
         </div>
 
         <div className="max-w-7xl mx-auto px-6 py-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
             <div className="bg-white rounded-xl p-6 border border-slate-200">
               <p className="text-sm text-slate-500 mb-1">Total Users</p>
               <p className="text-3xl font-bold text-slate-800">{stats.totalUsers}</p>
-            </div>
-            <div className="bg-white rounded-xl p-6 border border-slate-200">
-              <p className="text-sm text-slate-500 mb-1">Paid Users</p>
-              <p className="text-3xl font-bold text-green-600">{stats.paidUsers}</p>
-            </div>
-            <div className="bg-white rounded-xl p-6 border border-slate-200">
-              <p className="text-sm text-slate-500 mb-1">Free Users</p>
-              <p className="text-3xl font-bold text-yellow-600">{stats.freeUsers}</p>
             </div>
             <div className="bg-white rounded-xl p-6 border border-slate-200">
               <p className="text-sm text-slate-500 mb-1">Verified Emails</p>
@@ -78,28 +82,14 @@ export default function AdminPage() {
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Email</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Name</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Plan</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Joined</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">
-                  {stats.users.map((user: any, index: number) => (
+                  {stats.users.map((user: AdminUser, index: number) => (
                     <tr key={index} className="hover:bg-slate-50">
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700">{user.email}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700">{user.name || "-"}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 capitalize">{user.plan}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {user.isPaid ? (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
-                            Paid
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">
-                            Free
-                          </span>
-                        )}
-                      </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
                         {new Date(user.createdAt).toLocaleDateString()}
                       </td>

@@ -26,10 +26,10 @@ export async function GET(request: Request) {
     return NextResponse.json({
       onboardingCompleted: user.onboardingCompleted || false,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Check onboarding error:", error);
     return NextResponse.json(
-      { error: error.message || "Something went wrong" },
+      { error: error instanceof Error ? error.message : "Something went wrong" },
       { status: 500 }
     );
   }

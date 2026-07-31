@@ -1,27 +1,25 @@
 import { NextAuthOptions, DefaultSession } from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import connectDB from "@/lib/db";
 import User from "@/models/User";
-import bcrypt from "bcryptjs";
-
-interface ExtendedUser {
-  id: string;
-  name: string;
-  email: string;
-  onboardingCompleted?: boolean;
-  plan?: string;
-}
+import { getCheckoutSession, getPayment, isPaidStatus } from "@/lib/payments";
 
 declare module "next-auth" {
   interface Session {
-    user: ExtendedUser & DefaultSession["user"];
+    user: {
+      id: string;
+      onboardingCompleted?: boolean;
+      hasPaid?: boolean;
+    } & DefaultSession["user"];
   }
 }
 
 declare module "next-auth/jwt" {
-  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  interface JWT extends ExtendedUser {}
+  interface JWT {
+    id: string;
+    onboardingCompleted?: boolean;
+    hasPaid?: boolean;
+  }
 }
 
 export const authOptions: NextAuthOptions = {
@@ -33,60 +31,8 @@ export const authOptions: NextAuthOptions = {
         params: {
           prompt: "consent",
           access_type: "offline",
-          response_type: "code"
-        }
-      }
-    }),
-    CredentialsProvider({
-      name: "Credentials",
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          throw new Error("Please enter email and password");
-        }
-
-        await connectDB();
-
-        const user = await User.findOne({ email: credentials.email });
-
-        if (!user) {
-          throw new Error("No user found with this email");
-        }
-
-        if (user.provider === "google") {
-          throw new Error("Please sign in with Google");
-        }
-
-        if (!user.isEmailVerified) {
-          throw new Error("Please verify your email first. Check your inbox for the verification link.");
-        }
-
-        if (credentials.password === "__revalidate__") {
-          return {
-            id: user._id.toString(),
-            name: user.name,
-            email: user.email,
-            onboardingCompleted: user.onboardingCompleted,
-            plan: user.plan,
-          };
-        }
-
-        const isValid = await bcrypt.compare(credentials.password, user.password);
-
-        if (!isValid) {
-          throw new Error("Invalid password");
-        }
-
-        return {
-          id: user._id.toString(),
-          name: user.name,
-          email: user.email,
-          onboardingCompleted: user.onboardingCompleted,
-          plan: user.plan,
-        };
+          response_type: "code",
+        },
       },
     }),
   ],
@@ -97,46 +43,89 @@ export const authOptions: NextAuthOptions = {
     signIn: "/login",
   },
   callbacks: {
-    async jwt({ token, user, account }) {
-      if (account && user) {
+    async jwt({ token, account }) {
+      if (account && token.email) {
         await connectDB();
-        
-        let existingUser = await User.findOne({ email: user.email });
-        
+
+        let existingUser = await User.findOne({ email: token.email });
+
         if (!existingUser) {
           existingUser = await User.create({
-            name: user.name,
-            email: user.email,
-            image: user.image,
+            name: token.name,
+            email: token.email,
+            image: token.picture,
             provider: "google",
-            isEmailVerified: true,
             onboardingCompleted: false,
           });
-        } else if (existingUser.provider !== "google") {
-          existingUser.provider = "google";
-          existingUser.image = user.image;
-          await existingUser.save();
         }
-        
+
         token.id = existingUser._id.toString();
-        token.name = existingUser.name;
         token.onboardingCompleted = existingUser.onboardingCompleted;
-        token.plan = existingUser.plan;
-      } else if (user) {
-        token.id = user.id;
-        token.name = user.name || "";
-        token.onboardingCompleted = (user as ExtendedUser).onboardingCompleted;
-        token.plan = (user as ExtendedUser).plan;
+        token.hasPaid = existingUser.hasPaid || false;
+
+        if (!token.hasPaid) {
+          try {
+            const storedSessionId =
+              typeof existingUser.dodoCheckoutSessionId === "string"
+                ? existingUser.dodoCheckoutSessionId
+                : null;
+            const storedPaymentId =
+              typeof existingUser.lastPaymentId === "string"
+                ? existingUser.lastPaymentId
+                : null;
+
+            const ownsPayment = (payment: {
+              status: string | null;
+              metadata?: Record<string, string | number | boolean>;
+            }) => {
+              const metaUserId =
+                typeof payment.metadata?.user_id === "string"
+                  ? payment.metadata.user_id
+                  : null;
+              return (
+                isPaidStatus(payment.status) &&
+                (!metaUserId || metaUserId === existingUser._id.toString())
+              );
+            };
+
+            let healed = false;
+            if (storedPaymentId) {
+              const payment = await getPayment(storedPaymentId);
+              if (ownsPayment(payment)) healed = true;
+            }
+            if (!healed && storedSessionId) {
+              const session = await getCheckoutSession(storedSessionId);
+              let sessionPaid = isPaidStatus(session.payment_status);
+              if (sessionPaid && session.payment_id) {
+                const payment = await getPayment(session.payment_id);
+                if (!ownsPayment(payment)) sessionPaid = false;
+              }
+              if (sessionPaid) healed = true;
+            }
+
+            if (healed && !existingUser.hasPaid) {
+              existingUser.hasPaid = true;
+              existingUser.plan = "pro";
+              existingUser.paymentDate = new Date();
+              await existingUser.save();
+              console.log(`[dodo] sign-in heal: ${existingUser.email} marked as paid`);
+            }
+            token.hasPaid = existingUser.hasPaid || false;
+          } catch (error: unknown) {
+            console.error(
+              "Sign-in payment heal error:",
+              error instanceof Error ? error.message : error
+            );
+          }
+        }
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
-        const extSession = session.user as unknown as ExtendedUser & { id: string; name: string };
-        extSession.id = token.id;
-        extSession.name = token.name || "";
-        extSession.onboardingCompleted = token.onboardingCompleted;
-        extSession.plan = token.plan;
+        session.user.id = token.id;
+        session.user.onboardingCompleted = token.onboardingCompleted;
+        session.user.hasPaid = token.hasPaid;
       }
       return session;
     },
