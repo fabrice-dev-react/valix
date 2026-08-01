@@ -23,11 +23,13 @@ export async function GET() {
     }
 
     await connectDB();
-    const user = await User.findById(token.id).select("hasPaid plan");
+    const user = await User.findById(token.id).select("hasPaid plan paymentDate email");
 
     return NextResponse.json({
       hasPaid: user?.hasPaid || false,
       plan: user?.plan || "pro",
+      paymentDate: user?.paymentDate ? user.paymentDate.toISOString() : null,
+      email: user?.email || null,
     });
   } catch (error: unknown) {
     console.error("Payment status error:", error instanceof Error ? error.message : error);

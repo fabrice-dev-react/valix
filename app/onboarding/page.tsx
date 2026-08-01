@@ -11,12 +11,12 @@ export default function OnboardingRedirect() {
       try {
         const res = await fetch("/api/auth/refresh-session", { method: "POST" });
         if (!res.ok) {
-          router.push("/login");
+          router.push("/?login=1");
           return;
         }
         router.push("/dashboard");
       } catch {
-        router.push("/login");
+        router.push("/?login=1");
       }
     }
     checkAccess();

@@ -77,13 +77,13 @@ export default function Header() {
             ) : (
               <>
                 <Link
-                  href="/login"
+                  href="/?login=1"
                   className="text-[13.5px] font-medium text-ink-soft hover:text-ink transition-colors px-3 py-2"
                 >
                   Log in
                 </Link>
                 <Link
-                  href="/login"
+                  href="/?login=1"
                   className="inline-flex items-center gap-2 text-[13.5px] font-semibold text-white bg-ink hover:bg-black px-5 py-2.5 rounded-full transition-all duration-200 shadow-[0_1px_0_rgba(255,255,255,0.08)_inset]"
                 >
                   Try it free
@@ -145,14 +145,14 @@ export default function Header() {
               ) : (
                 <div className="flex flex-col gap-2 pt-1">
                   <Link
-                    href="/login"
+                    href="/?login=1"
                     onClick={() => setMobileOpen(false)}
                     className="text-center py-3 text-[15px] font-semibold text-white bg-ink rounded-full"
                   >
                     Try it free
                   </Link>
                   <Link
-                    href="/login"
+                    href="/?login=1"
                     onClick={() => setMobileOpen(false)}
                     className="text-center py-3 text-[15px] font-semibold text-ink rounded-full border border-line"
                   >

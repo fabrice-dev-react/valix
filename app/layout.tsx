@@ -4,11 +4,11 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import AuthProvider from "@/components/AuthProvider";
 
 export const metadata: Metadata = {
-  title: "Valix — Viral, Converting Ads From a Website URL",
-  description: "Paste a URL. Valix understands your offer, your customers and their pain points, then turns it into 10 ready-to-publish Facebook & Instagram ads — each with a different angle. Pick the winner and run.",
+  title: "Valix — Trade-Ready Signals From Any Market Screenshot",
+  description: "Upload a chart screenshot — forex, indices, gold, crypto or stocks. Valix reads the price action and returns a clear buy or sell signal with entry, stop loss, take profit and a confidence score.",
   openGraph: {
-    title: "Valix — Viral, Converting Ads From a Website URL",
-    description: "Paste any website URL and get 10 beautiful Facebook & Instagram ads that convert. Trained on 800 ads that worked.",
+    title: "Valix — Trade-Ready Signals From Any Market Screenshot",
+    description: "Turn any market screenshot into a clear trading signal with entry, stop loss, take profit and confidence. Forex, indices, gold, crypto and stocks.",
   },
 };
 

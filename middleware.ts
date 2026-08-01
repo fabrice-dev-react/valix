@@ -4,7 +4,6 @@ import { getToken } from "next-auth/jwt";
 
 const PUBLIC_PATHS = [
   "/",
-  "/login",
 ];
 
 const PAYMENT_PATHS = [
@@ -24,9 +23,9 @@ export async function middleware(request: NextRequest) {
   const isApiRoute = pathname.startsWith("/api/");
   const isPaymentPath = PAYMENT_PATHS.some(path => pathname === path || pathname.startsWith(path + "/"));
 
-  // Not signed in → send to login (except public, payment and API routes).
+  // Not signed in → send to the landing page login overlay (except public, payment and API routes).
   if (!isPublic && !isApiAuth && !isApiRoute && !isPaymentPath && !token) {
-    const loginUrl = new URL("/login", request.nextUrl);
+    const loginUrl = new URL("/?login=1", request.nextUrl);
     loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);
   }

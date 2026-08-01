@@ -6,11 +6,11 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 
 const features = [
-  "Unlimited ad generations",
-  "Ten ad variations per run",
-  "Static Facebook + Instagram ads, ready to publish",
-  "Copy in your brand's voice",
-  "Export as images & copy",
+  "Unlimited chart analyses",
+  "Forex, indices, crypto, gold & stocks",
+  "Buy/sell with entry, stop & take profit",
+  "Confidence score on every signal",
+  "Market reasoning behind each call",
 ];
 
 type Phase = "checking" | "redirecting" | "ready" | "error";

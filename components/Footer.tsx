@@ -32,8 +32,8 @@ export default function Footer() {
               <span className="text-lg font-bold tracking-tight text-white">Valix</span>
             </Link>
             <p className="text-sm text-white/50 max-w-xs leading-relaxed">
-              Paste a URL, get four publishable ads. Built for teams that ship
-              Facebook &amp; Instagram creative every week.
+              Drop a market screenshot, get a clear trade plan. Built for
+              traders who want a sharp second opinion on every setup.
             </p>
 
             <form
@@ -41,7 +41,7 @@ export default function Footer() {
               className="mt-6 max-w-xs"
             >
               <p className="text-[12px] font-medium text-white/70 mb-2">
-                Weekly notes on ads that work. No spam.
+                Weekly notes on market setups that matter. No spam.
               </p>
               <div className="flex gap-2">
                 <input
