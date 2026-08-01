@@ -912,7 +912,7 @@ export default function Home() {
                 </h2>
                 <p className="mt-5 text-[15px] text-ink-soft max-w-sm">
                   Something else on your mind?{" "}
-                  <a href="mailto:hello@valix.com" className="font-semibold text-ink underline decoration-signal/50 underline-offset-4 hover:decoration-signal transition-colors">
+                  <a href="mailto:niyomutabazifabrice100@gmail.com" className="font-semibold text-ink underline decoration-signal/50 underline-offset-4 hover:decoration-signal transition-colors">
                     Email us
                   </a>{" "}
                   — a human replies within a day.

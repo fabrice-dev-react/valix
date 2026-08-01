@@ -14,6 +14,14 @@ type AdminStats = {
   totalUsers: number;
   paidUsers: number;
   users: AdminUser[];
+  messages: ContactMessage[];
+};
+
+type ContactMessage = {
+  name: string;
+  email: string;
+  message: string;
+  createdAt: string;
 };
 
 export default function AdminPage() {
@@ -91,8 +99,7 @@ export default function AdminPage() {
           <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
             <div className="px-6 py-4 border-b border-slate-200">
               <h2 className="font-semibold text-slate-800">All Users</h2>
-            </div>
-            <div className="overflow-x-auto">
+            </div>            <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-slate-50 border-b border-slate-200">
                   <tr>
@@ -122,6 +129,34 @@ export default function AdminPage() {
                 </tbody>
               </table>
             </div>
+          </div>
+
+          <div className="mt-8 bg-white rounded-xl border border-slate-200 overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-200">
+              <h2 className="font-semibold text-slate-800">Contact Messages</h2>
+            </div>
+            {stats.messages.length === 0 ? (
+              <p className="px-6 py-8 text-sm text-slate-500">No messages yet.</p>
+            ) : (
+              <ul className="divide-y divide-slate-200">
+                {stats.messages.map((msg: ContactMessage, index: number) => (
+                  <li key={index} className="px-6 py-4">
+                    <div className="flex items-center justify-between gap-4">
+                      <p className="text-sm font-semibold text-slate-800">
+                        {msg.name || "Anonymous"}
+                        {msg.email && (
+                          <span className="ml-2 font-normal text-slate-500">· {msg.email}</span>
+                        )}
+                      </p>
+                      <p className="text-xs text-slate-400 whitespace-nowrap">
+                        {new Date(msg.createdAt).toLocaleString()}
+                      </p>
+                    </div>
+                    <p className="mt-1.5 text-sm text-slate-600 whitespace-pre-line">{msg.message}</p>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
       </div>
@@ -159,8 +194,15 @@ export default function AdminPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-3 px-4 rounded-full bg-black hover:bg-slate-800 text-white font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
             >
+              {loading ? (
+                <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14m-7-7l7 7-7 7" />
+                </svg>
+              )}
               {loading ? "Verifying..." : "Login"}
             </button>
           </form>

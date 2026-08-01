@@ -103,9 +103,9 @@ export default function LoginOverlay({
 
         <p className="text-center text-[12px] text-ink-soft leading-relaxed">
           By continuing you agree to our{" "}
-          <a href="#" className="font-semibold text-ink underline decoration-signal/50 underline-offset-2 hover:decoration-signal transition-colors">Terms</a>{" "}
+          <a href="/terms" className="font-semibold text-ink underline decoration-signal/50 underline-offset-2 hover:decoration-signal transition-colors">Terms</a>{" "}
           and{" "}
-          <a href="#" className="font-semibold text-ink underline decoration-signal/50 underline-offset-2 hover:decoration-signal transition-colors">Privacy Policy</a>.
+          <a href="/privacy" className="font-semibold text-ink underline decoration-signal/50 underline-offset-2 hover:decoration-signal transition-colors">Privacy Policy</a>.
         </p>
       </div>
     </div>

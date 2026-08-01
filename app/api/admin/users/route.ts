@@ -2,6 +2,7 @@ import { createHash } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/db";
 import User from "@/models/User";
+import Message from "@/models/Message";
 
 const ADMIN_COOKIE = "admin_auth";
 
@@ -16,6 +17,8 @@ async function getAdminData() {
     .select("email name createdAt hasPaid isEmailVerified")
     .sort({ createdAt: -1 });
 
+  const messages = await Message.find({}).sort({ createdAt: -1 });
+
   const totalUsers = users.length;
   const paidUsers = users.filter((u) => u.hasPaid).length;
 
@@ -28,6 +31,12 @@ async function getAdminData() {
       createdAt: u.createdAt,
       hasPaid: u.hasPaid,
       isEmailVerified: u.isEmailVerified,
+    })),
+    messages: messages.map((m) => ({
+      name: m.name,
+      email: m.email,
+      message: m.message,
+      createdAt: m.createdAt,
     })),
   };
 }

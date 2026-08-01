@@ -5,6 +5,10 @@ import { getToken } from "next-auth/jwt";
 const PUBLIC_PATHS = [
   "/",
   "/admin",
+  "/privacy",
+  "/terms",
+  "/cookies",
+  "/contact",
 ];
 
 const PAYMENT_PATHS = [
