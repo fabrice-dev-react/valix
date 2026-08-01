@@ -67,9 +67,8 @@ export default function LoginOverlay({
           Welcome to Valix
         </h2>
         <p className="mt-3 text-[15px] leading-relaxed text-ink-soft">
-          Your account is created automatically when you continue with Google —
-          same button for your first visit and every visit after. You&apos;ll
-          unlock chart analysis with a $39/month subscription.
+          One tap with Google creates your account — $39/month unlocks unlimited
+          analyses.
         </p>
 
         <button

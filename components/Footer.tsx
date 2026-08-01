@@ -35,28 +35,6 @@ export default function Footer() {
               Drop a market screenshot, get a clear trade plan. Built for
               traders who want a sharp second opinion on every setup.
             </p>
-
-            <form
-              onSubmit={(e) => e.preventDefault()}
-              className="mt-6 max-w-xs"
-            >
-              <p className="text-[12px] font-medium text-white/70 mb-2">
-                Weekly notes on market setups that matter. No spam.
-              </p>
-              <div className="flex gap-2">
-                <input
-                  type="email"
-                  placeholder="you@brand.com"
-                  className="flex-1 min-w-0 px-3.5 py-2.5 rounded-full bg-white/5 border border-white/10 text-sm text-white placeholder:text-white/30 outline-none focus:border-white/30 transition-colors"
-                />
-                <button
-                  type="submit"
-                  className="shrink-0 px-4 py-2.5 rounded-full bg-signal text-white text-sm font-semibold hover:bg-signal-dark transition-colors"
-                >
-                  Join
-                </button>
-              </div>
-            </form>
           </div>
 
           {[

@@ -120,12 +120,14 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
           <button
             onClick={() => signOut({ callbackUrl: "/" })}
             aria-label="Log out"
-            title="Log out"
-            className="p-2 rounded-lg text-ink-soft hover:text-ink hover:bg-mist transition-colors lg:mt-1"
+            className="group relative p-2 rounded-lg text-ink-soft hover:text-ink hover:bg-mist transition-colors lg:mt-1"
           >
             <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
+            <span className="hidden lg:block absolute left-full ml-3 px-2.5 py-1 rounded-lg bg-ink text-white text-[12px] font-medium whitespace-nowrap opacity-0 pointer-events-none translate-x-1 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-150 z-50 shadow-lg">
+              Log out
+            </span>
           </button>
         </div>
       </aside>

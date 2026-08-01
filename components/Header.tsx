@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
+import { useLogin } from "@/components/LoginContext";
 
 const navLinks = [
   { label: "Features", href: "/#features" },
@@ -13,6 +14,7 @@ const navLinks = [
 
 export default function Header() {
   const { data: session, status } = useSession();
+  const { openLogin } = useLogin();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -60,35 +62,23 @@ export default function Header() {
 
           <div className="hidden lg:flex items-center gap-3">
             {isLoggedIn ? (
-              <>
-                <Link
-                  href="/dashboard"
-                  className="text-[13.5px] font-medium text-ink-soft hover:text-ink transition-colors px-3 py-2"
-                >
-                  Dashboard
-                </Link>
-                <button
-                  onClick={() => signOut({ callbackUrl: "/" })}
-                  className="text-[13.5px] font-medium text-ink-soft hover:text-ink transition-colors px-3 py-2"
-                >
-                  Log out
-                </button>
-              </>
+              <Link
+                href="/dashboard"
+                className="text-[13.5px] font-medium text-ink-soft hover:text-ink transition-colors px-3 py-2"
+              >
+                Dashboard
+              </Link>
             ) : (
-              <>
-                <Link
-                  href="/?login=1"
-                  className="text-[13.5px] font-medium text-ink-soft hover:text-ink transition-colors px-3 py-2"
-                >
-                  Log in
-                </Link>
-                <Link
-                  href="/?login=1"
-                  className="inline-flex items-center gap-2 text-[13.5px] font-semibold text-white bg-ink hover:bg-black px-5 py-2.5 rounded-full transition-all duration-200 shadow-[0_1px_0_rgba(255,255,255,0.08)_inset]"
-                >
-                  Try it free
-                </Link>
-              </>
+              <button
+                onClick={openLogin}
+                className="inline-flex items-center gap-2 text-[13.5px] font-semibold text-white bg-ink hover:bg-black px-5 py-2.5 rounded-full transition-all duration-200 shadow-[0_1px_0_rgba(255,255,255,0.08)_inset]"
+              >
+                Start now
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M22 7l-8.5 8.5-5-5L2 17" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M16 7h6v6" />
+                </svg>
+              </button>
             )}
           </div>
 
@@ -127,37 +117,28 @@ export default function Header() {
             ))}
             <div className="pt-3 mt-2 border-t border-line">
               {isLoggedIn ? (
-                <>
-                  <Link
-                    href="/dashboard"
-                    onClick={() => setMobileOpen(false)}
-                    className="block py-2.5 text-[15px] font-medium text-ink hover:text-ink"
-                  >
-                    Dashboard
-                  </Link>
-                  <button
-                    onClick={() => signOut({ callbackUrl: "/" })}
-                    className="block py-2.5 text-[15px] font-medium text-ink-soft hover:text-ink transition-colors"
-                  >
-                    Log out
-                  </button>
-                </>
+                <Link
+                  href="/dashboard"
+                  onClick={() => setMobileOpen(false)}
+                  className="block py-2.5 text-[15px] font-medium text-ink hover:text-ink"
+                >
+                  Dashboard
+                </Link>
               ) : (
                 <div className="flex flex-col gap-2 pt-1">
-                  <Link
-                    href="/?login=1"
-                    onClick={() => setMobileOpen(false)}
-                    className="text-center py-3 text-[15px] font-semibold text-white bg-ink rounded-full"
+                  <button
+                    onClick={() => {
+                      setMobileOpen(false);
+                      openLogin();
+                    }}
+                    className="inline-flex items-center justify-center gap-2 py-3 text-[15px] font-semibold text-white bg-ink rounded-full"
                   >
-                    Try it free
-                  </Link>
-                  <Link
-                    href="/?login=1"
-                    onClick={() => setMobileOpen(false)}
-                    className="text-center py-3 text-[15px] font-semibold text-ink rounded-full border border-line"
-                  >
-                    Log in
-                  </Link>
+                    Start now
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M22 7l-8.5 8.5-5-5L2 17" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M16 7h6v6" />
+                    </svg>
+                  </button>
                 </div>
               )}
             </div>

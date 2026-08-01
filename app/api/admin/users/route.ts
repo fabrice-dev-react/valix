@@ -1,6 +1,36 @@
+import { createHash } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/db";
 import User from "@/models/User";
+
+const ADMIN_COOKIE = "admin_auth";
+
+function hashPassword(password: string) {
+  return createHash("sha256").update(password).digest("hex");
+}
+
+async function getAdminData() {
+  await connectDB();
+
+  const users = await User.find({})
+    .select("email name createdAt hasPaid isEmailVerified")
+    .sort({ createdAt: -1 });
+
+  const totalUsers = users.length;
+  const paidUsers = users.filter((u) => u.hasPaid).length;
+
+  return {
+    totalUsers,
+    paidUsers,
+    users: users.map((u) => ({
+      email: u.email,
+      name: u.name,
+      createdAt: u.createdAt,
+      hasPaid: u.hasPaid,
+      isEmailVerified: u.isEmailVerified,
+    })),
+  };
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,32 +46,37 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid password" }, { status: 401 });
     }
 
-    return NextResponse.json({ success: true });
-  } catch (error) {
+    const data = await getAdminData();
+
+    const response = NextResponse.json({ success: true, ...data });
+    response.cookies.set(ADMIN_COOKIE, hashPassword(adminPassword), {
+      httpOnly: true,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 12,
+    });
+    return response;
+  } catch {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    await connectDB();
+    const adminPassword = process.env.ADMIN_PASSWORD;
 
-    const users = await User.find({}).select("email name createdAt isEmailVerified").sort({ createdAt: -1 });
+    if (!adminPassword) {
+      return NextResponse.json({ error: "Admin not configured" }, { status: 500 });
+    }
 
-    const totalUsers = users.length;
-    const verifiedUsers = users.filter((u) => u.isEmailVerified).length;
+    const cookie = request.cookies.get(ADMIN_COOKIE)?.value;
+    if (cookie !== hashPassword(adminPassword)) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-    return NextResponse.json({
-      totalUsers,
-      verifiedUsers,
-      users: users.map((u) => ({
-        email: u.email,
-        name: u.name,
-        createdAt: u.createdAt,
-        isEmailVerified: u.isEmailVerified,
-      })),
-    });
-  } catch (error) {
+    const data = await getAdminData();
+    return NextResponse.json(data);
+  } catch {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

@@ -1,17 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
 type AdminUser = {
   email: string;
   name?: string | null;
   createdAt: string;
+  hasPaid: boolean;
 };
 
 type AdminStats = {
   totalUsers: number;
-  verifiedUsers: number;
+  paidUsers: number;
   users: AdminUser[];
 };
 
@@ -21,6 +22,22 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
   const [stats, setStats] = useState<AdminStats | null>(null);
+
+  useEffect(() => {
+    const check = async () => {
+      try {
+        const res = await fetch("/api/admin/users");
+        if (res.ok) {
+          const result = await res.json();
+          setStats(result);
+          setAuthenticated(true);
+        }
+      } catch {
+        // stay on the login form
+      }
+    };
+    check();
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,8 +56,7 @@ export default function AdminPage() {
         return;
       }
 
-      const data = await fetch("/api/admin/users");
-      const result = await data.json();
+      const result = await res.json();
       setStats(result);
       setAuthenticated(true);
     } catch {
@@ -67,8 +83,8 @@ export default function AdminPage() {
               <p className="text-3xl font-bold text-slate-800">{stats.totalUsers}</p>
             </div>
             <div className="bg-white rounded-xl p-6 border border-slate-200">
-              <p className="text-sm text-slate-500 mb-1">Verified Emails</p>
-              <p className="text-3xl font-bold text-slate-800">{stats.verifiedUsers}</p>
+              <p className="text-sm text-slate-500 mb-1">Paid Users</p>
+              <p className="text-3xl font-bold text-slate-800">{stats.paidUsers}</p>
             </div>
           </div>
 
@@ -83,6 +99,7 @@ export default function AdminPage() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Email</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Name</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Joined</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">
@@ -92,6 +109,13 @@ export default function AdminPage() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700">{user.name || "-"}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
                         {new Date(user.createdAt).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                        {user.hasPaid ? (
+                          <span className="inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">Paid</span>
+                        ) : (
+                          <span className="inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-500">Free</span>
+                        )}
                       </td>
                     </tr>
                   ))}

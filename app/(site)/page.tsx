@@ -2,8 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { useEffect, useRef, useState } from "react";
-import LoginOverlay from "@/components/LoginOverlay";
+import { useRef, useState } from "react";
+import { useLogin } from "@/components/LoginContext";
 import { fileToResizedDataUrl } from "@/lib/clientImage";
 
 function Stars({ className = "w-3.5 h-3.5" }: { className?: string }) {
@@ -317,26 +317,16 @@ export default function Home() {
   const router = useRouter();
   const { data: session, status } = useSession();
   const isLoggedIn = status === "authenticated" && session;
+  const { openLogin } = useLogin();
   const inputRef = useRef<HTMLInputElement>(null);
-  const [loginOpen, setLoginOpen] = useState(() => {
-    if (typeof window === "undefined") return false;
-    const params = new URLSearchParams(window.location.search);
-    return params.has("login") || params.has("error");
-  });
   const [preview, setPreview] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
-
-  useEffect(() => {
-    if (loginOpen) {
-      window.history.replaceState({}, "", window.location.pathname);
-    }
-  }, [loginOpen]);
 
   const handleCTA = () => {
     if (isLoggedIn) {
       router.push("/dashboard");
     } else {
-      setLoginOpen(true);
+      openLogin();
     }
   };
 
@@ -348,7 +338,7 @@ export default function Home() {
       if (isLoggedIn) {
         router.push("/dashboard");
       } else {
-        setLoginOpen(true);
+        openLogin();
       }
     } catch {
       // ignore invalid files
@@ -980,8 +970,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      <LoginOverlay open={loginOpen} onClose={() => setLoginOpen(false)} />
     </div>
   );
 }
