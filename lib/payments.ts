@@ -1,5 +1,6 @@
 const DODO_API_KEY = process.env.DODO_PAYMENTS_API_KEY || "";
 const DODO_PRODUCT_ID = process.env.DODO_PAYMENTS_PRODUCT_ID || "";
+const DODO_ONE_TIME_PRODUCT_ID = process.env.DODO_PAYMENTS_ONE_TIME_PRODUCT_ID || "";
 const DODO_ENVIRONMENT = process.env.DODO_PAYMENTS_ENVIRONMENT || "live";
 const DODO_BASE_URL =
   DODO_ENVIRONMENT === "test"
@@ -7,7 +8,9 @@ const DODO_BASE_URL =
     : "https://live.dodopayments.com";
 
 export const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-export const PLAN_PRICE = 39;
+export const PLAN_PRICE = 59;
+export const SETUP_FEE = 249;
+export const hasOneTimeProduct = () => DODO_ONE_TIME_PRODUCT_ID.length > 0;
 
 export class PaymentError extends Error {
   status: number;
@@ -84,15 +87,16 @@ type CheckoutSessionInput = {
   email: string;
   name?: string;
   userId: string;
+  productId?: string;
 };
 
-export async function createCheckoutSession({ email, name, userId }: CheckoutSessionInput) {
+export async function createCheckoutSession({ email, name, userId, productId }: CheckoutSessionInput) {
   const body = await dodoFetch("/checkouts", {
     method: "POST",
     body: JSON.stringify({
       product_cart: [
         {
-          product_id: DODO_PRODUCT_ID,
+          product_id: productId || DODO_PRODUCT_ID,
           quantity: 1,
         },
       ],

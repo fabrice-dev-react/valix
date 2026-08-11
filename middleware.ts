@@ -5,6 +5,7 @@ import { getToken } from "next-auth/jwt";
 const PUBLIC_PATHS = [
   "/",
   "/admin",
+  "/book",
   "/privacy",
   "/terms",
   "/cookies",
@@ -16,9 +17,7 @@ const PAYMENT_PATHS = [
 ];
 
 // Any signed-in user (paid or not) can reach these.
-const MEMBER_PATHS = [
-  "/book",
-];
+const MEMBER_PATHS: string[] = [];
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;

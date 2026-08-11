@@ -9,7 +9,7 @@ export const MEETING_SLOTS = [
   "16:00",
 ];
 
-export const MEETING_TOPIC = "WhatsApp AI demo call";
+export const MEETING_TOPIC = "WhatsApp AI consultation";
 export const MEETING_DURATION_MIN = 45;
 export const BOOKING_HORIZON_DAYS = 30;
 

@@ -14,6 +14,7 @@ type AdminUser = {
 type AdminMeeting = {
   name: string;
   email: string;
+  whatsapp: string;
   date: string;
   slot: string;
   topic: string;
@@ -205,17 +206,22 @@ export default function AdminPage() {
             ) : (
               <ul className="divide-y divide-line">
                 {stats.meetings.map((m: AdminMeeting, index: number) => (
-                  <li key={index} className="px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                    <div className="flex items-center gap-3">
+                  <li key={index} className="px-6 py-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                       <span className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.15em] text-signal-dark font-semibold">
                         <span className="w-1.5 h-1.5 rounded-full bg-signal" />
                         {formatDateLabel(m.date)} · {formatSlotLabel(m.slot)}
                       </span>
+                      <div className="text-sm">
+                        <span className="font-semibold text-ink">{m.name || "Anonymous"}</span>
+                        <span className="ml-2 text-ink-soft">{m.email}</span>
+                      </div>
                     </div>
-                    <div className="text-sm">
-                      <span className="font-semibold text-ink">{m.name || "Anonymous"}</span>
-                      <span className="ml-2 text-ink-soft">{m.email}</span>
-                    </div>
+                    {m.whatsapp && (
+                      <p className="mt-1.5 text-[13px] text-ink-soft">
+                        WhatsApp: <span className="font-medium text-ink">{m.whatsapp}</span>
+                      </p>
+                    )}
                   </li>
                 ))}
               </ul>

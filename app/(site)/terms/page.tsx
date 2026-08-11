@@ -49,10 +49,10 @@ export default function TermsPage() {
                 credentials secure.
               </p>
               <p>
-                Valix is offered as a paid subscription at $39 per month, billed
-                monthly through Dodo Payments. Your subscription unlocks
-                unlimited chart analyses. Payment is due in advance and is
-                non-refundable except where required by law.
+                Valix charges a one-time setup fee to build and launch your
+                WhatsApp AI automation, plus an optional monthly maintenance
+                fee, both billed through Dodo Payments. Payment is due in
+                advance and is non-refundable except where required by law.
               </p>
             </div>
           ),

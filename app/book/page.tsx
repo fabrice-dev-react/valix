@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
 import {
   CalendarCheck,
   CalendarClock,
@@ -15,6 +14,7 @@ import {
 import {
   MEETING_DURATION_MIN,
   MEETING_SLOTS,
+  MEETING_TOPIC,
   nextBusinessDays,
   formatDateLabel,
   formatSlotLabel,
@@ -23,11 +23,13 @@ import {
 const DAYS = nextBusinessDays(14);
 
 export default function BookPage() {
-  const { data: session, status } = useSession();
   const [dateKey, setDateKey] = useState<string>(DAYS[0]?.key ?? "");
   const [slot, setSlot] = useState<string | null>(null);
   const [takenSlots, setTakenSlots] = useState<string[]>([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [booked, setBooked] = useState<{ date: string; slot: string } | null>(null);
@@ -56,6 +58,10 @@ export default function BookPage() {
     };
   }, [dateKey]);
 
+  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  const whatsappValid = whatsapp.trim().length >= 7;
+  const canSubmit = !!slot && emailValid && whatsappValid;
+
   const submit = async () => {
     if (!slot) return;
     setSubmitting(true);
@@ -64,7 +70,13 @@ export default function BookPage() {
       const res = await fetch("/api/meetings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ date: dateKey, slot }),
+        body: JSON.stringify({
+          date: dateKey,
+          slot,
+          name: name.trim(),
+          email: email.trim(),
+          whatsapp: whatsapp.trim(),
+        }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -80,20 +92,7 @@ export default function BookPage() {
     }
   };
 
-  if (status === "loading") {
-    return (
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="flex items-center gap-3">
-          <span className="w-6 h-6 border-2 border-ink border-t-transparent rounded-full animate-spin" />
-          <span className="font-mono text-xs uppercase tracking-[0.18em] text-ink-soft">
-            One moment
-          </span>
-        </div>
-      </div>
-    );
-  }
-
-  const firstName = (session?.user?.name || "there").split(" ")[0];
+  const firstName = name.trim().split(" ")[0] || "there";
 
   return (
     <div className="bg-cream text-ink">
@@ -122,15 +121,17 @@ export default function BookPage() {
                 </div>
               </div>
               <p className="mt-6 text-[13.5px] text-ink-soft leading-relaxed max-w-sm mx-auto">
-                We&apos;ll confirm by email and send you everything you need. If you need to
+                We&apos;ll confirm by email at <span className="font-semibold text-ink">{email}</span>{" "}
+                and message you on WhatsApp at{" "}
+                <span className="font-semibold text-ink">{whatsapp}</span>. If you need to
                 reschedule, just get in touch.
               </p>
               <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
                 <Link
-                  href="/dashboard"
+                  href="/"
                   className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-ink text-white text-[14px] font-semibold hover:bg-black transition-colors"
                 >
-                  Back to portal
+                  Back to home
                 </Link>
               </div>
             </div>
@@ -236,6 +237,60 @@ export default function BookPage() {
                       })}
                     </div>
                   )}
+                </div>
+
+                <div className="rounded-2xl border border-line bg-paper p-6 sm:p-8">
+                  <div className="flex items-center gap-2">
+                    <MessageCircle className="w-4 h-4 text-signal-dark" />
+                    <h2 className="text-[16px] font-bold text-ink">Your details</h2>
+                  </div>
+                  <p className="mt-2 text-[13px] text-ink-soft">
+                    Where should we send the confirmation?
+                  </p>
+
+                  <div className="mt-5 space-y-4">
+                    <div>
+                      <label htmlFor="name" className="block text-[13px] font-semibold text-ink mb-1.5">
+                        Name
+                      </label>
+                      <input
+                        id="name"
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="Your name"
+                        className="w-full px-4 py-3 rounded-xl border border-line bg-cream text-[14px] text-ink placeholder:text-ink-soft/60 outline-none focus:border-ink/30 transition-colors"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="email" className="block text-[13px] font-semibold text-ink mb-1.5">
+                        Email
+                      </label>
+                      <input
+                        id="email"
+                        type="email"
+                        required
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="you@email.com"
+                        className="w-full px-4 py-3 rounded-xl border border-line bg-cream text-[14px] text-ink placeholder:text-ink-soft/60 outline-none focus:border-ink/30 transition-colors"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="whatsapp" className="block text-[13px] font-semibold text-ink mb-1.5">
+                        WhatsApp number
+                      </label>
+                      <input
+                        id="whatsapp"
+                        type="tel"
+                        required
+                        value={whatsapp}
+                        onChange={(e) => setWhatsapp(e.target.value)}
+                        placeholder="+1 555 000 0000"
+                        className="w-full px-4 py-3 rounded-xl border border-line bg-cream text-[14px] text-ink placeholder:text-ink-soft/60 outline-none focus:border-ink/30 transition-colors"
+                      />
+                    </div>
+                  </div>
 
                   {error && (
                     <div className="mt-5 rounded-xl bg-signal-soft border border-signal/20 px-4 py-3">
@@ -245,7 +300,7 @@ export default function BookPage() {
 
                   <button
                     onClick={submit}
-                    disabled={!slot || submitting}
+                    disabled={!canSubmit || submitting}
                     className="mt-7 w-full h-12 rounded-full bg-ink text-white text-[15px] font-semibold hover:bg-black active:scale-[0.99] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
                     {submitting ? (
@@ -277,11 +332,11 @@ export default function BookPage() {
                       Your meeting
                     </p>
                     <h3 className="mt-3 text-xl font-bold tracking-tight text-white">
-                      WhatsApp AI demo call
+                      {MEETING_TOPIC}
                     </h3>
                     <p className="mt-2 text-[13.5px] text-white/60 leading-relaxed">
-                      A 45-minute walkthrough of how we&apos;ll automate your WhatsApp — questions,
-                      leads, bookings and human handoff.
+                      A {MEETING_DURATION_MIN}-minute walkthrough of how we&apos;ll automate your
+                      WhatsApp — questions, leads, bookings and human handoff.
                     </p>
 
                     <div className="mt-6 space-y-3">
@@ -311,12 +366,7 @@ export default function BookPage() {
                 </div>
 
                 <p className="mt-4 text-[12.5px] text-ink-soft leading-relaxed">
-                  Free, no obligation. {session?.user?.email ? (
-                    <>
-                      We&apos;ll use <span className="font-semibold text-ink">{session.user.email}</span>{" "}
-                      for the confirmation.
-                    </>
-                  ) : null}
+                  Free, no obligation. We&apos;ll confirm by email and WhatsApp.
                 </p>
               </div>
             </div>

@@ -4,23 +4,48 @@ import { getToken } from "next-auth/jwt";
 import { NextRequest } from "next/server";
 import connectDB from "@/lib/db";
 import User from "@/models/User";
-import { createCheckoutSession, PaymentError } from "@/lib/payments";
+import {
+  createCheckoutSession,
+  PaymentError,
+  hasOneTimeProduct,
+} from "@/lib/payments";
 
 export const dynamic = "force-dynamic";
 
-export async function POST() {
+type PlanType = "monthly" | "one_time";
+
+function parsePlanType(value: unknown): PlanType {
+  return value === "one_time" ? "one_time" : "monthly";
+}
+
+export async function POST(req: NextRequest) {
   try {
     const headersList = await headers();
     const host = headersList.get("host") || "localhost:3000";
     const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
-    const req = new NextRequest(`${protocol}://${host}`, {
+    const wrapped = new NextRequest(`${protocol}://${host}`, {
       headers: { cookie: headersList.get("cookie") || "" },
     });
 
-    const token = await getToken({ req });
+    const token = await getToken({ req: wrapped });
 
     if (!token?.id || !token?.email) {
       return NextResponse.json({ error: "Please log in to continue" }, { status: 401 });
+    }
+
+    let type: PlanType = "monthly";
+    try {
+      const body = await req.json();
+      type = parsePlanType(body?.type);
+    } catch {
+      // no body → default to the monthly plan
+    }
+
+    if (type === "one_time" && !hasOneTimeProduct()) {
+      return NextResponse.json(
+        { error: "The one-time setup fee isn't available yet. Please try again later." },
+        { status: 503 }
+      );
     }
 
     await connectDB();
@@ -38,6 +63,7 @@ export async function POST() {
       email: token.email,
       name: (token.name as string) || undefined,
       userId: token.id,
+      ...(type === "one_time" ? { productId: process.env.DODO_PAYMENTS_ONE_TIME_PRODUCT_ID } : {}),
     });
 
     if (session.session_id) {
@@ -48,6 +74,7 @@ export async function POST() {
     return NextResponse.json({
       sessionId: session.session_id,
       checkoutUrl: session.checkout_url,
+      plan: type,
     });
   } catch (error: unknown) {
     console.error("Payment checkout error:", error instanceof Error ? error.message : error);

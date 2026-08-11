@@ -8,30 +8,24 @@ import { isValidBookingDate, isValidSlot, MEETING_TOPIC } from "@/lib/meetings";
 
 export const dynamic = "force-dynamic";
 
+function cleanString(value: unknown): string {
+  return typeof value === "string" ? value.trim() : "";
+}
+
 export async function POST(req: NextRequest) {
   try {
-    const headersList = await headers();
-    const host = headersList.get("host") || "localhost:3000";
-    const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
-    const wrapped = new NextRequest(`${protocol}://${host}`, {
-      headers: { cookie: headersList.get("cookie") || "" },
-    });
-
-    const token = await getToken({ req: wrapped, secret: process.env.NEXTAUTH_SECRET });
-
-    if (!token?.id) {
-      return NextResponse.json({ error: "Please log in to continue" }, { status: 401 });
-    }
-
-    let body: { date?: unknown; slot?: unknown; topic?: unknown };
+    let body: { date?: unknown; slot?: unknown; topic?: unknown; name?: unknown; email?: unknown; whatsapp?: unknown };
     try {
       body = await req.json();
     } catch {
       return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
     }
 
-    const date = typeof body.date === "string" ? body.date : "";
-    const slot = typeof body.slot === "string" ? body.slot : "";
+    const date = cleanString(body.date);
+    const slot = cleanString(body.slot);
+    const name = cleanString(body.name);
+    const email = cleanString(body.email);
+    const whatsapp = cleanString(body.whatsapp);
 
     if (!isValidBookingDate(date)) {
       return NextResponse.json({ error: "That date is not available" }, { status: 400 });
@@ -39,6 +33,14 @@ export async function POST(req: NextRequest) {
 
     if (!isValidSlot(slot)) {
       return NextResponse.json({ error: "That time is not available" }, { status: 400 });
+    }
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return NextResponse.json({ error: "Please enter a valid email address" }, { status: 400 });
+    }
+
+    if (!whatsapp || whatsapp.length < 7) {
+      return NextResponse.json({ error: "Please enter your WhatsApp number" }, { status: 400 });
     }
 
     await connectDB();
@@ -51,13 +53,30 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const topic = typeof body.topic === "string" && body.topic.trim() ? body.topic.trim() : MEETING_TOPIC;
+    // Optional: link the booking to a signed-in user if one exists.
+    let userId: string | undefined;
+    try {
+      const headersList = await headers();
+      const host = headersList.get("host") || "localhost:3000";
+      const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
+      const wrapped = new NextRequest(`${protocol}://${host}`, {
+        headers: { cookie: headersList.get("cookie") || "" },
+      });
+      const token = await getToken({ req: wrapped, secret: process.env.NEXTAUTH_SECRET });
+      if (token?.id) userId = token.id as string;
+    } catch {
+      // booking stays anonymous
+    }
+
+    const topic =
+      cleanString(body.topic) || MEETING_TOPIC;
 
     try {
       const meeting = await Meeting.create({
-        userId: token.id,
-        name: typeof token.name === "string" ? token.name : "",
-        email: typeof token.email === "string" ? token.email : "",
+        ...(userId ? { userId } : {}),
+        name,
+        email,
+        whatsapp,
         date,
         slot,
         topic,

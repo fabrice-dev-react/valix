@@ -67,8 +67,8 @@ export default function LoginOverlay({
           Welcome to Valix
         </h2>
         <p className="mt-3 text-[15px] leading-relaxed text-ink-soft">
-          One tap with Google creates your account — $39/month unlocks unlimited
-          analyses.
+          One tap with Google creates your account. Then choose a plan to
+          get started — we handle everything from there.
         </p>
 
         <button
@@ -96,7 +96,7 @@ export default function LoginOverlay({
           </div>
           <div className="relative flex justify-center">
             <span className="bg-paper px-3 font-mono text-[11px] uppercase tracking-[0.18em] text-ink-soft">
-              $39/month · cancel anytime
+              Setup from $249 · monthly optional
             </span>
           </div>
         </div>

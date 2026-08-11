@@ -479,7 +479,7 @@ export default function Home() {
                     href="/book"
                     className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-ink text-white text-[15px] font-semibold hover:bg-black transition-all duration-200"
                   >
-                    Book a Demo
+                    Book a Meeting
                     <CalendarCheck className="w-4 h-4" />
                   </Link>
                 </div>
@@ -1143,7 +1143,7 @@ export default function Home() {
                 href="/book"
                 className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-white/10 border border-white/15 text-white text-[15px] font-semibold hover:bg-white/15 transition-all duration-200"
               >
-                Book a Demo
+                Book a Meeting
                 <CalendarCheck className="w-4 h-4" />
               </Link>
             </div>

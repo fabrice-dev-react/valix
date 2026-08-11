@@ -14,6 +14,10 @@ const meetingSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
+  whatsapp: {
+    type: String,
+    default: "",
+  },
   date: {
     type: String,
     required: true,
@@ -24,7 +28,7 @@ const meetingSchema = new mongoose.Schema({
   },
   topic: {
     type: String,
-    default: "WhatsApp AI demo call",
+    default: "WhatsApp AI consultation",
   },
   status: {
     type: String,

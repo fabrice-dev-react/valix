@@ -47,6 +47,7 @@ async function getAdminData() {
     meetings: meetings.map((m) => ({
       name: m.name,
       email: m.email,
+      whatsapp: m.whatsapp,
       date: m.date,
       slot: m.slot,
       topic: m.topic,

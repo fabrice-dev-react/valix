@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { PLAN_PRICE, SETUP_FEE } from "@/lib/payments";
 
 type BillingInfo = {
   plan: string;
@@ -12,11 +13,12 @@ type BillingInfo = {
 };
 
 const planFeatures = [
-  "Unlimited chart analyses",
-  "Forex, indices, crypto, gold & stocks",
-  "Buy/sell with entry, stop & take profit",
-  "Confidence score on every signal",
-  "Market reasoning behind each call",
+  "AI monitoring & ongoing improvements",
+  "Updating your business info & FAQs",
+  "Improving AI responses over time",
+  "Small workflow changes",
+  "Fixing automation issues",
+  "Ongoing support from the Valix team",
 ];
 
 export default function BillingPage() {
@@ -54,29 +56,36 @@ export default function BillingPage() {
     })();
   }, []);
 
-  const startCheckout = useCallback(async () => {
-    setCheckingOut(true);
-    setError(null);
-    try {
-      const res = await fetch("/api/payment/checkout", { method: "POST" });
-      const data = await res.json();
+  const startCheckout = useCallback(
+    async (type: "monthly" | "one_time") => {
+      setCheckingOut(true);
+      setError(null);
+      try {
+        const res = await fetch("/api/payment/checkout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ type }),
+        });
+        const data = await res.json();
 
-      if (!res.ok) {
-        throw new Error(data.error || "Something went wrong. Please try again.");
+        if (!res.ok) {
+          throw new Error(data.error || "Something went wrong. Please try again.");
+        }
+
+        if (data.alreadyPaid) {
+          await fetch("/api/auth/refresh-session", { method: "POST" });
+          router.replace("/billing");
+          return;
+        }
+
+        window.location.assign(data.checkoutUrl);
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+        setCheckingOut(false);
       }
-
-      if (data.alreadyPaid) {
-        await fetch("/api/auth/refresh-session", { method: "POST" });
-        router.replace("/billing");
-        return;
-      }
-
-      window.location.assign(data.checkoutUrl);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
-      setCheckingOut(false);
-    }
-  }, [router]);
+    },
+    [router]
+  );
 
   if (status === "loading") {
     return (
@@ -120,7 +129,7 @@ export default function BillingPage() {
           Billing
         </h1>
         <p className="mt-3 text-[15px] text-ink-soft max-w-md">
-          Manage your Valix Pro subscription.
+          Manage your Valix plan and payments.
         </p>
       </div>
 
@@ -133,7 +142,7 @@ export default function BillingPage() {
                 Current plan
               </p>
               <h2 className="mt-2 text-[26px] font-extrabold tracking-[-0.02em] text-ink">
-                Valix Pro
+                WhatsApp AI Automation
               </h2>
             </div>
             <div className="text-right">
@@ -141,7 +150,7 @@ export default function BillingPage() {
                 Price
               </p>
               <p className="mt-2 text-[26px] font-extrabold tracking-[-0.02em] text-ink">
-                $39
+                ${PLAN_PRICE}
                 <span className="text-[14px] font-medium text-ink-soft">/month</span>
               </p>
             </div>
@@ -194,20 +203,20 @@ export default function BillingPage() {
                   <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink-soft">
                     Monthly price
                   </p>
-                  <p className="mt-1 text-[16px] font-bold text-ink">$39.00</p>
+                  <p className="mt-1 text-[16px] font-bold text-ink">${PLAN_PRICE}.00</p>
                 </div>
               </div>
 
               <p className="mt-5 text-[14px] leading-relaxed text-ink-soft max-w-md">
-                Your plan renews automatically. You have unlimited access to chart analysis — no
-                limits, no surprises.
+                Your plan renews automatically. We keep your WhatsApp AI running, updated and
+                improving — you don&apos;t have to do a thing.
               </p>
               <div className="mt-6">
                 <Link
                   href="/dashboard"
                   className="inline-flex items-center justify-center w-full sm:w-auto px-6 py-3 rounded-full bg-ink text-white text-[13.5px] font-semibold hover:bg-black active:scale-[0.98] transition-all text-center"
                 >
-                  Analyze a chart
+                  Go to dashboard
                 </Link>
               </div>
             </>
@@ -235,25 +244,41 @@ export default function BillingPage() {
                 </div>
               )}
 
-              <button
-                onClick={startCheckout}
-                disabled={checkingOut}
-                className="mt-8 w-full h-12 rounded-full bg-ink text-white text-[15px] font-semibold hover:bg-black active:scale-[0.99] transition-all disabled:opacity-60 flex items-center justify-center gap-2"
-              >
-                {checkingOut ? (
-                  <>
-                    <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-                    Opening checkout…
-                  </>
-                ) : (
-                  <>
-                    Subscribe for $39/month
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14m-7-7l7 7-7 7" />
-                    </svg>
-                  </>
-                )}
-              </button>
+              <div className="mt-8 grid sm:grid-cols-2 gap-3">
+                <button
+                  onClick={() => startCheckout("monthly")}
+                  disabled={checkingOut}
+                  className="w-full h-12 rounded-full bg-ink text-white text-[15px] font-semibold hover:bg-black active:scale-[0.99] transition-all disabled:opacity-60 flex items-center justify-center gap-2"
+                >
+                  {checkingOut ? (
+                    <>
+                      <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                      Opening checkout…
+                    </>
+                  ) : (
+                    <>
+                      Subscribe ${PLAN_PRICE}/month
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14m-7-7l7 7-7 7" />
+                      </svg>
+                    </>
+                  )}
+                </button>
+                <button
+                  onClick={() => startCheckout("one_time")}
+                  disabled={checkingOut}
+                  className="w-full h-12 rounded-full bg-signal text-white text-[15px] font-semibold hover:bg-signal-dark active:scale-[0.99] transition-all shadow-[0_16px_40px_-12px_rgba(255,77,47,0.5)] disabled:opacity-60 flex items-center justify-center gap-2"
+                >
+                  {checkingOut ? (
+                    <>
+                      <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                      Opening checkout…
+                    </>
+                  ) : (
+                    <>Pay ${SETUP_FEE} once</>
+                  )}
+                </button>
+              </div>
 
               <p className="mt-4 text-center text-[12px] text-ink-soft/80">
                 Secure checkout by Dodo Payments
@@ -264,8 +289,9 @@ export default function BillingPage() {
       </div>
 
       <p className="mt-6 text-[13px] leading-relaxed text-ink-soft/80 max-w-xl">
-        Payments are handled by Dodo Payments. Billing is monthly and you can cancel anytime,
-        no contracts. Your Pro access activates instantly once a payment is confirmed.
+        Payments are handled by Dodo Payments. The monthly plan renews automatically and you can
+        cancel anytime, no contracts. The one-time setup fee is a single payment. Your access
+        activates once a payment is confirmed.
       </p>
     </div>
   );
