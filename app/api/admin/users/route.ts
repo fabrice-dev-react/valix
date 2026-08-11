@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/db";
 import User from "@/models/User";
 import Message from "@/models/Message";
+import Meeting from "@/models/Meeting";
 
 const ADMIN_COOKIE = "admin_auth";
 
@@ -19,12 +20,17 @@ async function getAdminData() {
 
   const messages = await Message.find({}).sort({ createdAt: -1 });
 
+  const meetings = await Meeting.find({})
+    .sort({ date: 1, slot: 1 });
+
   const totalUsers = users.length;
   const paidUsers = users.filter((u) => u.hasPaid).length;
+  const totalMeetings = meetings.filter((m) => m.status === "booked").length;
 
   return {
     totalUsers,
     paidUsers,
+    totalMeetings,
     users: users.map((u) => ({
       email: u.email,
       name: u.name,
@@ -36,6 +42,15 @@ async function getAdminData() {
       name: m.name,
       email: m.email,
       message: m.message,
+      createdAt: m.createdAt,
+    })),
+    meetings: meetings.map((m) => ({
+      name: m.name,
+      email: m.email,
+      date: m.date,
+      slot: m.slot,
+      topic: m.topic,
+      status: m.status,
       createdAt: m.createdAt,
     })),
   };

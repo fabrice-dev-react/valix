@@ -32,8 +32,9 @@ export default function Footer() {
               <span className="text-lg font-bold tracking-tight text-white">Valix</span>
             </Link>
             <p className="text-sm text-white/50 max-w-xs leading-relaxed">
-              Drop a market screenshot, get a clear trade plan. Built for
-              traders who want a sharp second opinion on every setup.
+              We automate WhatsApp customer support for small businesses — AI
+              that answers questions, captures leads and handles bookings,
+              built and managed for you.
             </p>
           </div>
 

@@ -15,6 +15,11 @@ const PAYMENT_PATHS = [
   "/payment",
 ];
 
+// Any signed-in user (paid or not) can reach these.
+const MEMBER_PATHS = [
+  "/book",
+];
+
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
@@ -27,16 +32,17 @@ export async function middleware(request: NextRequest) {
   const isApiAuth = pathname.startsWith("/api/auth");
   const isApiRoute = pathname.startsWith("/api/");
   const isPaymentPath = PAYMENT_PATHS.some(path => pathname === path || pathname.startsWith(path + "/"));
+  const isMemberPath = MEMBER_PATHS.some(path => pathname === path || pathname.startsWith(path + "/"));
 
-  // Not signed in → send to the landing page login overlay (except public, payment and API routes).
-  if (!isPublic && !isApiAuth && !isApiRoute && !isPaymentPath && !token) {
+  // Not signed in → send to the landing page login overlay (except public, payment, member and API routes).
+  if (!isPublic && !isApiAuth && !isApiRoute && !isPaymentPath && !isMemberPath && !token) {
     const loginUrl = new URL("/?login=1", request.nextUrl);
     loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  // Signed in but hasn't paid → block everything except the payment flow.
-  if (token && !isPublic && !isApiAuth && !isApiRoute && !isPaymentPath && !token.hasPaid) {
+  // Signed in but hasn't paid → block everything except the payment flow and member paths.
+  if (token && !isPublic && !isApiAuth && !isApiRoute && !isPaymentPath && !isMemberPath && !token.hasPaid) {
     return NextResponse.redirect(new URL("/payment", request.nextUrl));
   }
 
