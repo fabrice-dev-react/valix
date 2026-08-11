@@ -453,20 +453,18 @@ export default function Home() {
               <div className="animate-fade-up">
                 <div className="inline-flex items-center gap-2 rounded-full border border-line bg-paper px-4 py-1.5 shadow-sm">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#25D366] animate-pulse" />
-                  <Eyebrow>We do it for you · no tech skills needed</Eyebrow>
+                  <Eyebrow>Your AI receptionist on WhatsApp</Eyebrow>
                 </div>
 
                 <h1 className="mt-7 text-[34px] sm:text-5xl md:text-[52px] lg:text-[58px] font-extrabold tracking-[-0.03em] leading-[1.08] text-ink">
-                  We turn your WhatsApp into an{" "}
-                  <span className="relative inline-block align-baseline">
-                    <span className="relative z-10 text-signal">AI customer support assistant</span>
-                    <span className="absolute left-0 bottom-[0.06em] right-0 h-[0.16em] bg-signal/20 rounded-sm z-0" />
-                  </span>
+                  We automate your{" "}
+                  <span className="text-signal">WhatsApp customer support.</span>
                 </h1>
 
                 <p className="mt-6 text-base sm:text-lg leading-relaxed text-ink-soft max-w-xl">
-                  We build and manage an AI that automatically answers your customers, captures
-                  leads and handles bookings on WhatsApp — 24/7. You don&apos;t set up anything.
+                  We build and run an AI assistant that answers your customers in WhatsApp —
+                  questions, bookings and leads handled automatically. You don&apos;t set up or
+                  manage a thing.
                 </p>
 
                 <div className="mt-9 flex flex-col sm:flex-row items-start sm:items-center gap-3">
@@ -490,12 +488,12 @@ export default function Home() {
                   <div className="flex items-center gap-2.5">
                     <Stars />
                     <p className="text-[13px] text-ink-soft">
-                      <span className="font-semibold text-ink">4.9</span> from 1,800+ small businesses
+                      <span className="font-semibold text-ink">4.9</span> from 350 businesses
                     </p>
                   </div>
                   <div className="hidden sm:block h-4 w-px bg-line" />
                   <p className="text-[13px] text-ink-soft">
-                    Built, launched &amp; maintained for you — no tech skills needed
+                    We do the setup. You do the business.
                   </p>
                 </div>
               </div>

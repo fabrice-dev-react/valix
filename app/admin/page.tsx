@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { formatDateLabel, formatSlotLabel } from "@/lib/meetings";
 
 type AdminUser = {
   email: string;
@@ -10,11 +11,14 @@ type AdminUser = {
   hasPaid: boolean;
 };
 
-type AdminStats = {
-  totalUsers: number;
-  paidUsers: number;
-  users: AdminUser[];
-  messages: ContactMessage[];
+type AdminMeeting = {
+  name: string;
+  email: string;
+  date: string;
+  slot: string;
+  topic: string;
+  status: string;
+  createdAt: string;
 };
 
 type ContactMessage = {
@@ -22,6 +26,15 @@ type ContactMessage = {
   email: string;
   message: string;
   createdAt: string;
+};
+
+type AdminStats = {
+  totalUsers: number;
+  paidUsers: number;
+  totalMeetings: number;
+  users: AdminUser[];
+  messages: ContactMessage[];
+  meetings: AdminMeeting[];
 };
 
 export default function AdminPage() {
@@ -76,52 +89,104 @@ export default function AdminPage() {
 
   if (authenticated && stats) {
     return (
-      <div className="min-h-screen bg-slate-50">
-        <div className="bg-white border-b border-slate-200 px-6 py-4">
+      <div className="min-h-screen bg-cream">
+        <div className="bg-paper border-b border-line px-6 py-4">
           <div className="max-w-7xl mx-auto flex items-center justify-between">
-            <h1 className="text-xl font-bold text-slate-800">Admin Dashboard</h1>
-            <Link href="/" className="text-sm text-slate-500 hover:text-slate-700">Back to App</Link>
+            <div className="flex items-center gap-3">
+              <span className="w-2.5 h-2.5 rounded-full bg-signal" />
+              <h1 className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink font-semibold">
+                Valix · Admin
+              </h1>
+            </div>
+            <Link
+              href="/"
+              className="text-xs font-medium text-ink-soft hover:text-signal transition-colors"
+            >
+              Back to site
+            </Link>
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-6 py-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-            <div className="bg-white rounded-xl p-6 border border-slate-200">
-              <p className="text-sm text-slate-500 mb-1">Total Users</p>
-              <p className="text-3xl font-bold text-slate-800">{stats.totalUsers}</p>
+        <div className="max-w-7xl mx-auto px-6 py-10">
+          <div className="mb-8">
+            <h2 className="text-2xl md:text-3xl font-semibold text-ink tracking-tight">
+              Everything happening at Valix
+            </h2>
+            <p className="mt-1 text-sm text-ink-soft">
+              Users, payments and booked meetings — all in one place.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+            <div className="bg-paper rounded-2xl p-6 border border-line">
+              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink-soft mb-2">
+                Total users
+              </p>
+              <p className="text-4xl font-semibold text-ink tracking-tight">
+                {stats.totalUsers}
+              </p>
             </div>
-            <div className="bg-white rounded-xl p-6 border border-slate-200">
-              <p className="text-sm text-slate-500 mb-1">Paid Users</p>
-              <p className="text-3xl font-bold text-slate-800">{stats.paidUsers}</p>
+            <div className="bg-paper rounded-2xl p-6 border border-line">
+              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink-soft mb-2">
+                Paid users
+              </p>
+              <p className="text-4xl font-semibold text-ink tracking-tight">
+                {stats.paidUsers}
+              </p>
+            </div>
+            <div className="bg-paper rounded-2xl p-6 border border-line">
+              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink-soft mb-2">
+                Booked meetings
+              </p>
+              <p className="text-4xl font-semibold text-ink tracking-tight">
+                {stats.totalMeetings}
+              </p>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-200">
-              <h2 className="font-semibold text-slate-800">All Users</h2>
-            </div>            <div className="overflow-x-auto">
+          <div className="bg-paper rounded-2xl border border-line overflow-hidden">
+            <div className="px-6 py-4 border-b border-line">
+              <h3 className="text-sm font-semibold text-ink">All users</h3>
+            </div>
+            <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-slate-50 border-b border-slate-200">
+                <thead className="bg-mist/50 border-b border-line">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Email</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Name</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Joined</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
+                    <th className="px-6 py-3 text-left font-mono text-[11px] uppercase tracking-[0.2em] text-ink-soft">
+                      Email
+                    </th>
+                    <th className="px-6 py-3 text-left font-mono text-[11px] uppercase tracking-[0.2em] text-ink-soft">
+                      Name
+                    </th>
+                    <th className="px-6 py-3 text-left font-mono text-[11px] uppercase tracking-[0.2em] text-ink-soft">
+                      Joined
+                    </th>
+                    <th className="px-6 py-3 text-left font-mono text-[11px] uppercase tracking-[0.2em] text-ink-soft">
+                      Status
+                    </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-200">
+                <tbody className="divide-y divide-line">
                   {stats.users.map((user: AdminUser, index: number) => (
-                    <tr key={index} className="hover:bg-slate-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700">{user.email}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700">{user.name || "-"}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                    <tr key={index} className="hover:bg-cream">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-ink">
+                        {user.email}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-ink">
+                        {user.name || "-"}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-ink-soft">
                         {new Date(user.createdAt).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         {user.hasPaid ? (
-                          <span className="inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">Paid</span>
+                          <span className="inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold bg-moss/15 text-moss">
+                            Paid
+                          </span>
                         ) : (
-                          <span className="inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-500">Free</span>
+                          <span className="inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold bg-mist text-ink-soft">
+                            Free
+                          </span>
                         )}
                       </td>
                     </tr>
@@ -131,28 +196,54 @@ export default function AdminPage() {
             </div>
           </div>
 
-          <div className="mt-8 bg-white rounded-xl border border-slate-200 overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-200">
-              <h2 className="font-semibold text-slate-800">Contact Messages</h2>
+          <div className="mt-8 bg-paper rounded-2xl border border-line overflow-hidden">
+            <div className="px-6 py-4 border-b border-line">
+              <h3 className="text-sm font-semibold text-ink">Booked meetings</h3>
+            </div>
+            {stats.meetings.length === 0 ? (
+              <p className="px-6 py-8 text-sm text-ink-soft">No meetings booked yet.</p>
+            ) : (
+              <ul className="divide-y divide-line">
+                {stats.meetings.map((m: AdminMeeting, index: number) => (
+                  <li key={index} className="px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <span className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.15em] text-signal-dark font-semibold">
+                        <span className="w-1.5 h-1.5 rounded-full bg-signal" />
+                        {formatDateLabel(m.date)} · {formatSlotLabel(m.slot)}
+                      </span>
+                    </div>
+                    <div className="text-sm">
+                      <span className="font-semibold text-ink">{m.name || "Anonymous"}</span>
+                      <span className="ml-2 text-ink-soft">{m.email}</span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <div className="mt-8 bg-paper rounded-2xl border border-line overflow-hidden">
+            <div className="px-6 py-4 border-b border-line">
+              <h3 className="text-sm font-semibold text-ink">Contact messages</h3>
             </div>
             {stats.messages.length === 0 ? (
-              <p className="px-6 py-8 text-sm text-slate-500">No messages yet.</p>
+              <p className="px-6 py-8 text-sm text-ink-soft">No messages yet.</p>
             ) : (
-              <ul className="divide-y divide-slate-200">
+              <ul className="divide-y divide-line">
                 {stats.messages.map((msg: ContactMessage, index: number) => (
                   <li key={index} className="px-6 py-4">
                     <div className="flex items-center justify-between gap-4">
-                      <p className="text-sm font-semibold text-slate-800">
+                      <p className="text-sm font-semibold text-ink">
                         {msg.name || "Anonymous"}
                         {msg.email && (
-                          <span className="ml-2 font-normal text-slate-500">· {msg.email}</span>
+                          <span className="ml-2 font-normal text-ink-soft">· {msg.email}</span>
                         )}
                       </p>
-                      <p className="text-xs text-slate-400 whitespace-nowrap">
+                      <p className="text-xs text-ink-soft whitespace-nowrap">
                         {new Date(msg.createdAt).toLocaleString()}
                       </p>
                     </div>
-                    <p className="mt-1.5 text-sm text-slate-600 whitespace-pre-line">{msg.message}</p>
+                    <p className="mt-1.5 text-sm text-ink whitespace-pre-line">{msg.message}</p>
                   </li>
                 ))}
               </ul>
@@ -164,20 +255,28 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center px-6">
+    <div className="min-h-screen bg-cream flex items-center justify-center px-6">
       <div className="w-full max-w-md">
-        <div className="bg-white rounded-2xl p-8 border border-slate-200">
-          <h1 className="text-2xl font-bold text-slate-800 mb-6">Admin Access</h1>
+        <div className="bg-paper rounded-2xl p-8 border border-line">
+          <div className="mb-6 flex items-center gap-3">
+            <span className="w-2.5 h-2.5 rounded-full bg-signal" />
+            <h1 className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink font-semibold">
+              Admin access
+            </h1>
+          </div>
 
           {error && (
-            <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg">
+            <div className="mb-4 p-3 bg-signal/10 text-signal-dark text-sm rounded-xl">
               {error}
             </div>
           )}
 
           <form onSubmit={handleLogin} className="space-y-5">
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-2">
+              <label
+                htmlFor="password"
+                className="block font-mono text-[11px] uppercase tracking-[0.2em] text-ink-soft mb-2"
+              >
                 Password
               </label>
               <input
@@ -187,17 +286,17 @@ export default function AdminPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter admin password"
                 required
-                className="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all placeholder:text-slate-400 text-slate-800"
+                className="w-full px-4 py-2.5 rounded-xl bg-cream border border-line focus:border-signal focus:ring-2 focus:ring-signal/20 outline-none transition-all placeholder:text-ink-soft/60 text-ink"
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 px-4 rounded-full bg-black hover:bg-slate-800 text-white font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
+              className="w-full py-3 px-4 rounded-full bg-ink hover:bg-ink/85 text-paper font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
             >
               {loading ? (
-                <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <span className="w-5 h-5 border-2 border-paper border-t-transparent rounded-full animate-spin" />
               ) : (
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14m-7-7l7 7-7 7" />
@@ -208,7 +307,9 @@ export default function AdminPage() {
           </form>
 
           <div className="mt-6 text-center">
-            <Link href="/" className="text-sm text-slate-500 hover:text-slate-700">Back to App</Link>
+            <Link href="/" className="text-sm text-ink-soft hover:text-signal transition-colors">
+              Back to site
+            </Link>
           </div>
         </div>
       </div>

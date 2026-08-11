@@ -3,7 +3,8 @@
 import { useState } from "react";
 
 const WHATSAPP_NUMBER = "250793242447";
-const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER}`;
+const WHATSAPP_MESSAGE = "Hi Valix! I'd like to know more about your WhatsApp AI automation.";
+const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
 
 export default function ContactPage() {
   const [name, setName] = useState("");
