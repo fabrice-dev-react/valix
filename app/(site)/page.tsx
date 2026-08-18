@@ -271,18 +271,15 @@ export default function Home() {
               built for your product.
             </p>
 
-            <div className="mt-9">
-              <button
-                onClick={handleCTA}
-                className="group relative inline-flex items-center justify-center gap-2.5 px-10 py-5 rounded-2xl bg-signal text-white text-[16px] font-bold hover:bg-signal-dark transition-all duration-300 shadow-[0_20px_50px_-12px_rgba(255,77,47,0.55)] hover:shadow-[0_24px_60px_-12px_rgba(255,77,47,0.7)] hover:scale-[1.02] active:scale-[0.98]"
-              >
-                <span className="relative z-10">Build my marketing plan</span>
-                <ArrowRight className="w-4.5 h-4.5 relative z-10 transition-transform duration-300 group-hover:translate-x-1" />
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-signal via-signal to-[#ff6b3d] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </button>
-              <p className="mt-3.5 text-[13px] text-ink-soft">Setup takes 2 minutes — enter your website and go</p>
-            </div>
-
+        <div className="mt-9">
+  <button
+    onClick={handleCTA}
+    className="group relative inline-flex items-center justify-center gap-2.5 px-10 py-5 rounded-full bg-black text-white text-[16px] font-bold hover:bg-gray-900 transition-all duration-300 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.35)] hover:shadow-[0_24px_60px_-12px_rgba(0,0,0,0.5)] hover:scale-[1.02] active:scale-[0.98]"
+  >
+    <span className="relative z-10">Build my marketing plan</span>
+    <ArrowRight className="w-4.5 h-4.5 relative z-10 transition-transform duration-300 group-hover:translate-x-1" />
+  </button>
+</div>
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8">
               <div className="flex items-center gap-2.5">
                 <Flame className="w-4 h-4 text-signal" />
@@ -501,13 +498,16 @@ export default function Home() {
             <p className="mt-4 text-base text-white/60 leading-relaxed max-w-md mx-auto">
               Enter your website, get your plan, and ship your first action today. No calls. No strategy sessions. Just marketing that ships.
             </p>
-            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-              <button onClick={handleCTA} className="group relative inline-flex items-center justify-center gap-2.5 px-10 py-5 rounded-2xl bg-signal text-white text-[16px] font-bold hover:bg-signal-dark transition-all duration-300 shadow-[0_20px_50px_-12px_rgba(255,77,47,0.55)] hover:shadow-[0_24px_60px_-12px_rgba(255,77,47,0.7)] hover:scale-[1.02] active:scale-[0.98]">
-                <span className="relative z-10">Build my marketing plan</span>
-                <ArrowRight className="w-4.5 h-4.5 relative z-10 transition-transform duration-300 group-hover:translate-x-1" />
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-signal via-signal to-[#ff6b3d] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </button>
-            </div>
+           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+  <button
+    onClick={handleCTA}
+    className="group relative inline-flex items-center justify-center gap-2.5 px-10 py-5 rounded-full bg-signal text-white text-[16px] font-bold hover:bg-signal-dark transition-all duration-300 shadow-[0_20px_50px_-12px_rgba(255,77,47,0.55)] hover:shadow-[0_24px_60px_-12px_rgba(255,77,47,0.7)] hover:scale-[1.02] active:scale-[0.98]"
+  >
+    <span className="relative z-10">Build my marketing plan</span>
+    <ArrowRight className="w-4.5 h-4.5 relative z-10 transition-transform duration-300 group-hover:translate-x-1" />
+    <div className="absolute inset-0 rounded-full bg-gradient-to-r from-signal via-signal to-[#ff6b3d] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+  </button>
+</div>
             <div className="mt-6 flex items-center justify-center gap-5 flex-wrap">
               <p className="flex items-center gap-1.5 text-[12px] text-white/50"><Target className="w-3 h-3 text-[#6ee7a0]" /> Custom plan</p>
               <p className="flex items-center gap-1.5 text-[12px] text-white/50"><Flame className="w-3 h-3 text-[#6ee7a0]" /> Daily streak</p>
