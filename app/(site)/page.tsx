@@ -274,11 +274,13 @@ export default function Home() {
             <div className="mt-9">
               <button
                 onClick={handleCTA}
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-signal text-white text-[15px] font-semibold hover:bg-signal-dark transition-all duration-200 shadow-[0_16px_40px_-12px_rgba(255,77,47,0.6)]"
+                className="group relative inline-flex items-center justify-center gap-2.5 px-10 py-5 rounded-2xl bg-signal text-white text-[16px] font-bold hover:bg-signal-dark transition-all duration-300 shadow-[0_20px_50px_-12px_rgba(255,77,47,0.55)] hover:shadow-[0_24px_60px_-12px_rgba(255,77,47,0.7)] hover:scale-[1.02] active:scale-[0.98]"
               >
-                Get started
-                <ArrowRight className="w-4 h-4" />
+                <span className="relative z-10">Build my marketing plan</span>
+                <ArrowRight className="w-4.5 h-4.5 relative z-10 transition-transform duration-300 group-hover:translate-x-1" />
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-signal via-signal to-[#ff6b3d] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </button>
+              <p className="mt-3.5 text-[13px] text-ink-soft">Setup takes 2 minutes — enter your website and go</p>
             </div>
 
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8">
@@ -500,9 +502,10 @@ export default function Home() {
               Enter your website, get your plan, and ship your first action today. No calls. No strategy sessions. Just marketing that ships.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-              <button onClick={handleCTA} className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-signal text-white text-[15px] font-semibold hover:bg-signal-dark transition-all duration-200 shadow-[0_16px_40px_-12px_rgba(255,77,47,0.6)]">
-                Start for $9/month
-                <ArrowRight className="w-4 h-4" />
+              <button onClick={handleCTA} className="group relative inline-flex items-center justify-center gap-2.5 px-10 py-5 rounded-2xl bg-signal text-white text-[16px] font-bold hover:bg-signal-dark transition-all duration-300 shadow-[0_20px_50px_-12px_rgba(255,77,47,0.55)] hover:shadow-[0_24px_60px_-12px_rgba(255,77,47,0.7)] hover:scale-[1.02] active:scale-[0.98]">
+                <span className="relative z-10">Build my marketing plan</span>
+                <ArrowRight className="w-4.5 h-4.5 relative z-10 transition-transform duration-300 group-hover:translate-x-1" />
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-signal via-signal to-[#ff6b3d] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </button>
             </div>
             <div className="mt-6 flex items-center justify-center gap-5 flex-wrap">
