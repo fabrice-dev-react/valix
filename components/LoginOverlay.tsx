@@ -64,11 +64,11 @@ export default function LoginOverlay({
         </div>
 
         <h2 className="mt-5 text-3xl font-extrabold tracking-[-0.03em] text-ink leading-tight">
-          Welcome to Valix
+          Start marketing your SaaS
         </h2>
         <p className="mt-3 text-[15px] leading-relaxed text-ink-soft">
-          One tap with Google creates your account. Then choose a plan to
-          get started — we handle everything from there.
+          One tap with Google creates your account. Tell us about your SaaS and
+          we&apos;ll build your daily marketing plan.
         </p>
 
         <button
@@ -96,7 +96,7 @@ export default function LoginOverlay({
           </div>
           <div className="relative flex justify-center">
             <span className="bg-paper px-3 font-mono text-[11px] uppercase tracking-[0.18em] text-ink-soft">
-              Setup from $249 · monthly optional
+              $9/month · cancel anytime
             </span>
           </div>
         </div>

@@ -4,7 +4,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { PLAN_PRICE, SETUP_FEE } from "@/lib/payments";
+import { PLAN_PRICE } from "@/lib/payments";
+import { Check, ArrowRight } from "lucide-react";
 
 type BillingInfo = {
   plan: string;
@@ -13,12 +14,12 @@ type BillingInfo = {
 };
 
 const planFeatures = [
-  "AI monitoring & ongoing improvements",
-  "Updating your business info & FAQs",
-  "Improving AI responses over time",
-  "Small workflow changes",
-  "Fixing automation issues",
-  "Ongoing support from the Valix team",
+  "AI-powered website analysis",
+  "Custom marketing channel plan",
+  "Daily focused marketing actions",
+  "Streak tracking & accountability",
+  "Progress dashboard",
+  "Channel recommendations",
 ];
 
 export default function BillingPage() {
@@ -56,36 +57,33 @@ export default function BillingPage() {
     })();
   }, []);
 
-  const startCheckout = useCallback(
-    async (type: "monthly" | "one_time") => {
-      setCheckingOut(true);
-      setError(null);
-      try {
-        const res = await fetch("/api/payment/checkout", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ type }),
-        });
-        const data = await res.json();
+  const startCheckout = useCallback(async () => {
+    setCheckingOut(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/payment/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "monthly" }),
+      });
+      const data = await res.json();
 
-        if (!res.ok) {
-          throw new Error(data.error || "Something went wrong. Please try again.");
-        }
-
-        if (data.alreadyPaid) {
-          await fetch("/api/auth/refresh-session", { method: "POST" });
-          router.replace("/billing");
-          return;
-        }
-
-        window.location.assign(data.checkoutUrl);
-      } catch (err: unknown) {
-        setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
-        setCheckingOut(false);
+      if (!res.ok) {
+        throw new Error(data.error || "Something went wrong. Please try again.");
       }
-    },
-    [router]
-  );
+
+      if (data.alreadyPaid) {
+        await fetch("/api/auth/refresh-session", { method: "POST" });
+        router.replace("/billing");
+        return;
+      }
+
+      window.location.assign(data.checkoutUrl);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+      setCheckingOut(false);
+    }
+  }, [router]);
 
   if (status === "loading") {
     return (
@@ -142,7 +140,7 @@ export default function BillingPage() {
                 Current plan
               </p>
               <h2 className="mt-2 text-[26px] font-extrabold tracking-[-0.02em] text-ink">
-                WhatsApp AI Automation
+                Valix Pro
               </h2>
             </div>
             <div className="text-right">
@@ -208,8 +206,8 @@ export default function BillingPage() {
               </div>
 
               <p className="mt-5 text-[14px] leading-relaxed text-ink-soft max-w-md">
-                Your plan renews automatically. We keep your WhatsApp AI running, updated and
-                improving — you don&apos;t have to do a thing.
+                Your plan renews automatically. You keep getting daily marketing actions,
+                streak tracking, and your custom plan. Cancel anytime.
               </p>
               <div className="mt-6">
                 <Link
@@ -225,14 +223,7 @@ export default function BillingPage() {
               <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-2.5">
                 {planFeatures.map((feature) => (
                   <li key={feature} className="flex items-start gap-2.5">
-                    <svg
-                      className="mt-[5px] w-3.5 h-3.5 text-signal-dark shrink-0"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                    </svg>
+                    <Check className="mt-[3px] w-3.5 h-3.5 text-signal-dark shrink-0" />
                     <span className="text-[13.5px] text-ink-soft">{feature}</span>
                   </li>
                 ))}
@@ -244,38 +235,22 @@ export default function BillingPage() {
                 </div>
               )}
 
-              <div className="mt-8 grid sm:grid-cols-2 gap-3">
+              <div className="mt-8">
                 <button
-                  onClick={() => startCheckout("monthly")}
-                  disabled={checkingOut}
-                  className="w-full h-12 rounded-full bg-ink text-white text-[15px] font-semibold hover:bg-black active:scale-[0.99] transition-all disabled:opacity-60 flex items-center justify-center gap-2"
-                >
-                  {checkingOut ? (
-                    <>
-                      <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-                      Opening checkout…
-                    </>
-                  ) : (
-                    <>
-                      Subscribe ${PLAN_PRICE}/month
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14m-7-7l7 7-7 7" />
-                      </svg>
-                    </>
-                  )}
-                </button>
-                <button
-                  onClick={() => startCheckout("one_time")}
+                  onClick={startCheckout}
                   disabled={checkingOut}
                   className="w-full h-12 rounded-full bg-signal text-white text-[15px] font-semibold hover:bg-signal-dark active:scale-[0.99] transition-all shadow-[0_16px_40px_-12px_rgba(255,77,47,0.5)] disabled:opacity-60 flex items-center justify-center gap-2"
                 >
                   {checkingOut ? (
                     <>
                       <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-                      Opening checkout…
+                      Opening checkout...
                     </>
                   ) : (
-                    <>Pay ${SETUP_FEE} once</>
+                    <>
+                      Subscribe ${PLAN_PRICE}/month
+                      <ArrowRight className="w-4 h-4" />
+                    </>
                   )}
                 </button>
               </div>
@@ -289,9 +264,8 @@ export default function BillingPage() {
       </div>
 
       <p className="mt-6 text-[13px] leading-relaxed text-ink-soft/80 max-w-xl">
-        Payments are handled by Dodo Payments. The monthly plan renews automatically and you can
-        cancel anytime, no contracts. The one-time setup fee is a single payment. Your access
-        activates once a payment is confirmed.
+        Payments are handled by Dodo Payments. The plan renews automatically and you can
+        cancel anytime, no contracts. Your access activates once a payment is confirmed.
       </p>
     </div>
   );

@@ -16,15 +16,6 @@ const navItems = [
     ),
   },
   {
-    label: "Book a meeting",
-    href: "/book",
-    icon: (
-      <svg className="w-[19px] h-[19px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M8 2v4m8-4v4M3 9h18M5 4h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2zm4 12h4" />
-      </svg>
-    ),
-  },
-  {
     label: "Billing",
     href: "/billing",
     icon: (

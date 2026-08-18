@@ -4,24 +4,17 @@ import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { PLAN_PRICE, SETUP_FEE } from "@/lib/payments";
+import { PLAN_PRICE } from "@/lib/payments";
+import { Check, ArrowRight, Zap } from "lucide-react";
 
-const monthlyFeatures = [
-  "AI monitoring & ongoing improvements",
-  "Updating your business info & FAQs",
-  "Improving AI responses over time",
-  "Small workflow changes",
-  "Fixing automation issues",
-  "Ongoing support from the Valix team",
-];
-
-const oneTimeFeatures = [
-  "AI customer support setup",
-  "WhatsApp automation setup",
-  "Business info & FAQ configuration",
-  "Service & product information",
-  "Lead capture & booking automation",
-  "Human handoff, testing & launch support",
+const planFeatures = [
+  "AI-powered website analysis",
+  "Custom marketing channel plan",
+  "Daily focused marketing actions",
+  "Streak tracking & accountability",
+  "Progress dashboard",
+  "Channel recommendations",
+  "New actions every morning",
 ];
 
 type Phase = "checking" | "ready";
@@ -45,29 +38,20 @@ export default function PaymentPage() {
   );
 }
 
-function CheckIcon() {
-  return (
-    <svg className="w-2.5 h-2.5 text-signal-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-    </svg>
-  );
-}
-
 function PaymentPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { data: session, status } = useSession();
   const [phase, setPhase] = useState<Phase>("checking");
   const [error, setError] = useState<string | null>(null);
-  const [monthlyLoading, setMonthlyLoading] = useState(false);
-  const [oneTimeLoading, setOneTimeLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const startedRef = useRef(false);
 
   const refreshSession = useCallback(async () => {
     try {
       await fetch("/api/auth/refresh-session", { method: "POST" });
     } catch {
-      // best-effort; the session fetch below may already be fresh enough
+      // best-effort
     }
   }, []);
 
@@ -75,42 +59,37 @@ function PaymentPageContent() {
     router.replace("/dashboard");
   }, [router]);
 
-  const startCheckout = useCallback(
-    async (type: "monthly" | "one_time") => {
-      if (type === "monthly") setMonthlyLoading(true);
-      else setOneTimeLoading(true);
-      setError(null);
-      try {
-        const res = await fetch("/api/payment/checkout", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ type }),
-        });
-        const data = await res.json();
+  const startCheckout = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/payment/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "monthly" }),
+      });
+      const data = await res.json();
 
-        if (!res.ok) {
-          throw new Error(data.error || "Something went wrong. Please try again.");
-        }
-
-        if (data.alreadyPaid) {
-          await refreshSession();
-          goToDashboard();
-          return;
-        }
-
-        if (data.sessionId && typeof window !== "undefined") {
-          window.localStorage.setItem("valix_dodo_session", data.sessionId);
-        }
-
-        window.location.assign(data.checkoutUrl);
-      } catch (err: unknown) {
-        setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
-        if (type === "monthly") setMonthlyLoading(false);
-        else setOneTimeLoading(false);
+      if (!res.ok) {
+        throw new Error(data.error || "Something went wrong. Please try again.");
       }
-    },
-    [refreshSession, goToDashboard]
-  );
+
+      if (data.alreadyPaid) {
+        await refreshSession();
+        goToDashboard();
+        return;
+      }
+
+      if (data.sessionId && typeof window !== "undefined") {
+        window.localStorage.setItem("valix_dodo_session", data.sessionId);
+      }
+
+      window.location.assign(data.checkoutUrl);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+      setLoading(false);
+    }
+  }, [refreshSession, goToDashboard]);
 
   useEffect(() => {
     if (startedRef.current) return;
@@ -157,7 +136,7 @@ function PaymentPageContent() {
 
   return (
     <div className="min-h-screen bg-cream flex items-center justify-center px-4 sm:px-6 py-12">
-      <div className="w-full max-w-3xl">
+      <div className="w-full max-w-lg">
         <div className="flex items-center justify-center mb-8">
           <Link href="/" className="flex items-center gap-2.5">
             <img src="/logo.png" alt="Valix" className="w-9 h-9 rounded-[10px]" />
@@ -167,136 +146,78 @@ function PaymentPageContent() {
 
         <div className="text-center mb-10">
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-[-0.03em] text-ink">
-            Choose how to pay
+            Start shipping your marketing
           </h1>
-          <p className="mt-3 text-[15px] text-ink-soft max-w-xl mx-auto">
-            Pick the option that suits you. Your access activates once the payment is confirmed.
+          <p className="mt-3 text-[15px] text-ink-soft max-w-md mx-auto">
+            One plan. Everything included. Cancel anytime.
           </p>
           {cancelled && (
             <p className="mt-4 inline-flex items-center gap-2 rounded-full bg-signal-soft border border-signal/20 px-4 py-1.5 text-[13px] font-medium text-signal-dark">
-              Payment was cancelled — no charge was made. Choose an option below.
+              Payment was cancelled — no charge was made. Try again below.
             </p>
           )}
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="bg-paper border border-line rounded-3xl overflow-hidden shadow-[0_32px_64px_-24px_rgba(22,19,17,0.2)] flex flex-col">
-            <div className="bg-ink px-6 py-5 text-white relative overflow-hidden">
-              <div
-                className="absolute inset-0 opacity-[0.06]"
-                style={{
-                  backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)",
-                  backgroundSize: "20px 20px",
-                }}
-              />
-              <p className="relative font-mono text-[10px] uppercase tracking-[0.22em] text-white/60">
-                Monthly maintenance
-              </p>
-              <div className="relative mt-2 flex items-baseline gap-1.5">
-                <span className="text-[44px] font-extrabold tracking-tight leading-none">
+        <div className="bg-ink text-white rounded-3xl overflow-hidden shadow-[0_32px_64px_-24px_rgba(22,19,17,0.5)]">
+          <div className="relative px-8 py-7 overflow-hidden">
+            <div
+              className="absolute inset-0 opacity-[0.06]"
+              style={{
+                backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)",
+                backgroundSize: "20px 20px",
+              }}
+            />
+            <div className="relative">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-signal text-white text-[11px] font-bold px-3 py-1">
+                <Zap className="w-3 h-3" />
+                Valix Pro
+              </span>
+              <div className="mt-4 flex items-baseline gap-1.5">
+                <span className="text-[52px] font-extrabold tracking-tight leading-none">
                   ${PLAN_PRICE}
                 </span>
                 <span className="text-sm text-white/60">/month</span>
               </div>
-              <p className="relative mt-1 text-[13px] text-white/60">
-                Optional. Cancel anytime.
+              <p className="mt-1 text-[13px] text-white/60">
+                Cancel anytime · no contracts
               </p>
-            </div>
-
-            <div className="px-6 py-6 flex flex-col flex-1">
-              <ul className="space-y-3">
-                {monthlyFeatures.map((feature) => (
-                  <li key={feature} className="flex items-start gap-3">
-                    <span className="mt-0.5 w-4 h-4 shrink-0 rounded-full bg-signal-soft flex items-center justify-center">
-                      <CheckIcon />
-                    </span>
-                    <span className="text-[14px] text-ink-soft">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <button
-                onClick={() => startCheckout("monthly")}
-                disabled={monthlyLoading}
-                className="mt-7 w-full h-12 rounded-full bg-ink text-white text-[15px] font-semibold hover:bg-black active:scale-[0.99] transition-all disabled:opacity-60 flex items-center justify-center gap-2"
-              >
-                {monthlyLoading ? (
-                  <>
-                    <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-                    Opening checkout…
-                  </>
-                ) : (
-                  <>
-                    Subscribe for ${PLAN_PRICE}/month
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14m-7-7l7 7-7 7" />
-                    </svg>
-                  </>
-                )}
-              </button>
             </div>
           </div>
 
-          <div className="bg-paper border border-line rounded-3xl overflow-hidden shadow-[0_32px_64px_-24px_rgba(22,19,17,0.2)] flex flex-col">
-            <div className="bg-signal px-6 py-5 text-white relative overflow-hidden">
-              <div
-                className="absolute inset-0 opacity-[0.08]"
-                style={{
-                  backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)",
-                  backgroundSize: "20px 20px",
-                }}
-              />
-              <p className="relative font-mono text-[10px] uppercase tracking-[0.22em] text-white/70">
-                One-time setup fee
-              </p>
-              <div className="relative mt-2 flex items-baseline gap-1.5">
-                <span className="text-[44px] font-extrabold tracking-tight leading-none">
-                  ${SETUP_FEE}
-                </span>
-                <span className="text-sm text-white/70">once</span>
-              </div>
-              <p className="relative mt-1 text-[13px] text-white/70">
-                We build and launch your WhatsApp AI for you.
-              </p>
-            </div>
+          <div className="px-8 py-7">
+            <ul className="space-y-3">
+              {planFeatures.map((feature) => (
+                <li key={feature} className="flex items-start gap-3">
+                  <span className="mt-0.5 w-4 h-4 shrink-0 rounded-full bg-signal/20 flex items-center justify-center">
+                    <Check className="w-3 h-3 text-signal" />
+                  </span>
+                  <span className="text-[14px] text-white/90">{feature}</span>
+                </li>
+              ))}
+            </ul>
 
-            <div className="px-6 py-6 flex flex-col flex-1">
-              <ul className="space-y-3">
-                {oneTimeFeatures.map((feature) => (
-                  <li key={feature} className="flex items-start gap-3">
-                    <span className="mt-0.5 w-4 h-4 shrink-0 rounded-full bg-signal-soft flex items-center justify-center">
-                      <CheckIcon />
-                    </span>
-                    <span className="text-[14px] text-ink-soft">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <button
-                onClick={() => startCheckout("one_time")}
-                disabled={oneTimeLoading}
-                className="mt-7 w-full h-12 rounded-full bg-signal text-white text-[15px] font-semibold hover:bg-signal-dark active:scale-[0.99] transition-all shadow-[0_16px_40px_-12px_rgba(255,77,47,0.6)] disabled:opacity-60 flex items-center justify-center gap-2"
-              >
-                {oneTimeLoading ? (
-                  <>
-                    <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-                    Opening checkout…
-                  </>
-                ) : (
-                  <>
-                    Pay ${SETUP_FEE} once
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14m-7-7l7 7-7 7" />
-                    </svg>
-                  </>
-                )}
-              </button>
-            </div>
+            <button
+              onClick={startCheckout}
+              disabled={loading}
+              className="mt-8 w-full h-13 py-3.5 rounded-full bg-signal text-white text-[15px] font-semibold hover:bg-signal-dark active:scale-[0.99] transition-all shadow-[0_16px_40px_-12px_rgba(255,77,47,0.6)] disabled:opacity-60 flex items-center justify-center gap-2"
+            >
+              {loading ? (
+                <>
+                  <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                  Opening checkout...
+                </>
+              ) : (
+                <>
+                  Subscribe for ${PLAN_PRICE}/month
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
+            </button>
           </div>
         </div>
 
         {error && (
-          <div className="mt-6 rounded-xl bg-signal-soft border border-signal/20 px-4 py-3 max-w-2xl mx-auto">
+          <div className="mt-6 rounded-xl bg-signal-soft border border-signal/20 px-4 py-3">
             <p className="text-[13px] font-medium text-signal-dark">{error}</p>
           </div>
         )}
