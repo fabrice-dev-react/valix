@@ -26,6 +26,56 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  onboardingStep: {
+    type: Number,
+    default: 0,
+  },
+  businessName: {
+    type: String,
+  },
+  businessType: {
+    type: String,
+  },
+  services: [{
+    type: String,
+  }],
+  serviceArea: {
+    type: String,
+  },
+  address: {
+    type: String,
+  },
+  businessHours: {
+    open: { type: String },
+    close: { type: String },
+    days: [String],
+  },
+  emergencyService: {
+    type: Boolean,
+    default: false,
+  },
+  aiInstructions: {
+    type: String,
+  },
+  aiTone: {
+    type: String,
+    default: "professional",
+  },
+  phoneNotifications: {
+    callbacks: { type: Boolean, default: true },
+    email: { type: Boolean, default: true },
+  },
+  phoneStatus: {
+    type: String,
+    enum: ["not_connected", "pending", "connected"],
+    default: "not_connected",
+  },
+  phoneNumber: {
+    type: String,
+  },
+  phoneConnectedAt: {
+    type: Date,
+  },
   hasPaid: {
     type: Boolean,
     default: false,

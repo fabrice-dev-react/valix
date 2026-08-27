@@ -23,7 +23,7 @@ export async function POST() {
     }
 
     await connectDB();
-    const user = await User.findOne({ email: token.email }).select("name email onboardingCompleted hasPaid");
+    const user = await User.findOne({ email: token.email }).select("name email onboardingCompleted hasPaid phoneStatus");
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
@@ -33,6 +33,7 @@ export async function POST() {
       ...token,
       onboardingCompleted: user.onboardingCompleted,
       hasPaid: user.hasPaid || false,
+      phoneStatus: user.phoneStatus || "not_connected",
     };
 
     const encoded = await encode({
@@ -50,6 +51,7 @@ export async function POST() {
     return NextResponse.json({
       hasPaid: user.hasPaid || false,
       onboardingCompleted: user.onboardingCompleted,
+      phoneStatus: user.phoneStatus || "not_connected",
       name: user.name,
       email: user.email,
     });

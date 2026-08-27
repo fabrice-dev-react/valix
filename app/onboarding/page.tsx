@@ -1,116 +1,181 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import {
   ArrowLeft,
   ArrowRight,
-  Check,
+  Building2,
   Clock,
-  Globe,
-  Rocket,
-  Target,
+  Sparkles,
 } from "lucide-react";
 
-const channels = [
-  { id: "twitter", label: "Twitter / X", desc: "Threads, replies, DMs" },
-  { id: "linkedin", label: "LinkedIn", desc: "Posts, comments, DMs" },
-  { id: "reddit", label: "Reddit", desc: "Posts, comments, communities" },
-  { id: "seo", label: "SEO / Blog", desc: "Articles, tutorials, guides" },
-  { id: "email", label: "Email", desc: "Cold outreach, newsletter" },
-  { id: "producthunt", label: "Product Hunt", desc: "Launches, updates" },
-  { id: "indiehackers", label: "Indie Hackers", desc: "Posts, engagement" },
-  { id: "youtube", label: "YouTube", desc: "Demos, tutorials" },
+type Step = "business" | "details";
+
+const businessTypes = [
+  "Home services",
+  "Medical / Dental",
+  "Legal",
+  "Salon / Spa",
+  "Auto services",
+  "Real estate",
+  "Restaurant",
+  "Fitness / Yoga",
+  "Contractor / Trades",
+  "Other",
 ];
 
-const dailyHours = [
-  { value: 0.5, label: "30 min", desc: "Quick daily actions" },
-  { value: 1, label: "1 hour", desc: "Focused marketing" },
-  { value: 2, label: "2 hours", desc: "Deep marketing work" },
-  { value: 3, label: "3+ hours", desc: "All-in marketing" },
+const tones = [
+  { id: "professional", label: "Professional", desc: "Polished and trustworthy" },
+  { id: "friendly", label: "Friendly", desc: "Warm and conversational" },
+  { id: "concise", label: "Concise", desc: "Short and to the point" },
 ];
-
-type Step = "url" | "channels" | "hours" | "goal" | "done";
 
 export default function OnboardingPage() {
   const router = useRouter();
   const { status } = useSession();
-  const [step, setStep] = useState<Step>("url");
-  const [websiteUrl, setWebsiteUrl] = useState("");
-  const [selectedChannels, setSelectedChannels] = useState<string[]>([]);
-  const [selectedHours, setSelectedHours] = useState<number>(1);
-  const [marketingGoal, setMarketingGoal] = useState("");
+  const [step, setStep] = useState<Step>("business");
+  const [loaded, setLoaded] = useState(false);
+  const [saved, setSaved] = useState(true);
   const [saving, setSaving] = useState(false);
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const [businessName, setBusinessName] = useState("");
+  const [businessType, setBusinessType] = useState("");
+  const [businessDescription, setBusinessDescription] = useState("");
+  const [open, setOpen] = useState("09:00");
+  const [close, setClose] = useState("17:00");
+  const [days, setDays] = useState<string[]>(["Mon", "Tue", "Wed", "Thu", "Fri"]);
+  const [aiTone, setAiTone] = useState("professional");
+  const [aiInstructions, setAiInstructions] = useState("");
 
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/?login=1");
+      return;
     }
+    if (status !== "authenticated") return;
+
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/onboarding");
+        const data = await res.json();
+        if (cancelled) return;
+        const p = data.profile || {};
+        if (p.businessName) setBusinessName(p.businessName);
+        if (p.businessType) setBusinessType(p.businessType);
+        if (p.businessDescription) setBusinessDescription(p.businessDescription);
+        if (p.businessHours?.open) setOpen(p.businessHours.open);
+        if (p.businessHours?.close) setClose(p.businessHours.close);
+        if (Array.isArray(p.businessHours?.days) && p.businessHours.days.length)
+          setDays(p.businessHours.days);
+        if (p.aiTone) setAiTone(p.aiTone);
+        if (p.aiInstructions) setAiInstructions(p.aiInstructions);
+        const stepIndex = p.onboardingStep ?? 0;
+        setStep(stepIndex === 1 ? "details" : "business");
+      } catch {
+        // ignore, start fresh
+      } finally {
+        if (!cancelled) setLoaded(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [status, router]);
+
+  const persist = useCallback(
+    async (stepIndex: number, completed: boolean, partial?: Record<string, unknown>) => {
+      setSaving(true);
+      try {
+        await fetch("/api/onboarding", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            onboardingStep: stepIndex,
+            onboardingCompleted: completed === true,
+            ...partial,
+          }),
+        });
+        setSaved(true);
+      } catch {
+        setSaved(false);
+      } finally {
+        setSaving(false);
+      }
+    },
+    []
+  );
+
+  const markDirty = useCallback(() => {
+    setSaved(false);
+  }, []);
+
+  const draft = useCallback((): Record<string, unknown> => {
+    return {
+      businessName,
+      businessType,
+      businessDescription,
+      businessHours: { open, close, days },
+      aiTone,
+      aiInstructions,
+    };
+  }, [businessName, businessType, businessDescription, open, close, days, aiTone, aiInstructions]);
+
+  const autoSave = useCallback(
+    (stepIndex: number) => {
+      if (saveTimer.current) clearTimeout(saveTimer.current);
+      saveTimer.current = setTimeout(() => {
+        persist(stepIndex, false, draft());
+      }, 900);
+    },
+    [persist, draft]
+  );
 
   useEffect(() => {
-    async function checkOnboarding() {
-      try {
-        const res = await fetch("/api/users/check-onboarding");
-        const data = await res.json();
-        if (data.completed) {
-          router.push("/dashboard");
-        }
-      } catch {
-        // continue with onboarding
-      }
-    }
-    if (status === "authenticated") {
-      checkOnboarding();
-    }
-  }, [status, router]);
+    if (!loaded || saved) return;
+    if (step === "business") autoSave(0);
+    else autoSave(1);
+  }, [saved, loaded, step, draft, autoSave]);
 
-  const toggleChannel = (id: string) => {
-    setSelectedChannels((prev) =>
-      prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id]
-    );
+  const toggleDay = (d: string) => {
+    setDays((prev) => (prev.includes(d) ? prev.filter((x) => x !== d) : [...prev, d]));
+    markDirty();
   };
 
-  const canNext = (() => {
-    if (step === "url") return websiteUrl.trim().length > 3;
-    if (step === "channels") return selectedChannels.length > 0;
-    if (step === "hours") return true;
-    if (step === "goal") return marketingGoal.trim().length > 0;
-    return false;
-  })();
-
-  const handleComplete = useCallback(async () => {
-    setSaving(true);
-    try {
-      await fetch("/api/users/complete-onboarding", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          websiteUrl,
-          channels: selectedChannels,
-          dailyHours: selectedHours,
-          marketingGoal,
-        }),
-      });
-      router.push("/dashboard");
-    } catch {
-      setSaving(false);
-    }
-  }, [websiteUrl, selectedChannels, selectedHours, marketingGoal, router]);
-
-  const stepOrder: Step[] = ["url", "channels", "hours", "goal"];
+  const stepOrder: Step[] = ["business", "details"];
   const currentIndex = stepOrder.indexOf(step);
 
-  if (status === "loading") {
+  const businessValid = businessName.trim().length > 1 && businessType.trim().length > 0;
+  const detailsValid = true;
+
+  const canNext = step === "business" ? businessValid : detailsValid;
+
+  const handleContinue = async () => {
+    if (step === "business") {
+      await persist(1, false, draft());
+      setStep("details");
+    } else {
+      await persist(2, true, draft());
+      const res = await fetch("/api/auth/refresh-session", { method: "POST" });
+      const data = await res.json().catch(() => null);
+      if (data?.phoneStatus && data.phoneStatus !== "not_connected") {
+        router.push("/dashboard");
+      } else {
+        router.push("/phone");
+      }
+    }
+  };
+
+  if (status === "loading" || !loaded) {
     return (
       <div className="min-h-screen bg-cream flex items-center justify-center">
         <div className="flex items-center gap-3">
           <span className="w-6 h-6 border-2 border-ink border-t-transparent rounded-full animate-spin" />
-          <span className="font-mono text-xs uppercase tracking-[0.18em] text-ink-soft">
-            One moment
-          </span>
+          <span className="font-mono text-xs uppercase tracking-[0.18em] text-ink-soft">One moment</span>
         </div>
       </div>
     );
@@ -118,294 +183,226 @@ export default function OnboardingPage() {
 
   return (
     <div className="min-h-screen bg-cream flex flex-col">
-      {/* Top bar */}
       <div className="border-b border-line bg-paper/80 backdrop-blur-xl">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5">
             <img src="/logo.png" alt="Valix" className="w-8 h-8 rounded-[9px]" />
             <span className="text-[17px] font-bold tracking-tight text-ink">Valix</span>
           </Link>
-          <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink-soft">
-            Step {currentIndex + 1} of {stepOrder.length}
-          </span>
+          <div className="flex items-center gap-3">
+            <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink-soft">
+              Step {currentIndex + 1} of {stepOrder.length}
+            </span>
+            {saving ? (
+              <span className="w-4 h-4 border-2 border-signal border-t-transparent rounded-full animate-spin" />
+            ) : saved ? (
+              <span className="text-[11px] font-medium text-moss">Saved</span>
+            ) : null}
+          </div>
         </div>
-        {/* Progress bar */}
         <div className="h-0.5 bg-line">
           <div
             className="h-full bg-signal transition-all duration-500 ease-out"
-            style={{ width: `${((currentIndex + 1) / stepOrder.length) * 100}%` }}
+            style={{ width: `${((currentIndex + 1) / (stepOrder.length + 1)) * 100}%` }}
           />
         </div>
       </div>
 
-      {/* Content */}
       <div className="flex-1 flex items-center justify-center px-4 sm:px-6 py-12">
         <div className="w-full max-w-xl">
-          {/* STEP: Website URL */}
-          {step === "url" && (
+          {step === "business" && (
             <div className="animate-fade-up">
               <div className="flex items-center gap-3 mb-6">
                 <span className="w-12 h-12 rounded-xl bg-signal-soft flex items-center justify-center">
-                  <Globe className="w-6 h-6 text-signal-dark" />
+                  <Building2 className="w-6 h-6 text-signal-dark" />
                 </span>
                 <div>
                   <h1 className="text-2xl sm:text-3xl font-extrabold tracking-[-0.03em] text-ink">
-                    What&apos;s your SaaS website?
+                    Tell us about your business
                   </h1>
                   <p className="text-[14px] text-ink-soft mt-1">
-                    We&apos;ll analyze it to build your custom marketing plan.
+                    This helps Valix answer calls like your team would.
                   </p>
                 </div>
               </div>
 
-              <div className="mt-8">
-                <label className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink-soft font-semibold">
-                  Website URL
-                </label>
-                <input
-                  type="url"
-                  value={websiteUrl}
-                  onChange={(e) => setWebsiteUrl(e.target.value)}
-                  placeholder="https://your-saas.com"
-                  className="mt-2 w-full rounded-xl border border-line bg-paper px-4 py-3.5 text-[15px] text-ink placeholder:text-ink-soft/50 focus:outline-none focus:ring-2 focus:ring-signal/30 focus:border-signal transition-all"
-                  autoFocus
-                />
-              </div>
-
-              <p className="mt-4 text-[13px] text-ink-soft leading-relaxed">
-                We&apos;ll look at your product, audience, and positioning to recommend
-                the best marketing channels and actions for your SaaS.
-              </p>
-            </div>
-          )}
-
-          {/* STEP: Channels */}
-          {step === "channels" && (
-            <div className="animate-fade-up">
-              <div className="flex items-center gap-3 mb-6">
-                <span className="w-12 h-12 rounded-xl bg-signal-soft flex items-center justify-center">
-                  <Target className="w-6 h-6 text-signal-dark" />
-                </span>
+              <div className="mt-8 space-y-5">
                 <div>
-                  <h1 className="text-2xl sm:text-3xl font-extrabold tracking-[-0.03em] text-ink">
-                    Which channels interest you?
-                  </h1>
-                  <p className="text-[14px] text-ink-soft mt-1">
-                    Select all that apply. We&apos;ll prioritize based on your SaaS.
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {channels.map((ch) => {
-                  const selected = selectedChannels.includes(ch.id);
-                  return (
-                    <button
-                      key={ch.id}
-                      onClick={() => toggleChannel(ch.id)}
-                      className={`flex items-center gap-3 rounded-xl border px-4 py-3.5 text-left transition-all ${
-                        selected
-                          ? "border-signal bg-signal-soft ring-1 ring-signal/20"
-                          : "border-line bg-paper hover:border-ink/20"
-                      }`}
-                    >
-                      <span
-                        className={`w-5 h-5 shrink-0 rounded-full border-2 flex items-center justify-center transition-all ${
-                          selected
-                            ? "border-signal bg-signal text-white"
-                            : "border-line"
-                        }`}
-                      >
-                        {selected && <Check className="w-3 h-3" />}
-                      </span>
-                      <div>
-                        <p className="text-[14px] font-semibold text-ink">{ch.label}</p>
-                        <p className="text-[12px] text-ink-soft">{ch.desc}</p>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* STEP: Daily Hours */}
-          {step === "hours" && (
-            <div className="animate-fade-up">
-              <div className="flex items-center gap-3 mb-6">
-                <span className="w-12 h-12 rounded-xl bg-signal-soft flex items-center justify-center">
-                  <Clock className="w-6 h-6 text-signal-dark" />
-                </span>
-                <div>
-                  <h1 className="text-2xl sm:text-3xl font-extrabold tracking-[-0.03em] text-ink">
-                    How many hours per day for marketing?
-                  </h1>
-                  <p className="text-[14px] text-ink-soft mt-1">
-                    We&apos;ll tailor your daily actions to fit this time.
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-8 grid grid-cols-2 gap-3">
-                {dailyHours.map((opt) => {
-                  const selected = selectedHours === opt.value;
-                  return (
-                    <button
-                      key={opt.value}
-                      onClick={() => setSelectedHours(opt.value)}
-                      className={`rounded-xl border px-5 py-5 text-center transition-all ${
-                        selected
-                          ? "border-signal bg-signal-soft ring-1 ring-signal/20"
-                          : "border-line bg-paper hover:border-ink/20"
-                      }`}
-                    >
-                      <p className={`text-[24px] font-extrabold ${selected ? "text-signal-dark" : "text-ink"}`}>
-                        {opt.label}
-                      </p>
-                      <p className="mt-1 text-[13px] text-ink-soft">{opt.desc}</p>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* STEP: Marketing Goal */}
-          {step === "goal" && (
-            <div className="animate-fade-up">
-              <div className="flex items-center gap-3 mb-6">
-                <span className="w-12 h-12 rounded-xl bg-signal-soft flex items-center justify-center">
-                  <Rocket className="w-6 h-6 text-signal-dark" />
-                </span>
-                <div>
-                  <h1 className="text-2xl sm:text-3xl font-extrabold tracking-[-0.03em] text-ink">
-                    What&apos;s your main marketing goal?
-                  </h1>
-                  <p className="text-[14px] text-ink-soft mt-1">
-                    This helps us prioritize the right actions for you.
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-8 space-y-3">
-                {[
-                  "Get my first 100 users",
-                  "Build audience and followers",
-                  "Generate consistent leads",
-                  "Improve organic traffic",
-                  "Launch on Product Hunt",
-                  "Get beta users and feedback",
-                ].map((goal) => (
-                  <button
-                    key={goal}
-                    onClick={() => setMarketingGoal(goal)}
-                    className={`w-full flex items-center gap-3 rounded-xl border px-4 py-3.5 text-left transition-all ${
-                      marketingGoal === goal
-                        ? "border-signal bg-signal-soft ring-1 ring-signal/20"
-                        : "border-line bg-paper hover:border-ink/20"
-                    }`}
-                  >
-                    <span
-                      className={`w-5 h-5 shrink-0 rounded-full border-2 flex items-center justify-center transition-all ${
-                        marketingGoal === goal
-                          ? "border-signal bg-signal text-white"
-                          : "border-line"
-                      }`}
-                    >
-                      {marketingGoal === goal && <Check className="w-3 h-3" />}
-                    </span>
-                    <span className="text-[14px] font-medium text-ink">{goal}</span>
-                  </button>
-                ))}
-
-                <div className="pt-2">
                   <label className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink-soft font-semibold">
-                    Or type your own
+                    Business name
                   </label>
                   <input
                     type="text"
-                    value={marketingGoal.startsWith("Get my first") || marketingGoal.startsWith("Build") || marketingGoal.startsWith("Generate") || marketingGoal.startsWith("Improve") || marketingGoal.startsWith("Launch") || marketingGoal.startsWith("Get beta") ? "" : marketingGoal}
-                    onChange={(e) => setMarketingGoal(e.target.value)}
-                    placeholder="e.g. Reach $10k MRR"
+                    value={businessName}
+                    onChange={(e) => { setBusinessName(e.target.value); markDirty(); }}
+                    placeholder="e.g. Maple Dental Studio"
                     className="mt-2 w-full rounded-xl border border-line bg-paper px-4 py-3.5 text-[15px] text-ink placeholder:text-ink-soft/50 focus:outline-none focus:ring-2 focus:ring-signal/30 focus:border-signal transition-all"
+                    autoFocus
+                  />
+                </div>
+
+                <div>
+                  <label className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink-soft font-semibold">
+                    Business description
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={businessDescription}
+                    onChange={(e) => { setBusinessDescription(e.target.value); markDirty(); }}
+                    placeholder="e.g. Family-owned dental studio specialising in cosmetic and emergency dentistry."
+                    className="mt-2 w-full rounded-xl border border-line bg-paper px-4 py-3.5 text-[15px] text-ink placeholder:text-ink-soft/50 focus:outline-none focus:ring-2 focus:ring-signal/30 focus:border-signal transition-all resize-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink-soft font-semibold">
+                    Business type
+                  </label>
+                  <div className="mt-2 grid grid-cols-2 gap-2">
+                    {businessTypes.map((t) => (
+                      <button
+                        key={t}
+                        onClick={() => { setBusinessType(t); markDirty(); }}
+                        className={`rounded-xl border px-4 py-3 text-left text-[13.5px] font-medium transition-all ${
+                          businessType === t
+                            ? "border-signal bg-signal-soft ring-1 ring-signal/20 text-ink"
+                            : "border-line bg-paper text-ink-soft hover:border-ink/20"
+                        }`}
+                      >
+                        {t}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {step === "details" && (
+            <div className="animate-fade-up">
+              <div className="flex items-center gap-3 mb-6">
+                <span className="w-12 h-12 rounded-xl bg-signal-soft flex items-center justify-center">
+                  <Sparkles className="w-6 h-6 text-signal-dark" />
+                </span>
+                <div>
+                  <h1 className="text-2xl sm:text-3xl font-extrabold tracking-[-0.03em] text-ink">
+                    How should Valix handle calls?
+                  </h1>
+                  <p className="text-[14px] text-ink-soft mt-1">
+                    Set your hours and how your AI should sound.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-8 space-y-6">
+                <div>
+                  <label className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink-soft font-semibold">
+                    Business hours
+                  </label>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
+                      <button
+                        key={d}
+                        onClick={() => toggleDay(d)}
+                        className={`px-3 py-2 rounded-lg border text-[13px] font-semibold transition-all ${
+                          days.includes(d)
+                            ? "border-signal bg-signal-soft text-signal-dark"
+                            : "border-line bg-paper text-ink-soft hover:border-ink/20"
+                        }`}
+                      >
+                        {d}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="mt-3 flex items-center gap-3">
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-ink-soft" />
+                      <input
+                        type="time"
+                        value={open}
+                        onChange={(e) => { setOpen(e.target.value); markDirty(); }}
+                        className="rounded-lg border border-line bg-paper px-3 py-2 text-[14px] text-ink focus:outline-none focus:ring-2 focus:ring-signal/30"
+                      />
+                    </div>
+                    <span className="text-ink-soft">to</span>
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-ink-soft" />
+                      <input
+                        type="time"
+                        value={close}
+                        onChange={(e) => { setClose(e.target.value); markDirty(); }}
+                        className="rounded-lg border border-line bg-paper px-3 py-2 text-[14px] text-ink focus:outline-none focus:ring-2 focus:ring-signal/30"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink-soft font-semibold">
+                    Tone
+                  </label>
+                  <div className="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    {tones.map((t) => (
+                      <button
+                        key={t.id}
+                        onClick={() => { setAiTone(t.id); markDirty(); }}
+                        className={`rounded-xl border px-4 py-3 text-left transition-all ${
+                          aiTone === t.id ? "border-signal bg-signal-soft ring-1 ring-signal/20" : "border-line bg-paper hover:border-ink/20"
+                        }`}
+                      >
+                        <p className={`text-[14px] font-semibold ${aiTone === t.id ? "text-signal-dark" : "text-ink"}`}>{t.label}</p>
+                        <p className="text-[12px] text-ink-soft">{t.desc}</p>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink-soft font-semibold">
+                    Anything Valix should know?
+                  </label>
+                  <textarea
+                    value={aiInstructions}
+                    onChange={(e) => { setAiInstructions(e.target.value); markDirty(); }}
+                    rows={3}
+                    placeholder="e.g. Always offer the next available appointment slot, mention our Saturday hours, and never quote prices before understanding the job."
+                    className="mt-2 w-full rounded-xl border border-line bg-paper px-4 py-3.5 text-[15px] text-ink placeholder:text-ink-soft/50 focus:outline-none focus:ring-2 focus:ring-signal/30 focus:border-signal transition-all resize-none"
                   />
                 </div>
               </div>
             </div>
           )}
 
-          {/* STEP: Done */}
-          {step === "done" && (
-            <div className="animate-fade-up text-center">
-              <div className="w-16 h-16 rounded-2xl bg-moss/15 flex items-center justify-center mx-auto">
-                <Check className="w-8 h-8 text-moss" />
-              </div>
-              <h1 className="mt-6 text-2xl sm:text-3xl font-extrabold tracking-[-0.03em] text-ink">
-                You&apos;re all set!
-              </h1>
-              <p className="mt-3 text-[15px] text-ink-soft max-w-md mx-auto">
-                We&apos;re building your custom marketing plan now. You&apos;ll see your first
-                daily actions in your dashboard.
-              </p>
+          <div className="mt-10 flex items-center justify-between">
+            {currentIndex > 0 ? (
               <button
-                onClick={handleComplete}
-                disabled={saving}
-                className="mt-8 inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-signal text-white text-[15px] font-semibold hover:bg-signal-dark transition-all shadow-[0_16px_40px_-12px_rgba(255,77,47,0.6)] disabled:opacity-60"
+                onClick={() => setStep(stepOrder[currentIndex - 1])}
+                className="inline-flex items-center gap-2 text-[14px] font-medium text-ink-soft hover:text-ink transition-colors"
               >
-                {saving ? (
-                  <>
-                    <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-                    Setting up...
-                  </>
-                ) : (
-                  <>
-                    Go to Dashboard
-                    <ArrowRight className="w-4 h-4" />
-                  </>
-                )}
+                <ArrowLeft className="w-4 h-4" />
+                Back
               </button>
-            </div>
-          )}
-
-          {/* Navigation */}
-          {step !== "done" && (
-            <div className="mt-10 flex items-center justify-between">
-              {currentIndex > 0 ? (
-                <button
-                  onClick={() => setStep(stepOrder[currentIndex - 1])}
-                  className="inline-flex items-center gap-2 text-[14px] font-medium text-ink-soft hover:text-ink transition-colors"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                  Back
-                </button>
+            ) : (
+              <div />
+            )}
+            <button
+              onClick={handleContinue}
+              disabled={!canNext || saving}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-signal text-white text-[14px] font-semibold hover:bg-signal-dark transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-[0_12px_28px_-10px_rgba(255,77,47,0.5)]"
+            >
+              {step === "details" ? (
+                <>
+                  Finish setup
+                  <ArrowRight className="w-4 h-4" />
+                </>
               ) : (
-                <div />
+                <>
+                  Continue
+                  <ArrowRight className="w-4 h-4" />
+                </>
               )}
-              <button
-                onClick={() => {
-                  if (step === "goal") {
-                    setStep("done");
-                  } else {
-                    setStep(stepOrder[currentIndex + 1]);
-                  }
-                }}
-                disabled={!canNext}
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-ink text-white text-[14px] font-semibold hover:bg-black transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                {step === "goal" ? (
-                  <>
-                    Complete setup
-                    <Rocket className="w-4 h-4" />
-                  </>
-                ) : (
-                  <>
-                    Continue
-                    <ArrowRight className="w-4 h-4" />
-                  </>
-                )}
-              </button>
-            </div>
-          )}
+            </button>
+          </div>
         </div>
       </div>
     </div>

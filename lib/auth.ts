@@ -10,6 +10,7 @@ declare module "next-auth" {
       id: string;
       onboardingCompleted?: boolean;
       hasPaid?: boolean;
+      phoneStatus?: string;
     } & DefaultSession["user"];
   }
 }
@@ -19,6 +20,7 @@ declare module "next-auth/jwt" {
     id: string;
     onboardingCompleted?: boolean;
     hasPaid?: boolean;
+    phoneStatus?: string;
   }
 }
 
@@ -62,6 +64,7 @@ export const authOptions: NextAuthOptions = {
         token.id = existingUser._id.toString();
         token.onboardingCompleted = existingUser.onboardingCompleted;
         token.hasPaid = existingUser.hasPaid || false;
+        token.phoneStatus = existingUser.phoneStatus || "not_connected";
 
         if (!token.hasPaid) {
           try {
@@ -126,6 +129,7 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.id;
         session.user.onboardingCompleted = token.onboardingCompleted;
         session.user.hasPaid = token.hasPaid;
+        session.user.phoneStatus = token.phoneStatus;
       }
       return session;
     },

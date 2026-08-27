@@ -50,15 +50,26 @@ function PaymentPageContent() {
 
   const refreshSession = useCallback(async () => {
     try {
-      await fetch("/api/auth/refresh-session", { method: "POST" });
+      const res = await fetch("/api/auth/refresh-session", { method: "POST" });
+      return await res.json().catch(() => null);
     } catch {
-      // best-effort
+      return null;
     }
   }, []);
 
-  const goToDashboard = useCallback(() => {
-    router.replace("/dashboard");
-  }, [router]);
+  const goNext = useCallback(
+    async (data?: { onboardingCompleted?: boolean; phoneStatus?: string } | null) => {
+      const info = data || (await refreshSession());
+      if (info?.onboardingCompleted === false || info?.onboardingCompleted === undefined) {
+        router.replace("/onboarding");
+      } else if (!info?.phoneStatus || info.phoneStatus === "not_connected") {
+        router.replace("/phone");
+      } else {
+        router.replace("/dashboard");
+      }
+    },
+    [router, refreshSession]
+  );
 
   const startCheckout = useCallback(async () => {
     setLoading(true);
@@ -76,8 +87,8 @@ function PaymentPageContent() {
       }
 
       if (data.alreadyPaid) {
-        await refreshSession();
-        goToDashboard();
+        setLoading(false);
+        goNext();
         return;
       }
 
@@ -90,7 +101,7 @@ function PaymentPageContent() {
       setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
       setLoading(false);
     }
-  }, [refreshSession, goToDashboard]);
+  }, [goNext]);
 
   useEffect(() => {
     if (startedRef.current) return;
@@ -99,7 +110,7 @@ function PaymentPageContent() {
     startedRef.current = true;
 
     if (session?.user?.hasPaid) {
-      goToDashboard();
+      goNext();
       return;
     }
 
@@ -109,8 +120,7 @@ function PaymentPageContent() {
         const data = await res.json();
 
         if (data.hasPaid) {
-          await refreshSession();
-          goToDashboard();
+          goNext();
           return;
         }
       } catch {
@@ -118,7 +128,7 @@ function PaymentPageContent() {
       }
       setPhase("ready");
     })();
-  }, [status, session, goToDashboard, refreshSession]);
+  }, [status, session, goNext]);
 
   if (status === "loading" || phase === "checking") {
     return (
@@ -234,8 +244,7 @@ function PaymentPageContent() {
           Already paid?{" "}
           <button
             onClick={async () => {
-              await refreshSession();
-              goToDashboard();
+              goNext();
             }}
             className="font-semibold text-ink underline decoration-signal/50 underline-offset-2 hover:decoration-signal transition-colors"
           >
