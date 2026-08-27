@@ -26,9 +26,9 @@ export default function Footer() {
               <span className="text-lg font-bold tracking-tight text-white">Valix</span>
             </Link>
             <p className="text-sm text-white/50 max-w-xs leading-relaxed">
-              Daily marketing discipline for SaaS founders. We analyze your
-              product, build your plan, and push the actions that keep your
-              marketing consistent.
+              Valix turns missed calls into qualified leads. When you cannot answer the phone, Valix
+              texts the caller by SMS, qualifies them with AI, and puts the leads in front of you to
+              call back.
             </p>
           </div>
 

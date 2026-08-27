@@ -16,6 +16,11 @@ export default function SiteLayout({
     const params = new URLSearchParams(window.location.search);
     return params.has("login") || params.has("error");
   });
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (loginOpen) {
@@ -28,7 +33,7 @@ export default function SiteLayout({
       <Header />
       <main>{children}</main>
       <Footer />
-      <LoginOverlay open={loginOpen} onClose={() => setLoginOpen(false)} />
+      <LoginOverlay open={loginOpen && mounted} onClose={() => setLoginOpen(false)} />
     </LoginContext.Provider>
   );
 }

@@ -12,8 +12,8 @@ export default function PrivacyPage() {
             <p>
               Valix (&ldquo;we&rdquo;, &ldquo;our&rdquo;, &ldquo;us&rdquo;)
               respects your privacy. This policy explains what information we
-              collect when you use our chart analysis service, how we use it,
-              and the choices you have.
+              collect when you use our AI missed-call recovery service, how we
+              use it, and the choices you have.
             </p>
           ),
         },
@@ -24,9 +24,9 @@ export default function PrivacyPage() {
               <p>We collect the following information:</p>
               <ul className="list-disc pl-5 space-y-1.5">
                 <li>Account details: your name, email address and profile picture when you sign in with Google.</li>
-                <li>Chart screenshots: the images you upload for analysis.</li>
-                <li>Usage data: pages visited, features used and analysis requests.</li>
-                <li>Payment data: handled by our payment processor, Dodo Payments. We do not store your card details.</li>
+                <li>Conversation data: the SMS conversations and lead details captured from your missed-call follow-ups.</li>
+                <li>Usage data: pages visited, features used and missed-call activity on your connected numbers.</li>
+                <li>Payment data: handled by our payment processor. We do not store your card details.</li>
               </ul>
             </div>
           ),
@@ -35,7 +35,7 @@ export default function PrivacyPage() {
           heading: "How We Use Your Information",
           body: (
             <ul className="list-disc pl-5 space-y-1.5">
-              <li>To provide and operate the service, including analyzing your chart screenshots.</li>
+              <li>To provide and operate the service, including sending SMS follow-ups and qualifying leads on your missed calls.</li>
               <li>To manage your account, subscription and billing.</li>
               <li>To improve the service and understand how it is used.</li>
               <li>To communicate with you about your account and the service.</li>
@@ -43,14 +43,14 @@ export default function PrivacyPage() {
           ),
         },
         {
-          heading: "Chart Screenshots & Analysis",
+          heading: "Caller Conversations & Lead Data",
           body: (
             <p>
-              The screenshots you upload are used solely to produce your
-              analysis. We may retain them briefly to complete and support the
-              analysis, and we do not sell them. Please do not upload images
-              containing personal or sensitive information you do not want us
-              to process.
+              The SMS conversations and details of the callers Valix follows up
+              with are collected on your behalf and used to qualify and present
+              leads to you. These are only used to provide the service, and are
+              not sold. You are responsible for handling any customer data you
+              act on in line with your own privacy obligations.
             </p>
           ),
         },
@@ -58,9 +58,9 @@ export default function PrivacyPage() {
           heading: "Payment Information",
           body: (
             <p>
-              Payments are processed by Dodo Payments under their own privacy
-              and security practices. We receive confirmation of payment status
-              but never see or store your full card details.
+              Payments are processed by our payment processor under their own
+              privacy and security practices. We receive confirmation of payment
+              status but never see or store your full card details.
             </p>
           ),
         },
@@ -71,8 +71,8 @@ export default function PrivacyPage() {
               <p>We use a limited set of third-party services to run the product:</p>
               <ul className="list-disc pl-5 space-y-1.5">
                 <li>Google for sign-in (OAuth).</li>
-                <li>Our AI model providers to generate chart analysis.</li>
-                <li>Dodo Payments for subscription billing.</li>
+                <li>Our SMS and AI model providers to run missed-call follow-ups and lead qualification.</li>
+                <li>Our payment processor for subscription billing.</li>
                 <li>Google Analytics for aggregated usage insights.</li>
               </ul>
               <p>
@@ -107,8 +107,8 @@ export default function PrivacyPage() {
                 </a>.
               </p>
               <p>
-                You can also delete your uploaded screenshots and cancel your
-                account at any time from your dashboard.
+                You can also delete your saved lead and conversation data and
+                cancel your account at any time from your dashboard.
               </p>
             </div>
           ),

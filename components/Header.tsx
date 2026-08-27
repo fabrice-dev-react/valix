@@ -70,9 +70,9 @@ export default function Header() {
             ) : (
               <button
                 onClick={openLogin}
-                className="inline-flex items-center gap-2 text-[13.5px] font-semibold text-white bg-ink hover:bg-black px-5 py-2.5 rounded-full transition-all duration-200 shadow-[0_1px_0_rgba(255,255,255,0.08)_inset]"
+                className="inline-flex items-center gap-2 text-[13.5px] font-semibold text-white bg-signal hover:bg-signal-dark px-5 py-2.5 rounded-full transition-all duration-200 shadow-[0_12px_30px_-10px_rgba(255,77,47,0.55)]"
               >
-                Start now
+                Recover my missed calls
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M22 7l-8.5 8.5-5-5L2 17" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M16 7h6v6" />
@@ -130,9 +130,9 @@ export default function Header() {
                       setMobileOpen(false);
                       openLogin();
                     }}
-                    className="inline-flex items-center justify-center gap-2 py-3 text-[15px] font-semibold text-white bg-ink rounded-full"
+                    className="inline-flex items-center justify-center gap-2 py-3 text-[15px] font-semibold text-white bg-signal hover:bg-signal-dark rounded-full shadow-[0_12px_30px_-10px_rgba(255,77,47,0.55)]"
                   >
-                    Start now
+                    Recover my missed calls
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M22 7l-8.5 8.5-5-5L2 17" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M16 7h6v6" />
