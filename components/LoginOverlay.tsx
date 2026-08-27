@@ -97,7 +97,7 @@ export default function LoginOverlay({
           </div>
           <div className="relative flex justify-center">
             <span className="bg-paper px-3 font-mono text-[11px] uppercase tracking-[0.18em] text-ink-soft">
-              from $39/month · cancel anytime
+              from $97/month · cancel anytime
             </span>
           </div>
         </div>

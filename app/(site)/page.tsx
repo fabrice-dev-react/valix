@@ -385,46 +385,23 @@ function StepVisual({ step }: { step: number }) {
    ============================================================ */
 const plans = [
   {
-    name: "Starter",
-    price: 39,
-    tagline: "A single business that wants to stop losing missed calls.",
+    name: "Everything included",
+    price: 97,
+    tagline: "Everything you need to stop losing missed calls — no add-ons, no tiers.",
     monthly: [
-      "1 phone number",
+      "5 phone numbers",
+      "More AI conversations",
       "Instant SMS follow-up",
       "AI lead qualification",
       "Qualified lead list",
-      "Lead dashboard",
-      "Email support",
-    ],
-    highlight: false,
-  },
-  {
-    name: "Growth",
-    price: 79,
-    tagline: "An active crew that misses calls while out on jobs.",
-    monthly: [
-      "Everything in Starter",
-      "2 phone numbers",
-      "Smart follow-up",
       "Hot lead alerts",
-      "More AI conversations",
+      "Smart follow-up",
+      "Multiple locations",
+      "Team member access",
+      "Lead dashboard",
       "Priority email support",
     ],
     highlight: true,
-  },
-  {
-    name: "Scale",
-    price: 149,
-    tagline: "Busy teams across locations and multiple business numbers.",
-    monthly: [
-      "Everything in Growth",
-      "5+ phone numbers",
-      "Multiple locations",
-      "Team member alerts",
-      "Advanced workflows",
-      "Dedicated onboarding help",
-    ],
-    highlight: false,
   },
 ];
 
@@ -817,16 +794,16 @@ export default function Home() {
               One recovered job can pay for the monthly plan.
             </h2>
             <p className="mt-5 text-[15px] sm:text-base text-ink-soft max-w-xl mx-auto">
-              Pick the plan that matches how busy you are. Upgrade, downgrade, or cancel anytime. Every plan
-              catches missed calls — higher plans catch them for more of your business.
+              One simple plan. Everything you need to catch missed calls, qualify the callers with AI, and
+              hand you the leads to call back — with no add-ons. Cancel anytime.
             </p>
           </div>
 
-          <div className="mt-14 grid md:grid-cols-3 gap-6 items-stretch">
+          <div className="mt-14 flex justify-center">
             {plans.map((plan) => (
               <div
                 key={plan.name}
-                className={`relative flex flex-col rounded-3xl border p-8 ${
+                className={`relative flex flex-col rounded-3xl border p-8 w-full max-w-3xl ${
                   plan.highlight
                     ? "bg-ink text-white border-ink shadow-[0_32px_64px_-24px_rgba(22,19,17,0.5)]"
                     : "bg-paper border-line"
@@ -834,7 +811,7 @@ export default function Home() {
               >
                 {plan.highlight && (
                   <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-signal text-white text-[11px] font-bold uppercase tracking-wide px-3 py-1 rounded-full">
-                    Recommended
+                    All-inclusive
                   </span>
                 )}
                 <div className="flex items-center justify-between">
@@ -852,7 +829,7 @@ export default function Home() {
                 </div>
                 <p className={`mt-1 text-xs ${plan.highlight ? "text-white/50" : "text-ink-soft/80"}`}>per business · cancel anytime</p>
 
-                <ul className="mt-7 space-y-3 flex-1">
+                <ul className="mt-7 space-y-3 flex-1 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:gap-y-3">
                   {plan.monthly.map((f) => (
                     <li key={f} className="flex items-start gap-3">
                       <span className={`mt-0.5 w-4 h-4 shrink-0 rounded-full flex items-center justify-center ${

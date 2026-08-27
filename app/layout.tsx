@@ -4,11 +4,18 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import AuthProvider from "@/components/AuthProvider";
 
 export const metadata: Metadata = {
-  title: "Valix — Daily Marketing Discipline for SaaS Founders",
-  description: "Valix analyzes your SaaS, builds a custom marketing plan, and pushes daily actions to keep you consistent. Stay disciplined, grow your pipeline, ship your marketing every day.",
+  title: "Valix — AI Missed-Call Recovery for Service Businesses",
+  description: "Valix instantly texts every missed caller by SMS, qualifies them with AI, and shows you a list of qualified leads ready to call back. Don't lose a customer to a missed call again. Live in minutes, no CRM required.",
   openGraph: {
-    title: "Valix — Daily Marketing Discipline for SaaS Founders",
-    description: "Stop guessing what to market. Valix gives you a daily plan, channels to focus on, and actions to complete — so your SaaS actually grows.",
+    title: "Valix — Never lose a customer to a missed call again",
+    description: "Miss a call? Valix texts them back instantly, AI finds out what they need, and you get a qualified lead ready to call back—so you don't lose them to a competitor.",
+    type: "website",
+    siteName: "Valix",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Valix — Never lose a customer to a missed call again",
+    description: "Valix texts missed callers by SMS, qualifies them with AI, and hands you a list of qualified leads ready to call back.",
   },
 };
 

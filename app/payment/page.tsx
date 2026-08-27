@@ -8,13 +8,14 @@ import { PLAN_PRICE } from "@/lib/payments";
 import { Check, ArrowRight, Zap } from "lucide-react";
 
 const planFeatures = [
-  "AI-powered website analysis",
-  "Custom marketing channel plan",
-  "Daily focused marketing actions",
-  "Streak tracking & accountability",
-  "Progress dashboard",
-  "Channel recommendations",
-  "New actions every morning",
+  "5 phone numbers",
+  "Instant SMS follow-up on missed calls",
+  "AI lead qualification",
+  "Qualified lead list",
+  "Hot lead alerts",
+  "Smart follow-up",
+  "Multiple locations",
+  "Team member access",
 ];
 
 type Phase = "checking" | "ready";
@@ -146,7 +147,7 @@ function PaymentPageContent() {
 
         <div className="text-center mb-10">
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-[-0.03em] text-ink">
-            Start shipping your marketing
+            Recover your missed calls
           </h1>
           <p className="mt-3 text-[15px] text-ink-soft max-w-md mx-auto">
             One plan. Everything included. Cancel anytime.
@@ -170,7 +171,7 @@ function PaymentPageContent() {
             <div className="relative">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-signal text-white text-[11px] font-bold px-3 py-1">
                 <Zap className="w-3 h-3" />
-                Valix Pro
+                Everything included
               </span>
               <div className="mt-4 flex items-baseline gap-1.5">
                 <span className="text-[52px] font-extrabold tracking-tight leading-none">

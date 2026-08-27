@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import LoginOverlay from "@/components/LoginOverlay";
 import { LoginContext } from "@/components/LoginContext";
+
+const emptySubscribe = () => () => {};
 
 export default function SiteLayout({
   children,
@@ -16,11 +18,11 @@ export default function SiteLayout({
     const params = new URLSearchParams(window.location.search);
     return params.has("login") || params.has("error");
   });
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
 
   useEffect(() => {
     if (loginOpen) {

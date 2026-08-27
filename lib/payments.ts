@@ -8,7 +8,7 @@ const DODO_BASE_URL =
     : "https://live.dodopayments.com";
 
 export const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-export const PLAN_PRICE = 9;
+export const PLAN_PRICE = 97;
 export const SETUP_FEE = 0;
 export const hasOneTimeProduct = () => DODO_ONE_TIME_PRODUCT_ID.length > 0;
 
