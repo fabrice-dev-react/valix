@@ -29,6 +29,7 @@ import {
   Settings2,
   Target,
   TrendingUp,
+  Users,
 } from "lucide-react";
 
 /* ============================================================
@@ -378,6 +379,120 @@ interface PlanData {
   interests: string[];
 }
 
+interface BlueprintCard {
+  id: string;
+  title: string;
+  icon: React.ElementType;
+  color: string;
+  bgColor: string;
+  borderColor: string;
+  description: string;
+  placeholder: string;
+}
+
+const blueprintCards: BlueprintCard[] = [
+  {
+    id: "problem",
+    title: "Problem",
+    icon: Target,
+    color: "text-signal",
+    bgColor: "bg-signal-soft/50",
+    borderColor: "border-signal/30",
+    description: "The core problem your side hustle solves",
+    placeholder: "What pain point are you solving?",
+  },
+  {
+    id: "target-users",
+    title: "Target Users",
+    icon: Users,
+    color: "text-[#7c5cfc]",
+    bgColor: "bg-[#f0ecff]/50",
+    borderColor: "border-[#7c5cfc]/30",
+    description: "Who exactly are your ideal customers",
+    placeholder: "Describe your ideal customer...",
+  },
+  {
+    id: "offer",
+    title: "Offer",
+    icon: Gem,
+    color: "text-[#e08914]",
+    bgColor: "bg-[#fff4e0]/50",
+    borderColor: "border-[#e08914]/30",
+    description: "What you sell and the value it delivers",
+    placeholder: "What's your core offer?",
+  },
+  {
+    id: "pricing",
+    title: "Pricing",
+    icon: CreditCard,
+    color: "text-[#2f5d46]",
+    bgColor: "bg-[#edf7ef]/50",
+    borderColor: "border-[#2f5d46]/30",
+    description: "How much you charge and why",
+    placeholder: "Set your price strategy...",
+  },
+  {
+    id: "market-strategy",
+    title: "Market Strategy",
+    icon: Compass,
+    color: "text-[#7c5cfc]",
+    bgColor: "bg-[#f0ecff]/50",
+    borderColor: "border-[#7c5cfc]/30",
+    description: "How you'll reach your first customers",
+    placeholder: "How will you find clients?",
+  },
+  {
+    id: "competition",
+    title: "Competition",
+    icon: TrendingUp,
+    color: "text-signal",
+    bgColor: "bg-signal-soft/50",
+    borderColor: "border-signal/30",
+    description: "Who else is doing this and your edge",
+    placeholder: "Analyze your competitors...",
+  },
+  {
+    id: "revenue-model",
+    title: "Revenue Model",
+    icon: Rocket,
+    color: "text-[#e08914]",
+    bgColor: "bg-[#fff4e0]/50",
+    borderColor: "border-[#e08914]/30",
+    description: "How money flows into your business",
+    placeholder: "How do you make money?",
+  },
+  {
+    id: "skills-match",
+    title: "Skills Match",
+    icon: Gem,
+    color: "text-[#2f5d46]",
+    bgColor: "bg-[#edf7ef]/50",
+    borderColor: "border-[#2f5d46]/30",
+    description: "How your skills align with this hustle",
+    placeholder: "Match your skills to the opportunity...",
+  },
+  {
+    id: "growth-plan",
+    title: "Growth Plan",
+    icon: TrendingUp,
+    color: "text-[#7c5cfc]",
+    bgColor: "bg-[#f0ecff]/50",
+    borderColor: "border-[#7c5cfc]/30",
+    description: "Your roadmap from $0 to your income goal",
+    placeholder: "How will you scale over time?",
+  },
+  {
+    id: "risk-assessment",
+    title: "Risk Assessment",
+    icon: ClipboardList,
+    color: "text-signal",
+    bgColor: "bg-signal-soft/50",
+    borderColor: "border-signal/30",
+    description: "What could go wrong and how to mitigate it",
+    placeholder: "What are the key risks?",
+  },
+];
+
 function PlanView({
   phases,
   statuses,
@@ -403,30 +518,50 @@ function PlanView({
     interests: [] as string[],
   };
 
-  const BOX_W = 320;
-  const BOX_H = 168;
-  const positions = [
-    { x: 40, y: 300 },
-    { x: 400, y: 300 },
-    { x: 760, y: 300 },
-    { x: 760, y: 640 },
-    { x: 400, y: 640 },
-    { x: 40, y: 640 },
-    { x: 40, y: 980 },
-  ];
-  const OFFER = { x: 40, y: 24, w: 1040, h: 176 };
+  const CARD_W = 260;
+  const CARD_H = 150;
+  const GAP_X = 40;
+  const GAP_Y = 36;
+  const START_X = 40;
+  const START_Y = 240;
+  const COLS = 3;
 
-  const edges = [
-    { from: [OFFER.x + OFFER.w / 2, OFFER.y + OFFER.h], to: [positions[0].x + BOX_W / 2, positions[0].y] },
-    { from: [positions[0].x + BOX_W, positions[0].y + BOX_H / 2], to: [positions[1].x, positions[1].y + BOX_H / 2] },
-    { from: [positions[1].x + BOX_W, positions[1].y + BOX_H / 2], to: [positions[2].x, positions[2].y + BOX_H / 2] },
-    { from: [positions[2].x + BOX_W / 2, positions[2].y + BOX_H], to: [positions[3].x + BOX_W / 2, positions[3].y] },
-    { from: [positions[3].x, positions[3].y + BOX_H / 2], to: [positions[4].x + BOX_W, positions[4].y + BOX_H / 2] },
-    { from: [positions[4].x, positions[4].y + BOX_H / 2], to: [positions[5].x + BOX_W, positions[5].y + BOX_H / 2] },
-    { from: [positions[5].x + BOX_W / 2, positions[5].y + BOX_H], to: [positions[6].x + BOX_W / 2, positions[6].y] },
-  ];
-  const stoneColor =
-    statuses[2] === "active" || statuses[2] === "completed" ? { fill: "#2f5d46", text: "#dbe9e2" } : { fill: "#e9e2d9", text: "#7a746b" };
+  const positions = blueprintCards.map((_, i) => {
+    const col = i % COLS;
+    const row = Math.floor(i / COLS);
+    return {
+      x: START_X + col * (CARD_W + GAP_X),
+      y: START_Y + row * (CARD_H + GAP_Y),
+    };
+  });
+
+  const boardW = START_X * 2 + COLS * CARD_W + (COLS - 1) * GAP_X;
+  const totalRows = Math.ceil(blueprintCards.length / COLS);
+  const boardH = START_Y + totalRows * CARD_H + (totalRows - 1) * GAP_Y + 120;
+
+  const edges: { from: [number, number]; to: [number, number] }[] = [];
+  for (let i = 0; i < blueprintCards.length; i++) {
+    const col = i % COLS;
+    const row = Math.floor(i / COLS);
+    const p = positions[i];
+    if (col < COLS - 1 && i + 1 < blueprintCards.length) {
+      edges.push({
+        from: [p.x + CARD_W, p.y + CARD_H / 2],
+        to: [positions[i + 1].x, positions[i + 1].y + CARD_H / 2],
+      });
+    }
+    const below = i + COLS;
+    if (below < blueprintCards.length) {
+      const colBelow = below % COLS;
+      const rowBelow = Math.floor(below / COLS);
+      if (rowBelow === row + 1 && colBelow === col) {
+        edges.push({
+          from: [p.x + CARD_W / 2, p.y + CARD_H],
+          to: [positions[below].x + CARD_W / 2, positions[below].y],
+        });
+      }
+    }
+  }
 
   const onPointerDown = (e: React.PointerEvent) => {
     if (e.button !== 0) return;
@@ -444,9 +579,6 @@ function PlanView({
     dragRef.current = null;
     setGrabbing(false);
   };
-
-  const boardW = 1120;
-  const boardH = 1180;
 
   return (
     <div
@@ -506,34 +638,10 @@ function PlanView({
           className="relative"
           style={{ width: boardW, height: boardH, transform: `scale(${scale})`, transformOrigin: "center" }}
         >
-          {/* Connectors */}
-          <svg className="absolute inset-0 w-full h-full pointer-events-none" width={boardW} height={boardH}>
-            <defs>
-              <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-                <path d="M0,0L10,5L0,10Z" fill="#b9b0a4" />
-              </marker>
-            </defs>
-            {edges.map((e, i) => {
-              const [x1, y1] = e.from;
-              const [x2, y2] = e.to;
-              const mid = statuses[i] === "active" || statuses[i] === "completed";
-              return (
-                <line
-                  key={i}
-                  x1={x1} y1={y1} x2={x2} y2={y2}
-                  stroke={mid ? "#2f5d46" : "#c8bfb2"}
-                  strokeWidth={mid ? 2.5 : 2}
-                  strokeDasharray={mid && i !== 0 ? "6 5" : "0"}
-                  markerEnd="url(#arrow)"
-                />
-              );
-            })}
-          </svg>
-
-          {/* Offer card */}
+          {/* Header */}
           <div
             className="absolute rounded-2xl border border-line bg-paper shadow-sm flex items-center justify-between gap-6 px-6"
-            style={{ left: OFFER.x, top: OFFER.y, width: OFFER.w, height: OFFER.h }}
+            style={{ left: 0, top: 0, width: boardW, height: 190 }}
           >
             <div className="min-w-0">
               <div className="flex items-center gap-2">
@@ -567,76 +675,73 @@ function PlanView({
             </div>
           </div>
 
-          {/* Phase boxes */}
-          {phases.map((phase, i) => {
-            const status = statuses[i];
+          {/* Arrow from header down to first card row */}
+          <svg className="absolute inset-0 w-full h-full pointer-events-none" width={boardW} height={boardH}>
+            <defs>
+              <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M0,0L10,5L0,10Z" fill="#b9b0a4" />
+              </marker>
+            </defs>
+            <line
+              x1={boardW / 2} y1={190}
+              x2={positions[0].x + CARD_W / 2} y2={positions[0].y}
+              stroke="#c8bfb2" strokeWidth={2} markerEnd="url(#arrow)"
+            />
+            {edges.map((e, i) => {
+              const [x1, y1] = e.from;
+              const [x2, y2] = e.to;
+              return (
+                <line
+                  key={i}
+                  x1={x1} y1={y1} x2={x2} y2={y2}
+                  stroke="#c8bfb2" strokeWidth={2}
+                  markerEnd="url(#arrow)"
+                />
+              );
+            })}
+          </svg>
+
+          {/* Blueprint cards */}
+          {blueprintCards.map((card, i) => {
             const p = positions[i];
-            const pct = status === "completed" ? 100 : status === "active" ? 25 : 0;
-            const locked = status === "locked";
+            const Icon = card.icon;
             return (
               <div
-                key={phase.id}
-                className={`absolute rounded-2xl border shadow-sm overflow-hidden text-left ${
-                  status === "active"
-                    ? "border-signal ring-2 ring-signal/15"
-                    : status === "completed"
-                      ? "border-moss/30"
-                      : "border-line"
-                } ${locked ? "bg-mist/60" : "bg-paper"}`}
-                style={{ left: p.x, top: p.y, width: BOX_W, height: BOX_H }}
+                key={card.id}
+                className="absolute rounded-2xl border shadow-sm overflow-hidden text-left bg-mist/40 opacity-50 pointer-events-none"
+                style={{
+                  left: p.x,
+                  top: p.y,
+                  width: CARD_W,
+                  height: CARD_H,
+                  borderColor: "var(--color-line)",
+                }}
               >
-                <div className={`h-1.5 w-full ${status === "completed" ? "bg-moss" : status === "active" ? "bg-signal" : "bg-mist"}`} />
-                <div className="px-5 py-4">
-                  <div className="flex items-center justify-between gap-2">
-                    <p className={`font-mono text-[9.5px] uppercase tracking-[0.2em] font-semibold ${
-                      locked ? "text-ink-soft/50" : status === "active" ? "text-signal" : "text-moss"
-                    }`}>
-                      Phase {phase.number}
-                    </p>
-                    <span className={`shrink-0 text-[9.5px] font-bold uppercase tracking-wide ${
-                      status === "completed" ? "text-moss" : status === "active" ? "text-signal" : "text-ink-soft/50"
-                    }`}>
-                      {status === "completed" ? "Done" : status === "active" ? "Active" : "Locked"}
+                <div className="h-1.5 w-full bg-mist" />
+                <div className="px-4 py-3.5">
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 bg-mist text-ink-soft/40">
+                      <Icon className="w-3.5 h-3.5" />
                     </span>
+                    <div className="min-w-0">
+                      <p className="text-[12px] font-extrabold tracking-[-0.01em] text-ink-soft/50">
+                        {card.title}
+                      </p>
+                      <p className="text-[10px] text-ink-soft/40 leading-tight mt-0.5 truncate">
+                        {card.description}
+                      </p>
+                    </div>
                   </div>
-                  <p className={`mt-1 text-[15px] font-extrabold tracking-[-0.02em] leading-tight ${
-                    locked ? "text-ink-soft/60" : "text-ink"
-                  }`}>
-                    {phase.title}
-                  </p>
-                  <div className="mt-2.5 h-1.5 rounded-full bg-mist overflow-hidden">
-                    <div
-                      className={`h-full rounded-full transition-all duration-700 ${
-                        status === "completed" ? "bg-moss" : status === "active" ? "bg-signal" : "bg-mist/40"
-                      }`}
-                      style={{ width: `${pct}%` }}
-                    />
-                  </div>
-                  <div className="mt-3 flex flex-wrap gap-1.5">
-                    {phase.subPhases.slice(0, 3).map((sp) => (
-                      <span
-                        key={sp.id}
-                        className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${
-                          locked ? "bg-mist text-ink-soft/50" : "bg-cream text-ink border border-line"
-                        }`}
-                      >
-                        {sp.title}
-                      </span>
-                    ))}
+                  <div className="mt-3 rounded-lg border border-dashed border-line bg-paper/60 px-3 py-2.5 flex items-center gap-2">
+                    <Lock className="w-3 h-3 text-ink-soft/30 shrink-0" />
+                    <p className="text-[11px] text-ink-soft/40 italic">
+                      No data yet — chat with your AI coach to fill this in
+                    </p>
                   </div>
                 </div>
               </div>
             );
           })}
-
-          {/* Results note */}
-          <div
-            className="absolute rounded-xl px-4 py-3 text-ink font-bold shadow-sm flex items-center gap-2.5"
-            style={{ left: 430, top: 830, background: stoneColor.fill, color: stoneColor.text }}
-          >
-            <Rocket className="w-4 h-4" />
-            {stoneColor.fill === "#2f5d46" ? "Launching soon — Offer ready to ship" : "Finish the roadmap to launch"}
-          </div>
         </div>
       </div>
     </div>

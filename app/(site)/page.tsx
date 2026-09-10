@@ -90,82 +90,6 @@ const features = [
 ];
 
 /* ============================================================
-   HOW IT WORKS — step visuals
-   ============================================================ */
-function StepVisual({ step }: { step: number }) {
-  if (step === 1) {
-    return (
-      <div className="rounded-xl border border-line bg-paper overflow-hidden mt-4">
-        <div className="p-4 flex items-center gap-2.5">
-          <span className="w-9 h-9 rounded-full bg-signal/15 text-signal-dark flex items-center justify-center shrink-0">
-            <Target className="w-4 h-4" />
-          </span>
-          <div>
-            <p className="text-[13px] font-bold text-ink leading-tight">Market scan complete</p>
-            <p className="text-[10.5px] text-ink-soft">3 validated opportunities found in your niche.</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-  if (step === 2) {
-    return (
-      <div className="rounded-xl border border-line bg-paper overflow-hidden mt-4">
-        <div className="px-4 pt-3.5 text-[10px] font-mono uppercase tracking-wide text-ink-soft">AI generated your offer</div>
-        <div className="p-4 pt-2 space-y-2">
-          {[
-            ["Service", "Logo Design Package"],
-            ["Positioning", "For early-stage startups"],
-            ["Price point", "$200/logo"],
-          ].map(([k, v]) => (
-            <div key={k} className="flex items-center justify-between border-b border-line pb-1.5 last:border-0 last:pb-0">
-              <span className="text-[11px] text-ink-soft">{k}</span>
-              <span className="text-[11px] font-semibold text-ink">{v}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  }
-  if (step === 3) {
-    return (
-      <div className="rounded-xl border border-line bg-paper overflow-hidden mt-4">
-        <div className="flex items-center justify-between px-4 py-2.5 bg-mist/50">
-          <span className="text-[10px] font-mono uppercase tracking-wide text-ink-soft">Today&apos;s tasks</span>
-          <span className="inline-flex items-center gap-1 text-[9px] font-bold text-white bg-signal rounded-full px-2 py-0.5 uppercase">
-            <Zap className="w-2.5 h-2.5" /> 5 tasks
-          </span>
-        </div>
-        <div className="p-3.5 space-y-2">
-          {["Post a Reel about your service", "DM 5 potential clients", "Update portfolio with new mockup"].map((t, i) => (
-            <div key={i} className="flex items-center gap-2.5 rounded-lg border border-line bg-cream px-3 py-2">
-              <span className={`w-4 h-4 shrink-0 rounded-full border-2 flex items-center justify-center ${i < 1 ? "border-moss bg-moss" : "border-line"}`}>
-                {i < 1 && <Check className="w-2.5 h-2.5 text-white" />}
-              </span>
-              <span className={`text-[11.5px] ${i < 1 ? "text-ink-soft line-through" : "text-ink"}`}>{t}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  }
-  return (
-    <div className="rounded-xl border border-line bg-paper overflow-hidden mt-4">
-      <div className="flex items-center justify-between px-4 py-2.5 bg-mist/50">
-        <span className="text-[10px] font-mono uppercase tracking-wide text-ink-soft">Revenue tracker</span>
-        <span className="inline-flex items-center gap-1 text-[9px] font-bold text-white bg-moss rounded-full px-2 py-1 uppercase">
-          <TrendingUp className="w-2.5 h-2.5" /> Growing
-        </span>
-      </div>
-      <div className="px-4 py-3.5">
-        <p className="text-[13px] font-bold text-ink">Month 1: $450 → Month 3: $2,100</p>
-        <p className="text-[11px] text-ink-soft mt-0.5">Your side hustle is gaining traction.</p>
-      </div>
-    </div>
-  );
-}
-
-/* ============================================================
    FAQ
    ============================================================ */
 const faqs = [
@@ -192,6 +116,10 @@ const faqs = [
   {
     q: "Can I cancel anytime?",
     a: "Yes. Plans can be cancelled anytime, no contracts. Annual plans are billed once per year at the discounted rate.",
+  },
+  {
+    q: "Why not just use ChatGPT?",
+    a: "ChatGPT gives you generic advice. Valix tracks your progress through structured phases, remembers your specific business context, generates a visual blueprint, assigns daily tasks, and holds you accountable — things a plain chatbot can't do.",
   },
 ];
 
@@ -245,23 +173,17 @@ export default function Home() {
             </div>
 
             <h1 className="mt-7 text-[40px] sm:text-5xl md:text-[58px] lg:text-[64px] font-extrabold tracking-[-0.03em] leading-[1.04] text-ink max-w-4xl mx-auto">
-              Find and start your <span className="text-signal">perfect online AI side hustle.</span>
+              Find and start an <span className="text-signal">online side hustle that makes money.</span>
             </h1>
 
             <p className="mt-6 text-[17px] sm:text-lg leading-relaxed text-ink-soft max-w-3xl mx-auto">
-              AI guides you from zero to income through validated phases — market research, offer design,
-              pricing, content planning, and daily tasks. So{" "}
-              <span className="font-semibold text-ink">you know exactly what to do next.</span>
+              Trying to make money online but still stuck in research mode? Valix AI helps you finally
+              start your side hustle — from finding the right market and creating your offer to pricing,
+              content, and daily action steps. No more endless research. Just know what to do next.
             </p>
 
             <div className="mt-9 flex flex-col sm:flex-row items-center justify-center gap-3">
               <PrimaryCTA onClick={handleCTA} />
-              <a
-                href="#how-it-works"
-                className="inline-flex items-center justify-center gap-2 px-9 py-4 rounded-full border border-line bg-paper text-ink text-[15px] font-semibold hover:border-ink/30 transition-colors"
-              >
-                See how it works
-              </a>
             </div>
 
             <div className="mt-7 flex items-center justify-center gap-5 flex-wrap text-[13px] text-ink-soft">
@@ -393,49 +315,6 @@ export default function Home() {
                 <div className="mt-auto pt-3">
                   <p className={`rounded-lg border px-3 py-2 text-[11.5px] font-medium ${f.tone === "ink" ? "bg-white/10 border-white/10 text-white/80" : "bg-paper/70 border-line text-ink-soft"}`}>{f.example}</p>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ============ HOW IT WORKS ============ */}
-      <section id="how-it-works" className="py-20 md:py-28">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto">
-            <div className="flex items-center justify-center gap-3">
-              <span className="h-px w-8 bg-signal" />
-              <Eyebrow>How it works</Eyebrow>
-              <span className="h-px w-8 bg-signal" />
-            </div>
-            <h2 className="mt-5 text-3xl sm:text-4xl lg:text-[44px] font-extrabold tracking-[-0.03em] leading-[1.05] text-ink">
-              From idea to income in 4 phases.
-            </h2>
-          </div>
-
-          {/* Timeline */}
-          <div className="mt-12 flex flex-wrap items-center justify-center gap-2 text-[12px] font-mono uppercase tracking-wide text-ink-soft">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-line bg-cream px-3 py-1.5"><Target className="w-3.5 h-3.5 text-signal-dark" /> Validate</span>
-            <span className="text-ink-soft/40">↓</span>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-line bg-cream px-3 py-1.5"><Palette className="w-3.5 h-3.5 text-signal-dark" /> Design offer</span>
-            <span className="text-ink-soft/40">↓</span>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-line bg-cream px-3 py-1.5"><BarChart3 className="w-3.5 h-3.5 text-signal-dark" /> Set pricing</span>
-            <span className="text-ink-soft/40">↓</span>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-signal bg-signal-soft px-3 py-1.5 font-bold text-signal-dark"><Zap className="w-3.5 h-3.5" /> Launch & grow</span>
-          </div>
-
-          <div className="mt-14 grid md:grid-cols-4 gap-6">
-            {[
-              { n: "Phase 1", title: "Validate", desc: "AI researches your niche and confirms there are real customers willing to pay." },
-              { n: "Phase 2", title: "Design your offer", desc: "AI crafts your service or product offer with positioning and differentiation." },
-              { n: "Phase 3", title: "Set your pricing", desc: "Data-driven pricing based on market rates, competitor analysis, and value." },
-              { n: "Phase 4", title: "Launch & grow", desc: "Content plans, daily tasks, and growth tracking to get your first paying customers." },
-            ].map((step, i) => (
-              <div key={step.n} className="rounded-2xl border border-line bg-cream p-6">
-                <span className="font-mono text-[11px] text-ink-soft/60">{step.n}</span>
-                <h3 className="mt-3 text-lg font-bold tracking-tight text-ink">{step.title}</h3>
-                <p className="mt-2 text-[14px] leading-relaxed text-ink-soft">{step.desc}</p>
-                <StepVisual step={i + 1} />
               </div>
             ))}
           </div>
