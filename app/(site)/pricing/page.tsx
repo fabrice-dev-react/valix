@@ -64,7 +64,7 @@ export default function PricingPage() {
               One plan. Everything included.
             </h1>
             <p className="mt-5 text-[15px] sm:text-base text-ink-soft max-w-xl mx-auto">
-              One sale pays for the entire year. Upgrade now to unlock unlimited AI coaching,
+              One sale pays for the entire year. Upgrade now to unlock unlimited AI guidance,
               market research, offer design, and your full side-hustle roadmap.
             </p>
           </div>

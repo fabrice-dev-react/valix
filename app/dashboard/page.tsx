@@ -735,7 +735,7 @@ function PlanView({
                   <div className="mt-3 rounded-lg border border-dashed border-line bg-paper/60 px-3 py-2.5 flex items-center gap-2">
                     <Lock className="w-3 h-3 text-ink-soft/30 shrink-0" />
                     <p className="text-[11px] text-ink-soft/40 italic">
-                      No data yet — chat with your AI coach to fill this in
+                      No data yet — chat with your AI guide to fill this in
                     </p>
                   </div>
                 </div>
@@ -863,7 +863,7 @@ export default function DashboardPage() {
       });
       if (!res.ok || !res.body) {
         const data = await res.json().catch(() => ({}));
-        const text = data?.text || "Sorry — I couldn't reach the coach.";
+        const text = data?.text || "Sorry — I couldn't reach the guide.";
         applyAiText(isWelcome, text, !!data?.unpaid);
         if (data?.fallback) setFallbackMode(true);
         return { text, unpaid: !!data?.unpaid };
@@ -1129,7 +1129,7 @@ export default function DashboardPage() {
                       Serious side hustlers don&rsquo;t hesitate over pizza-priced decisions.
                     </h2>
                     <p className="mt-3 text-[14px] leading-relaxed text-ink-soft max-w-md mx-auto">
-                      Upgrade for less than a pizza and get unlimited AI coaching, market research,
+                      Upgrade for less than a pizza and get unlimited AI guideing, market research,
                       offer design, and a daily blueprint — on autopilot.
                     </p>
                   </div>
@@ -1160,7 +1160,7 @@ export default function DashboardPage() {
                     className="flex-1 flex items-center gap-2.5 rounded-full border border-line bg-paper px-5 py-3 text-[14px] text-ink-soft/60 select-none cursor-pointer hover:border-signal/40 transition-all"
                   >
                     <Lock className="w-3.5 h-3.5 text-signal" />
-                    Upgrade to chat with your AI coach
+                    Upgrade to chat with your AI guide
                   </div>
                   <button
                     onClick={startCheckout}
@@ -1178,7 +1178,7 @@ export default function DashboardPage() {
               {fallbackMode && (
                 <div className="mx-auto w-full max-w-[80%] mb-3 flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3.5 py-2 text-[12px] text-amber-800">
                   <span className="shrink-0 w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-                  Coach is in fallback mode — add OpenRouter credits to enable live AI replies.
+                  Guide is in fallback mode — add OpenRouter credits to enable live AI replies.
                 </div>
               )}
               {/* Scroll area: full panel width → scrollbar hugs the far right edge */}
@@ -1193,9 +1193,9 @@ export default function DashboardPage() {
                       <div className="w-12 h-12 rounded-2xl bg-signal-soft text-signal flex items-center justify-center">
                         <MessageSquare className="w-5 h-5" />
                       </div>
-                      <p className="mt-4 text-[14px] font-semibold text-ink">Chat with your AI coach</p>
+                      <p className="mt-4 text-[14px] font-semibold text-ink">Chat with your AI guide</p>
                       <p className="mt-1.5 text-[12.5px] text-ink-soft max-w-xs leading-relaxed">
-                        Ask anything — your AI coach answers here, and every blueprint you build
+                        Ask anything — your AI guide answers here, and every blueprint you build
                         shows up in the Blueprint tab.
                       </p>
                     </div>
@@ -1222,7 +1222,7 @@ export default function DashboardPage() {
                     value={chatInput}
                     onChange={(e) => setChatInput(e.target.value)}
                     onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
-                    placeholder="Ask your AI coach anything..."
+                    placeholder="Ask your AI guide anything..."
                     className="flex-1 rounded-full border border-line bg-paper px-5 py-3 text-[14px] text-ink placeholder:text-ink-soft/40 focus:outline-none focus:ring-2 focus:ring-signal/20 focus:border-signal transition-all"
                   />
                   <button

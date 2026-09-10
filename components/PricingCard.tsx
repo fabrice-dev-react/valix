@@ -10,7 +10,7 @@ export const plans = [
     annualTotal: 228,
     tagline: "Everything you need to build and grow your AI side hustle — no add-ons, no tiers.",
     features: [
-      "Unlimited AI business coaching",
+      "Unlimited AI business guidance",
       "Market validation & research",
       "Offer & pricing design",
       "Content planning engine",
