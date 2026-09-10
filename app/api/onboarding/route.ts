@@ -45,6 +45,7 @@ export async function GET() {
     const profile: Record<string, unknown> = {
       onboardingCompleted: user.onboardingCompleted || false,
       onboardingStep: user.onboardingStep ?? 0,
+      hasPaid: user.hasPaid || false,
     };
     for (const f of PROFILE_FIELDS) {
       profile[f] = user[f] ?? (f === "services" ? [] : undefined);

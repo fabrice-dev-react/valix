@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { useLogin } from "@/components/LoginContext";
+import { PricingCard } from "@/components/PricingCard";
 import {
   ArrowRight,
   BarChart3,
@@ -163,30 +164,6 @@ function StepVisual({ step }: { step: number }) {
     </div>
   );
 }
-
-/* ============================================================
-   PRICING
-   ============================================================ */
-const plans = [
-  {
-    name: "Everything included",
-    price: 8,
-    oldPrice: 19,
-    annualTotal: 96,
-    tagline: "Everything you need to build and grow your AI side hustle — no add-ons, no tiers.",
-    features: [
-      "Unlimited AI business coaching",
-      "Market validation & research",
-      "Offer & pricing design",
-      "Content planning engine",
-      "Daily action task lists",
-      "Revenue & growth tracking",
-      "All business phases included",
-      "Priority email support",
-    ],
-    highlight: true,
-  },
-];
 
 /* ============================================================
    FAQ
@@ -483,65 +460,7 @@ export default function Home() {
           </div>
 
           <div className="mt-14 flex justify-center">
-            {plans.map((plan) => (
-              <div
-                key={plan.name}
-                className={`relative flex flex-col rounded-3xl border p-8 w-full max-w-3xl ${
-                  plan.highlight
-                    ? "bg-ink text-white border-ink shadow-[0_32px_64px_-24px_rgba(22,19,17,0.5)]"
-                    : "bg-paper border-line"
-                }`}
-              >
-                {plan.highlight && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-signal text-white text-[11px] font-bold uppercase tracking-wide px-3 py-1 rounded-full">
-                    Limited offer — 58% off
-                  </span>
-                )}
-                <div className="flex items-center justify-between">
-                  <h3 className={`text-lg font-bold ${plan.highlight ? "text-white" : "text-ink"}`}>{plan.name}</h3>
-                  {plan.highlight && <Zap className="w-4 h-4 text-signal" />}
-                </div>
-                <p className={`mt-2 text-[13px] leading-relaxed ${plan.highlight ? "text-white/60" : "text-ink-soft"}`}>
-                  {plan.tagline}
-                </p>
-                <div className="mt-5 flex items-baseline gap-3">
-                  <span className={`text-[46px] font-extrabold tracking-tight leading-none ${plan.highlight ? "text-white" : "text-ink"}`}>
-                    ${plan.price}
-                  </span>
-                  <span className={`text-sm ${plan.highlight ? "text-white/50" : "text-ink-soft"}`}>/month</span>
-                  <span className={`text-[13px] line-through ${plan.highlight ? "text-white/30" : "text-ink-soft/50"}`}>
-                    ${plan.oldPrice}/mo
-                  </span>
-                </div>
-                <p className={`mt-1 text-xs ${plan.highlight ? "text-white/50" : "text-ink-soft/80"}`}>
-                  Billed annually at ${plan.annualTotal}/year · cancel anytime
-                </p>
-
-                <ul className="mt-7 space-y-3 flex-1 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:gap-y-3">
-                  {plan.features.map((f) => (
-                    <li key={f} className="flex items-start gap-3">
-                      <span className={`mt-0.5 w-4 h-4 shrink-0 rounded-full flex items-center justify-center ${
-                        plan.highlight ? "bg-signal/20" : "bg-moss/15"
-                      }`}>
-                        <Check className={`w-3 h-3 ${plan.highlight ? "text-signal" : "text-moss"}`} />
-                      </span>
-                      <span className={`text-[14px] ${plan.highlight ? "text-white/90" : "text-ink"}`}>{f}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <button
-                  onClick={handleCTA}
-                  className={`mt-8 w-full py-3.5 rounded-full text-[14px] font-semibold transition-all duration-200 active:scale-[0.99] ${
-                    plan.highlight
-                      ? "bg-signal text-white hover:bg-signal-dark"
-                      : "bg-ink text-white hover:bg-black"
-                  }`}
-                >
-                  Start my side hustle — ${plan.price}/mo
-                </button>
-              </div>
-            ))}
+            <PricingCard onUpgrade={handleCTA} />
           </div>
 
           <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-[13px] text-ink-soft">

@@ -4,6 +4,7 @@ import { getToken } from "next-auth/jwt";
 
 const PUBLIC_PATHS = [
   "/",
+  "/pricing",
   "/admin",
   "/privacy",
   "/terms",

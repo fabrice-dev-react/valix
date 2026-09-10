@@ -1,8 +1,10 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { signOut, useSession } from "next-auth/react";
+import ReactMarkdown, { Components } from "react-markdown";
 import Link from "next/link";
+import { PricingCard } from "@/components/PricingCard";
 import {
   ArrowRight,
   Check,
@@ -15,6 +17,7 @@ import {
   Crown,
   Gem,
   Key,
+  Loader2,
   Lock,
   LogOut,
   MessageSquare,
@@ -282,37 +285,56 @@ function PhaseItem({
 /* ============================================================
    AI CHAT
    ============================================================ */
-const sampleMessages = [
-  {
-    from: "ai" as const,
-    text: "Hey! Welcome to your side hustle dashboard. I've analyzed your onboarding answers and I'm ready to help you get started.",
-  },
-  {
-    from: "ai" as const,
-    text: "Based on your profile, you're looking to build something with the skills you already have. Let's start with Phase 1: Self Discovery — this will help us nail down exactly what you should pursue.",
-  },
-  {
-    from: "user" as const,
-    text: "Sounds good! I'm ready to start.",
-  },
-  {
-    from: "ai" as const,
-    text: "Perfect. First, let me ask — what's the one thing you're best at? Not what you think sounds impressive, but what do people actually come to you for help with?",
-  },
-];
-
-function ChatMessage({ msg, index }: { msg: { from: "ai" | "user"; text: string }; index: number }) {
+function ChatMessage({
+  msg,
+  index,
+}: {
+  msg: { from: "ai" | "user"; text: string; unpaid?: boolean };
+  index: number;
+}) {
   const isAi = msg.from === "ai";
   return (
     <div className={`flex ${isAi ? "justify-start" : "justify-end"} animate-[chatIn_0.3s_ease]`} style={{ animationDelay: `${index * 80}ms` }}>
       <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-[14px] leading-relaxed ${
         isAi ? "text-ink" : "bg-ink text-white rounded-br-md"
       }`}>
-        {msg.text}
+        {isAi ? (
+          msg.text ? (
+            <>
+              <ReactMarkdown components={markdownComponents}>{msg.text}</ReactMarkdown>
+              {msg.unpaid && (
+                <Link
+                  href="/pricing"
+                  className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-signal text-white text-[13px] font-semibold hover:bg-signal-dark transition-all duration-200 shadow-[0_4px_12px_-4px_rgba(255,77,47,0.4)]"
+                >
+                  <Crown className="w-3.5 h-3.5" />
+                  Upgrade now — $19/mo
+                </Link>
+              )}
+            </>
+          ) : (
+            <div className="flex gap-1.5 py-0.5">
+              <span className="w-2 h-2 rounded-full bg-ink-soft/30 animate-bounce" style={{ animationDelay: "0ms" }} />
+              <span className="w-2 h-2 rounded-full bg-ink-soft/30 animate-bounce" style={{ animationDelay: "150ms" }} />
+              <span className="w-2 h-2 rounded-full bg-ink-soft/30 animate-bounce" style={{ animationDelay: "300ms" }} />
+            </div>
+          )
+        ) : (
+          msg.text
+        )}
       </div>
     </div>
   );
 }
+
+const markdownComponents: Components = {
+  p: ({ node, ...props }) => <p {...props} className="my-0.5" />,
+  ul: ({ node, ...props }) => <ul {...props} className="list-disc pl-5 my-1 space-y-0.5" />,
+  ol: ({ node, ...props }) => <ol {...props} className="list-decimal pl-5 my-1 space-y-0.5" />,
+  a: ({ node, ...props }) => (
+    <a {...props} className="text-signal underline font-medium" target="_blank" rel="noreferrer" />
+  ),
+};
 
 /* ============================================================
    PROGRESS RING
@@ -347,28 +369,39 @@ function ProgressRing({ value }: { value: number }) {
 /* ============================================================
    PLAN VIEW
    ============================================================ */
+interface PlanData {
+  offer: string;
+  incomeGoal: string;
+  timeCommitment: string;
+  startupCapital: string;
+  skills: string[];
+  interests: string[];
+}
+
 function PlanView({
   phases,
   statuses,
   overallProgress,
+  plan = null,
 }: {
   phases: Phase[];
   statuses: ("completed" | "active" | "locked")[];
   overallProgress: number;
+  plan?: PlanData | null;
 }) {
-  const plan = {
-    offer: "Content creation & freelance writing",
-    incomeGoal: "$1,000 – $3,000",
-    timeCommitment: "5 – 15 hrs",
-    startupCapital: "$100 – $500",
-    skills: ["Writing", "Social Media"],
-    interests: ["Content Creation", "AI & Automation"],
-  };
-
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [scale, setScale] = useState(0.85);
   const [grabbing, setGrabbing] = useState(false);
   const dragRef = useRef<{ startX: number; startY: number; originX: number; originY: number } | null>(null);
+
+  const planData = plan ?? {
+    offer: "No offer yet — build one in chat",
+    incomeGoal: "—",
+    timeCommitment: "—",
+    startupCapital: "—",
+    skills: [] as string[],
+    interests: [] as string[],
+  };
 
   const BOX_W = 320;
   const BOX_H = 168;
@@ -508,21 +541,21 @@ function PlanView({
                   <Target className="w-4 h-4" />
                 </span>
                 <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-signal-dark font-semibold">
-                  Your plan
+                  Your blueprint
                 </p>
               </div>
               <h2 className="mt-2.5 text-xl font-extrabold tracking-[-0.03em] text-ink leading-tight">
-                {plan.offer}
+                {planData.offer}
               </h2>
               <div className="mt-3 flex flex-wrap gap-2">
                 <span className="rounded-full bg-cream border border-line px-3 py-1 text-[11px] font-semibold text-ink">
-                  {plan.incomeGoal} / mo
+                  {planData.incomeGoal} / mo
                 </span>
                 <span className="rounded-full bg-cream border border-line px-3 py-1 text-[11px] font-semibold text-ink">
-                  {plan.timeCommitment} / wk
+                  {planData.timeCommitment} / wk
                 </span>
                 <span className="rounded-full bg-cream border border-line px-3 py-1 text-[11px] font-semibold text-ink">
-                  {plan.startupCapital}
+                  {planData.startupCapital}
                 </span>
               </div>
             </div>
@@ -613,10 +646,73 @@ export default function DashboardPage() {
   const { data: session } = useSession();
   const [expandedPhases, setExpandedPhases] = useState<Record<string, boolean>>({});
   const [chatInput, setChatInput] = useState("");
-  const [messages, setMessages] = useState(sampleMessages);
+  const [messages, setMessages] = useState<{ from: "ai" | "user"; text: string; unpaid?: boolean }[]>([]);
   const [sending, setSending] = useState(false);
   const [viewMode, setViewMode] = useState<"chat" | "plan">("chat");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [fallbackMode, setFallbackMode] = useState(false);
+  const [userName, setUserName] = useState<string | null>(null);
+  const [hasPaid, setHasPaid] = useState(true);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const chatScrollRef = useRef<HTMLDivElement>(null);
+  const historyLoadedRef = useRef(false);
+
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      try {
+        const res = await fetch("/api/onboarding");
+        const data = await res.json();
+        if (!active) return;
+        const bn = data?.profile?.businessName;
+        if (typeof bn === "string" && bn.trim()) setUserName(bn.trim());
+        if (typeof data?.profile?.hasPaid === "boolean") setHasPaid(data.profile.hasPaid);
+      } catch {
+        // keep session name fallback
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const displayName = userName || session?.user?.name || "";
+  const greetingName = displayName.split(" ")[0] || "There";
+  const capitalizedGreeting = greetingName.charAt(0).toUpperCase() + greetingName.slice(1);
+
+  useEffect(() => {
+    if (historyLoadedRef.current) return;
+    historyLoadedRef.current = true;
+    (async () => {
+      setSending(true);
+      let loaded = false;
+      try {
+        const res = await fetch("/api/chat/history");
+        const data = await res.json();
+        const history: { role: string; content: string }[] = Array.isArray(data?.messages)
+          ? data.messages
+          : [];
+        if (history.length) {
+          setMessages(history.map((m) => ({ from: m.role === "user" ? "user" : "ai", text: m.content })));
+          loaded = true;
+        }
+      } catch {
+        // fall through to welcome
+      }
+      if (!loaded) {
+        const res = await ask([], true);
+        if (res.text) await saveMessages([{ role: "assistant", content: res.text }]);
+      }
+      setSending(false);
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    const el = chatScrollRef.current;
+    if (el) el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
+  }, [messages, sending]);
 
   const currentPhaseIndex = 0; // After onboarding, user is on phase 1
 
@@ -633,19 +729,140 @@ export default function DashboardPage() {
   const completedCount = phases.filter((_, i) => getPhaseStatus(i) === "completed").length;
   const overallProgress = Math.round((completedCount / phases.length) * 100);
 
-  const handleSend = () => {
+  const applyAiText = (isWelcome: boolean, text: string, unpaid = false) => {
+    if (isWelcome) setMessages([{ from: "ai", text, unpaid }]);
+    else setMessages((prev) => (prev.length ? [...prev.slice(0, -1), { from: "ai", text, unpaid }] : prev));
+  };
+
+  const saveMessages = async (msgs: { role: "user" | "assistant"; content: string }[]) => {
+    try {
+      await fetch("/api/chat/history", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: msgs }),
+      });
+    } catch {
+      // ignore save failures
+    }
+  };
+
+  const ask = async (
+    history: { role: "user" | "assistant"; content: string }[],
+    isWelcome = false
+  ): Promise<{ text: string; unpaid: boolean }> => {
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "text/event-stream" },
+        body: JSON.stringify({ messages: history }),
+      });
+      if (!res.ok || !res.body) {
+        const data = await res.json().catch(() => ({}));
+        const text = data?.text || "Sorry — I couldn't reach the coach.";
+        applyAiText(isWelcome, text, !!data?.unpaid);
+        if (data?.fallback) setFallbackMode(true);
+        return { text, unpaid: !!data?.unpaid };
+      }
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let acc = "";
+      let fallback = false;
+      let unpaid = false;
+      let buffer = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+
+        const events = buffer.split("\n\n");
+        buffer = events.pop() || "";
+
+        for (const raw of events) {
+          const line = raw.trim();
+          if (!line.startsWith("data:")) continue;
+          const payload = line.slice(5).trim();
+          if (!payload || payload === "[DONE]") continue;
+
+          try {
+            const json = JSON.parse(payload);
+            if (json.unpaid) unpaid = true;
+            if (typeof json.text === "string") {
+              acc += json.text;
+              applyAiText(isWelcome, acc, unpaid);
+            }
+            if (json.done) fallback = !!json.fallback;
+          } catch {
+            // ignore
+          }
+        }
+      }
+
+      if (!acc.trim()) {
+        const text = "Hmm, I didn't get a response. Mind trying again?";
+        applyAiText(isWelcome, text);
+        return { text, unpaid: false };
+      }
+      setFallbackMode(fallback);
+      return { text: acc.trim(), unpaid };
+    } catch {
+      const text = "Something went wrong on my end — please try again.";
+      applyAiText(isWelcome, text);
+      return { text, unpaid: false };
+    }
+  };
+
+  const startCheckout = async () => {
+    if (checkoutLoading) return;
+    setCheckoutLoading(true);
+    setCheckoutError(null);
+    try {
+      const res = await fetch("/api/payments/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await res.json().catch(() => ({}));
+
+      if (data.alreadyPaid) {
+        setHasPaid(true);
+        return;
+      }
+
+      if (!res.ok || !data.checkout_url) {
+        setCheckoutError(data?.error || "Something went wrong. Please try again.");
+        return;
+      }
+
+      window.location.href = data.checkout_url;
+    } catch {
+      setCheckoutError("Something went wrong. Please try again.");
+    } finally {
+      setCheckoutLoading(false);
+    }
+  };
+
+  const handleSend = async () => {
     if (!chatInput.trim() || sending) return;
     const userMsg = chatInput.trim();
+    const history = [...messages, { from: "user" as const, text: userMsg }].map((m) => ({
+      role: m.from === "user" ? ("user" as const) : ("assistant" as const),
+      content: m.text,
+    }));
+    setMessages((prev) => [...prev, { from: "user", text: userMsg }, { from: "ai", text: "", unpaid: false }]);
     setChatInput("");
-    setMessages((prev) => [...prev, { from: "user", text: userMsg }]);
     setSending(true);
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        { from: "ai", text: "That's a great starting point. Let me think about that and guide you to the next step..." },
-      ]);
+    try {
+      const { text, unpaid } = await ask(history);
+      if (text && !unpaid) {
+        await saveMessages([
+          { role: "user", content: userMsg },
+          { role: "assistant", content: text },
+        ]);
+      }
+    } finally {
       setSending(false);
-    }, 1200);
+    }
   };
 
   return (
@@ -678,7 +895,7 @@ export default function DashboardPage() {
               className="flex items-center gap-1.5 rounded-full p-1 pr-2 hover:bg-mist/70 transition-colors"
             >
               <span className="w-8 h-8 rounded-full bg-gradient-to-br from-[#ff9a7a] to-[#ff4d2f] text-white flex items-center justify-center text-[13px] font-bold">
-                {(session?.user?.name?.[0] || session?.user?.email?.[0] || "V").toUpperCase()}
+                {(displayName?.[0] || session?.user?.email?.[0] || "V").toUpperCase()}
               </span>
               <ChevronDown className={`w-3.5 h-3.5 text-ink-soft transition-transform duration-200 ${menuOpen ? "rotate-180" : ""}`} />
             </button>
@@ -727,7 +944,7 @@ export default function DashboardPage() {
         {/* Greeting */}
         <div className="px-5 pt-6 pb-4">
           <h1 className="text-[22px] font-extrabold tracking-[-0.025em] text-ink leading-[1.15]">
-            {session?.user?.name?.split(" ")[0] || "There"}, let&apos;s build your side hustle.
+            {capitalizedGreeting}, let&apos;s build your side hustle.
           </h1>
         </div>
 
@@ -786,55 +1003,134 @@ export default function DashboardPage() {
               }`}
             >
               <ClipboardList className="w-3.5 h-3.5" />
-              Plan
+              Blueprint
             </button>
           </div>
         </div>
 
         {viewMode === "chat" ? (
-          <div className="flex-1 flex flex-col min-h-0">
-            {/* Scroll area: full panel width → scrollbar hugs the far right edge */}
-            <div className="flex-1 overflow-y-auto min-h-0">
-              {/* Centered 80% column for messages, far away from the scrollbar */}
-              <div className="mx-auto w-full max-w-[80%] pt-7 pb-10 space-y-4">
-                {messages.map((msg, i) => (
-                  <ChatMessage key={i} msg={msg} index={i} />
-                ))}
-                {sending && (
-                  <div className="flex justify-start">
-                    <div className="px-4 py-3 rounded-2xl">
-                      <div className="flex gap-1.5">
-                        <span className="w-2 h-2 rounded-full bg-ink-soft/30 animate-bounce" style={{ animationDelay: "0ms" }} />
-                        <span className="w-2 h-2 rounded-full bg-ink-soft/30 animate-bounce" style={{ animationDelay: "150ms" }} />
-                        <span className="w-2 h-2 rounded-full bg-ink-soft/30 animate-bounce" style={{ animationDelay: "300ms" }} />
+          !hasPaid ? (
+            <div className="flex-1 flex flex-col min-h-0">
+              <div className="flex-1 min-h-0 overflow-y-auto">
+                <div className="mx-auto w-full max-w-2xl pt-8 pb-10">
+                  <div className="text-center">
+                    <span className="inline-flex items-center gap-2 rounded-full border border-line bg-paper px-4 py-1.5 shadow-sm">
+                      <Lock className="w-3 h-3 text-signal" />
+                      <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-signal-dark font-semibold">
+                        Built for real side hustlers
+                      </p>
+                    </span>
+                    <h2 className="mt-5 text-2xl sm:text-3xl font-extrabold tracking-[-0.025em] text-ink leading-[1.12]">
+                      Serious side hustlers don&rsquo;t hesitate over pizza-priced decisions.
+                    </h2>
+                    <p className="mt-3 text-[14px] leading-relaxed text-ink-soft max-w-md mx-auto">
+                      Upgrade for less than a pizza and get unlimited AI coaching, market research,
+                      offer design, and a daily blueprint — on autopilot.
+                    </p>
+                  </div>
+
+                  <div className="mt-8 flex justify-center">
+                    <PricingCard
+                      onUpgrade={startCheckout}
+                      ctaLabel={
+                        checkoutLoading
+                          ? "Redirecting to checkout…"
+                          : "Upgrade — $19/mo"
+                      }
+                      disabled={checkoutLoading}
+                    />
+                  </div>
+
+                  {checkoutError && (
+                    <p className="mt-5 text-center text-[13px] font-semibold text-signal">{checkoutError}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Locked chat affordance: mirrors the real input so users know chat = build with the AI */}
+              <div className="pt-3">
+                <div className="mx-auto w-full max-w-[80%] flex items-end gap-3">
+                  <div
+                    onClick={startCheckout}
+                    className="flex-1 flex items-center gap-2.5 rounded-full border border-line bg-paper px-5 py-3 text-[14px] text-ink-soft/60 select-none cursor-pointer hover:border-signal/40 transition-all"
+                  >
+                    <Lock className="w-3.5 h-3.5 text-signal" />
+                    Upgrade to chat with your AI coach
+                  </div>
+                  <button
+                    onClick={startCheckout}
+                    disabled={checkoutLoading}
+                    className="shrink-0 w-11 h-11 rounded-full bg-signal/70 text-white flex items-center justify-center hover:bg-signal transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-[0_4px_12px_-4px_rgba(255,77,47,0.4)]"
+                    title="Upgrade to chat"
+                  >
+                    <Lock className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="flex-1 flex flex-col min-h-0">
+              {fallbackMode && (
+                <div className="mx-auto w-full max-w-[80%] mb-3 flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3.5 py-2 text-[12px] text-amber-800">
+                  <span className="shrink-0 w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                  Coach is in fallback mode — add OpenRouter credits to enable live AI replies.
+                </div>
+              )}
+              {/* Scroll area: full panel width → scrollbar hugs the far right edge */}
+              <div ref={chatScrollRef} className="flex-1 overflow-y-auto min-h-0">
+                {/* Centered 80% column for messages, far away from the scrollbar */}
+                <div className="mx-auto w-full max-w-[80%] pt-7 pb-10 space-y-4">
+                  {messages.map((msg, i) => (
+                    <ChatMessage key={i} msg={msg} index={i} />
+                  ))}
+                  {messages.length === 0 && !sending && (
+                    <div className="flex flex-col items-center text-center pt-16">
+                      <div className="w-12 h-12 rounded-2xl bg-signal-soft text-signal flex items-center justify-center">
+                        <MessageSquare className="w-5 h-5" />
+                      </div>
+                      <p className="mt-4 text-[14px] font-semibold text-ink">Chat with your AI coach</p>
+                      <p className="mt-1.5 text-[12.5px] text-ink-soft max-w-xs leading-relaxed">
+                        Ask anything — your AI coach answers here, and every blueprint you build
+                        shows up in the Blueprint tab.
+                      </p>
+                    </div>
+                  )}
+                  {sending && messages.length === 0 && (
+                    <div className="flex justify-start">
+                      <div className="px-4 py-3 rounded-2xl">
+                        <div className="flex gap-1.5">
+                          <span className="w-2 h-2 rounded-full bg-ink-soft/30 animate-bounce" style={{ animationDelay: "0ms" }} />
+                          <span className="w-2 h-2 rounded-full bg-ink-soft/30 animate-bounce" style={{ animationDelay: "150ms" }} />
+                          <span className="w-2 h-2 rounded-full bg-ink-soft/30 animate-bounce" style={{ animationDelay: "300ms" }} />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
-            </div>
 
-            {/* Input: pinned at bottom, centered 80% */}
-            <div className="pt-3">
-              <div className="mx-auto w-full max-w-[80%] flex items-end gap-3">
-                <input
-                  type="text"
-                  value={chatInput}
-                  onChange={(e) => setChatInput(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
-                  placeholder="Ask your AI coach anything..."
-                  className="flex-1 rounded-full border border-line bg-paper px-5 py-3 text-[14px] text-ink placeholder:text-ink-soft/40 focus:outline-none focus:ring-2 focus:ring-signal/20 focus:border-signal transition-all"
-                />
-                <button
-                  onClick={handleSend}
-                  disabled={!chatInput.trim() || sending}
-                  className="shrink-0 w-11 h-11 rounded-full bg-signal text-white flex items-center justify-center hover:bg-signal-dark transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-[0_4px_12px_-4px_rgba(255,77,47,0.4)]"
-                >
-                  <Send className="w-4.5 h-4.5" />
-                </button>
+              {/* Input: pinned at bottom, centered 80% */}
+              <div className="pt-3">
+                <div className="mx-auto w-full max-w-[80%] flex items-end gap-3">
+                  <input
+                    type="text"
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
+                    placeholder="Ask your AI coach anything..."
+                    className="flex-1 rounded-full border border-line bg-paper px-5 py-3 text-[14px] text-ink placeholder:text-ink-soft/40 focus:outline-none focus:ring-2 focus:ring-signal/20 focus:border-signal transition-all"
+                  />
+                  <button
+                    onClick={handleSend}
+                    disabled={!chatInput.trim() || sending}
+                    className="shrink-0 w-11 h-11 rounded-full bg-signal text-white flex items-center justify-center hover:bg-signal-dark transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-[0_4px_12px_-4px_rgba(255,77,47,0.4)]"
+                  >
+                    <Send className="w-4.5 h-4.5" />
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
+          )
         ) : (
           <PlanView
             phases={phases}

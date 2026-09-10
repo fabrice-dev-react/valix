@@ -176,6 +176,10 @@ export default function OnboardingPage() {
         const data = await res.json();
         if (cancelled) return;
         const p = data.profile || {};
+        if (p.onboardingCompleted) {
+          router.push("/dashboard");
+          return;
+        }
         const sh = p.sideHustleProfile || {};
         const saved: Record<string, string | string[]> = {};
         if (p.businessName) saved.name = p.businessName;
@@ -528,7 +532,7 @@ export default function OnboardingPage() {
           <button
             onClick={handleBack}
             disabled={step === 0}
-            className="inline-flex items-center gap-2 text-[14px] font-semibold text-ink-soft hover:text-ink transition-colors disabled:opacity-0 disabled:pointer-events-none"
+            className="inline-flex items-center gap-2 text-[14px] font-semibold text-ink-soft hover:text-ink transition-colors disabled:text-ink-soft/40 disabled:cursor-not-allowed disabled:hover:text-ink-soft/40"
           >
             <ArrowLeft className="w-4 h-4" />
             Back

@@ -21,6 +21,7 @@ export async function getAuthenticatedUser() {
   return {
     ...user.toObject(),
     _id: user._id.toString(),
+    id: user._id.toString(),
   };
 }
 
