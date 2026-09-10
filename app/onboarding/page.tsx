@@ -7,57 +7,168 @@ import { useSession } from "next-auth/react";
 import {
   ArrowLeft,
   ArrowRight,
-  Building2,
-  Clock,
+  Check,
+  ChevronRight,
   Sparkles,
 } from "lucide-react";
 
-type Step = "business" | "details";
+interface Question {
+  id: string;
+  type: "text" | "single" | "multi";
+  label: string;
+  sub?: string;
+  placeholder?: string;
+  emoji?: string;
+  options?: { id: string; label: string; emoji?: string }[];
+  maxSelect?: number;
+}
 
-const businessTypes = [
-  "Home services",
-  "Medical / Dental",
-  "Legal",
-  "Salon / Spa",
-  "Auto services",
-  "Real estate",
-  "Restaurant",
-  "Fitness / Yoga",
-  "Contractor / Trades",
-  "Other",
-];
-
-const tones = [
-  { id: "professional", label: "Professional", desc: "Polished and trustworthy" },
-  { id: "friendly", label: "Friendly", desc: "Warm and conversational" },
-  { id: "concise", label: "Concise", desc: "Short and to the point" },
+const questions: Question[] = [
+  {
+    id: "name",
+    type: "text",
+    label: "What's your name?",
+    sub: "We'll use this to personalize your experience.",
+    placeholder: "Type your name...",
+    emoji: "👋",
+  },
+  {
+    id: "monthlyIncomeGoal",
+    type: "single",
+    label: "How much do you want to make per month?",
+    sub: "This helps us recommend side hustles that match your income expectations.",
+    emoji: "💰",
+    options: [
+      { id: "500-1000", label: "$500 – $1,000", emoji: "🌱" },
+      { id: "1000-3000", label: "$1,000 – $3,000", emoji: "🌿" },
+      { id: "3000-5000", label: "$3,000 – $5,000", emoji: "🌳" },
+      { id: "5000-10000", label: "$5,000 – $10,000", emoji: "🔥" },
+      { id: "10000+", label: "$10,000+", emoji: "🚀" },
+    ],
+  },
+  {
+    id: "weeklyTimeCommitment",
+    type: "single",
+    label: "How much time can you commit per week?",
+    sub: "Your available time determines which strategies work best for you.",
+    emoji: "⏰",
+    options: [
+      { id: "1-5", label: "1 – 5 hours", emoji: "☕" },
+      { id: "5-15", label: "5 – 15 hours", emoji: "📚" },
+      { id: "15-30", label: "15 – 30 hours", emoji: "💼" },
+      { id: "30-40", label: "30 – 40 hours", emoji: "🏗️" },
+      { id: "40+", label: "40+ hours", emoji: "⚡" },
+    ],
+  },
+  {
+    id: "startupCapital",
+    type: "single",
+    label: "How much can you invest to start?",
+    sub: "Some side hustles need zero investment, others benefit from a small budget. Both work.",
+    emoji: "🏦",
+    options: [
+      { id: "0", label: "Nothing — $0", emoji: "✨" },
+      { id: "1-100", label: "$1 – $100", emoji: "🪙" },
+      { id: "100-500", label: "$100 – $500", emoji: "💵" },
+      { id: "500-2000", label: "$500 – $2,000", emoji: "💰" },
+      { id: "2000+", label: "$2,000+", emoji: "🏦" },
+    ],
+  },
+  {
+    id: "skills",
+    type: "multi",
+    label: "What skills do you have?",
+    sub: "Your existing skills give you a head start. It's okay if you're starting from zero.",
+    emoji: "🎯",
+    maxSelect: 6,
+    options: [
+      { id: "writing", label: "Writing", emoji: "✍️" },
+      { id: "design", label: "Design", emoji: "🎨" },
+      { id: "video", label: "Video / Editing", emoji: "🎬" },
+      { id: "coding", label: "Coding / Tech", emoji: "💻" },
+      { id: "sales", label: "Sales / Marketing", emoji: "📣" },
+      { id: "teaching", label: "Teaching", emoji: "🎓" },
+      { id: "data", label: "Data / Analytics", emoji: "📊" },
+      { id: "social", label: "Social Media", emoji: "📱" },
+      { id: "none", label: "Starting from zero", emoji: "🌱" },
+    ],
+  },
+  {
+    id: "comfortableWithPeople",
+    type: "single",
+    label: "Are you comfortable talking to people?",
+    sub: "This helps us suggest side hustles that fit your communication style.",
+    emoji: "🗣️",
+    options: [
+      { id: "yes", label: "Yes, I enjoy it", emoji: "😊" },
+      { id: "somewhat", label: "Somewhat", emoji: "🤔" },
+      { id: "no", label: "Not really", emoji: "🎧" },
+    ],
+  },
+  {
+    id: "languages",
+    type: "multi",
+    label: "What languages do you speak?",
+    sub: "Speaking multiple languages opens up bigger markets and more opportunities.",
+    emoji: "🌍",
+    maxSelect: 5,
+    options: [
+      { id: "english", label: "English", emoji: "🇬🇧" },
+      { id: "spanish", label: "Spanish", emoji: "🇪🇸" },
+      { id: "french", label: "French", emoji: "🇫🇷" },
+      { id: "german", label: "German", emoji: "🇩🇪" },
+      { id: "portuguese", label: "Portuguese", emoji: "🇧🇷" },
+      { id: "arabic", label: "Arabic", emoji: "🇸🇦" },
+      { id: "hindi", label: "Hindi", emoji: "🇮🇳" },
+      { id: "mandarin", label: "Mandarin", emoji: "🇨🇳" },
+      { id: "japanese", label: "Japanese", emoji: "🇯🇵" },
+      { id: "korean", label: "Korean", emoji: "🇰🇷" },
+      { id: "other", label: "Other", emoji: "🌐" },
+    ],
+  },
+  {
+    id: "interests",
+    type: "multi",
+    label: "What interests you most?",
+    sub: "Pick up to 3. We'll find side hustles that align with what excites you.",
+    emoji: "✨",
+    maxSelect: 3,
+    options: [
+      { id: "ai-automation", label: "AI & Automation", emoji: "🤖" },
+      { id: "content-creation", label: "Content Creation", emoji: "🎥" },
+      { id: "ecommerce", label: "E-commerce", emoji: "🛒" },
+      { id: "freelancing", label: "Freelancing", emoji: "🤝" },
+      { id: "consulting", label: "Consulting / Coaching", emoji: "🧠" },
+      { id: "saas", label: "SaaS / Apps", emoji: "⚡" },
+      { id: "social-media", label: "Social Media", emoji: "📱" },
+      { id: "education", label: "Online Education", emoji: "📖" },
+    ],
+  },
 ];
 
 export default function OnboardingPage() {
   const router = useRouter();
   const { status } = useSession();
-  const [step, setStep] = useState<Step>("business");
   const [loaded, setLoaded] = useState(false);
-  const [saved, setSaved] = useState(true);
+  const [step, setStep] = useState(0);
+  const [answers, setAnswers] = useState<Record<string, string | string[]>>({});
+  const [textInput, setTextInput] = useState("");
+  const [multiSelects, setMultiSelects] = useState<Record<string, string[]>>({});
   const [saving, setSaving] = useState(false);
-  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [completing, setCompleting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [direction, setDirection] = useState<"next" | "back">("next");
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const [businessName, setBusinessName] = useState("");
-  const [businessType, setBusinessType] = useState("");
-  const [businessDescription, setBusinessDescription] = useState("");
-  const [open, setOpen] = useState("09:00");
-  const [close, setClose] = useState("17:00");
-  const [days, setDays] = useState<string[]>(["Mon", "Tue", "Wed", "Thu", "Fri"]);
-  const [aiTone, setAiTone] = useState("professional");
-  const [aiInstructions, setAiInstructions] = useState("");
+  const total = questions.length;
+  const current = questions[step];
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/?login=1");
-      return;
-    }
-    if (status !== "authenticated") return;
+    if (status === "unauthenticated") router.push("/?login=1");
+  }, [status, router]);
 
+  useEffect(() => {
+    if (status !== "authenticated") return;
     let cancelled = false;
     (async () => {
       try {
@@ -65,108 +176,155 @@ export default function OnboardingPage() {
         const data = await res.json();
         if (cancelled) return;
         const p = data.profile || {};
-        if (p.businessName) setBusinessName(p.businessName);
-        if (p.businessType) setBusinessType(p.businessType);
-        if (p.businessDescription) setBusinessDescription(p.businessDescription);
-        if (p.businessHours?.open) setOpen(p.businessHours.open);
-        if (p.businessHours?.close) setClose(p.businessHours.close);
-        if (Array.isArray(p.businessHours?.days) && p.businessHours.days.length)
-          setDays(p.businessHours.days);
-        if (p.aiTone) setAiTone(p.aiTone);
-        if (p.aiInstructions) setAiInstructions(p.aiInstructions);
-        const stepIndex = p.onboardingStep ?? 0;
-        setStep(stepIndex === 1 ? "details" : "business");
+        const sh = p.sideHustleProfile || {};
+        const saved: Record<string, string | string[]> = {};
+        if (p.businessName) saved.name = p.businessName;
+        if (sh.monthlyIncomeGoal) saved.monthlyIncomeGoal = sh.monthlyIncomeGoal;
+        if (sh.weeklyTimeCommitment) saved.weeklyTimeCommitment = sh.weeklyTimeCommitment;
+        if (sh.startupCapital) saved.startupCapital = sh.startupCapital;
+        if (Array.isArray(sh.skills) && sh.skills.length) saved.skills = sh.skills;
+        if (sh.comfortableWithPeople) saved.comfortableWithPeople = sh.comfortableWithPeople;
+        if (Array.isArray(sh.languages) && sh.languages.length) saved.languages = sh.languages;
+        if (Array.isArray(sh.interests) && sh.interests.length) saved.interests = sh.interests;
+
+        if (Object.keys(saved).length > 0) {
+          setAnswers(saved);
+          if (typeof saved.name === "string") setTextInput(saved.name);
+          if (Array.isArray(saved.skills)) setMultiSelects((p) => ({ ...p, skills: saved.skills as string[] }));
+          if (Array.isArray(saved.languages)) setMultiSelects((p) => ({ ...p, languages: saved.languages as string[] }));
+          if (Array.isArray(saved.interests)) setMultiSelects((p) => ({ ...p, interests: saved.interests as string[] }));
+          const firstUnanswered = questions.findIndex((q) => !Object.keys(saved).includes(q.id));
+          if (firstUnanswered > 0) setStep(firstUnanswered);
+        }
       } catch {
-        // ignore, start fresh
+        // fresh
       } finally {
         if (!cancelled) setLoaded(true);
       }
     })();
-    return () => {
-      cancelled = true;
-    };
-  }, [status, router]);
-
-  const persist = useCallback(
-    async (stepIndex: number, completed: boolean, partial?: Record<string, unknown>) => {
-      setSaving(true);
-      try {
-        await fetch("/api/onboarding", {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            onboardingStep: stepIndex,
-            onboardingCompleted: completed === true,
-            ...partial,
-          }),
-        });
-        setSaved(true);
-      } catch {
-        setSaved(false);
-      } finally {
-        setSaving(false);
-      }
-    },
-    []
-  );
-
-  const markDirty = useCallback(() => {
-    setSaved(false);
-  }, []);
-
-  const draft = useCallback((): Record<string, unknown> => {
-    return {
-      businessName,
-      businessType,
-      businessDescription,
-      businessHours: { open, close, days },
-      aiTone,
-      aiInstructions,
-    };
-  }, [businessName, businessType, businessDescription, open, close, days, aiTone, aiInstructions]);
-
-  const autoSave = useCallback(
-    (stepIndex: number) => {
-      if (saveTimer.current) clearTimeout(saveTimer.current);
-      saveTimer.current = setTimeout(() => {
-        persist(stepIndex, false, draft());
-      }, 900);
-    },
-    [persist, draft]
-  );
+    return () => { cancelled = true; };
+  }, [status]);
 
   useEffect(() => {
-    if (!loaded || saved) return;
-    if (step === "business") autoSave(0);
-    else autoSave(1);
-  }, [saved, loaded, step, draft, autoSave]);
+    if (current?.type === "text") {
+      setTimeout(() => inputRef.current?.focus(), 350);
+    }
+  }, [step, current]);
 
-  const toggleDay = (d: string) => {
-    setDays((prev) => (prev.includes(d) ? prev.filter((x) => x !== d) : [...prev, d]));
-    markDirty();
+  const canProceed = () => {
+    if (!current) return false;
+    if (current.type === "text") return textInput.trim().length > 0;
+    if (current.type === "single") return !!answers[current.id];
+    if (current.type === "multi") return (multiSelects[current.id] || []).length > 0;
+    return false;
   };
 
-  const stepOrder: Step[] = ["business", "details"];
-  const currentIndex = stepOrder.indexOf(step);
-
-  const businessValid = businessName.trim().length > 1 && businessType.trim().length > 0;
-  const detailsValid = true;
-
-  const canNext = step === "business" ? businessValid : detailsValid;
-
-  const handleContinue = async () => {
-    if (step === "business") {
-      await persist(1, false, draft());
-      setStep("details");
-    } else {
-      await persist(2, true, draft());
-      const res = await fetch("/api/auth/refresh-session", { method: "POST" });
-      const data = await res.json().catch(() => null);
-      if (data?.phoneStatus && data.phoneStatus !== "not_connected") {
-        router.push("/dashboard");
-      } else {
-        router.push("/phone");
+  const persist = async (stepIndex: number, completed: boolean, finalAnswers?: Record<string, string | string[]>): Promise<boolean> => {
+    setSaving(true);
+    setError(null);
+    const a = finalAnswers || answers;
+    try {
+      const shData: Record<string, unknown> = {};
+      if (a.monthlyIncomeGoal) shData.monthlyIncomeGoal = a.monthlyIncomeGoal;
+      if (a.weeklyTimeCommitment) shData.weeklyTimeCommitment = a.weeklyTimeCommitment;
+      if (a.startupCapital) shData.startupCapital = a.startupCapital;
+      if (Array.isArray(a.skills)) {
+        shData.skills = a.skills;
+        shData.willingToLearn = a.skills.includes("none");
       }
+      if (a.comfortableWithPeople) shData.comfortableWithPeople = a.comfortableWithPeople;
+      if (Array.isArray(a.languages)) shData.languages = a.languages;
+      if (Array.isArray(a.interests)) shData.interests = a.interests;
+
+      const res = await fetch("/api/onboarding", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          onboardingStep: stepIndex,
+          onboardingCompleted: completed,
+          businessName: a.name || "",
+          sideHustleProfile: shData,
+        }),
+      });
+      if (!res.ok) {
+        throw new Error("Failed to save");
+      }
+      return true;
+    } catch (e) {
+      setError("Something went wrong. Please try again.");
+      return false;
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleNext = async () => {
+    if (!canProceed()) return;
+    setDirection("next");
+
+    if (current.type === "text") {
+      setAnswers((prev) => ({ ...prev, [current.id]: textInput.trim() }));
+    }
+    if (current.type === "multi") {
+      setAnswers((prev) => ({ ...prev, [current.id]: multiSelects[current.id] || [] }));
+    }
+
+    const updated = {
+      ...answers,
+      [current.id]: current.type === "text" ? textInput.trim() : current.type === "multi" ? (multiSelects[current.id] || []) : answers[current.id],
+    };
+
+    if (step === total - 1) {
+      setCompleting(true);
+      setError(null);
+      const saved = await persist(total, true, updated);
+      if (!saved) {
+        setCompleting(false);
+        return;
+      }
+      try {
+        const res = await fetch("/api/auth/refresh-session", { method: "POST" });
+        if (!res.ok) throw new Error("Session refresh failed");
+        router.push("/dashboard");
+      } catch {
+        router.push("/dashboard");
+      }
+      return;
+    }
+
+    const saved = await persist(step + 1, false, updated);
+    if (!saved) return;
+    setTextInput("");
+    setStep((prev) => prev + 1);
+  };
+
+  const handleBack = () => {
+    if (step === 0) return;
+    setDirection("back");
+    const prevQ = questions[step - 1];
+    if (prevQ.type === "text" && typeof answers[prevQ.id] === "string") {
+      setTextInput(answers[prevQ.id] as string);
+    }
+    setStep((prev) => prev - 1);
+  };
+
+  const handleMultiToggle = (optionId: string) => {
+    const max = current.maxSelect || 99;
+    setMultiSelects((prev) => {
+      const sel = prev[current.id] || [];
+      const next = sel.includes(optionId)
+        ? sel.filter((id) => id !== optionId)
+        : sel.length < max
+          ? [...sel, optionId]
+          : sel;
+      return { ...prev, [current.id]: next };
+    });
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleNext();
     }
   };
 
@@ -175,236 +333,232 @@ export default function OnboardingPage() {
       <div className="min-h-screen bg-cream flex items-center justify-center">
         <div className="flex items-center gap-3">
           <span className="w-6 h-6 border-2 border-ink border-t-transparent rounded-full animate-spin" />
-          <span className="font-mono text-xs uppercase tracking-[0.18em] text-ink-soft">One moment</span>
+          <span className="font-mono text-xs uppercase tracking-[0.18em] text-ink-soft">Loading...</span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-cream flex flex-col">
-      <div className="border-b border-line bg-paper/80 backdrop-blur-xl">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5">
-            <img src="/logo.png" alt="Valix" className="w-8 h-8 rounded-[9px]" />
+    <div className="min-h-screen bg-cream flex flex-col overflow-hidden relative">
+
+      {/* Decorative blobs */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+        <div className="absolute -top-40 -right-40 w-[500px] h-[500px] rounded-full bg-signal/5 blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full bg-signal/5 blur-3xl" />
+      </div>
+
+      {/* Header */}
+      <div className="relative z-10 px-4 sm:px-6 pt-6 pb-2">
+        <div className="max-w-xl mx-auto flex items-center justify-between mb-6">
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <img src="/logo.png" alt="Valix" className="w-8 h-8 rounded-[9px] group-hover:scale-105 transition-transform" />
             <span className="text-[17px] font-bold tracking-tight text-ink">Valix</span>
           </Link>
-          <div className="flex items-center gap-3">
-            <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink-soft">
-              Step {currentIndex + 1} of {stepOrder.length}
-            </span>
-            {saving ? (
-              <span className="w-4 h-4 border-2 border-signal border-t-transparent rounded-full animate-spin" />
-            ) : saved ? (
-              <span className="text-[11px] font-medium text-moss">Saved</span>
-            ) : null}
-          </div>
+          <span className="text-[13px] font-semibold text-ink-soft">
+            {step + 1}<span className="text-ink-soft/40"> / {total}</span>
+          </span>
         </div>
-        <div className="h-0.5 bg-line">
-          <div
-            className="h-full bg-signal transition-all duration-500 ease-out"
-            style={{ width: `${((currentIndex + 1) / (stepOrder.length + 1)) * 100}%` }}
-          />
-        </div>
-      </div>
 
-      <div className="flex-1 flex items-center justify-center px-4 sm:px-6 py-12">
-        <div className="w-full max-w-xl">
-          {step === "business" && (
-            <div className="animate-fade-up">
-              <div className="flex items-center gap-3 mb-6">
-                <span className="w-12 h-12 rounded-xl bg-signal-soft flex items-center justify-center">
-                  <Building2 className="w-6 h-6 text-signal-dark" />
-                </span>
-                <div>
-                  <h1 className="text-2xl sm:text-3xl font-extrabold tracking-[-0.03em] text-ink">
-                    Tell us about your business
-                  </h1>
-                  <p className="text-[14px] text-ink-soft mt-1">
-                    This helps Valix answer calls like your team would.
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-8 space-y-5">
-                <div>
-                  <label className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink-soft font-semibold">
-                    Business name
-                  </label>
-                  <input
-                    type="text"
-                    value={businessName}
-                    onChange={(e) => { setBusinessName(e.target.value); markDirty(); }}
-                    placeholder="e.g. Maple Dental Studio"
-                    className="mt-2 w-full rounded-xl border border-line bg-paper px-4 py-3.5 text-[15px] text-ink placeholder:text-ink-soft/50 focus:outline-none focus:ring-2 focus:ring-signal/30 focus:border-signal transition-all"
-                    autoFocus
-                  />
-                </div>
-
-                <div>
-                  <label className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink-soft font-semibold">
-                    Business description
-                  </label>
-                  <textarea
-                    rows={3}
-                    value={businessDescription}
-                    onChange={(e) => { setBusinessDescription(e.target.value); markDirty(); }}
-                    placeholder="e.g. Family-owned dental studio specialising in cosmetic and emergency dentistry."
-                    className="mt-2 w-full rounded-xl border border-line bg-paper px-4 py-3.5 text-[15px] text-ink placeholder:text-ink-soft/50 focus:outline-none focus:ring-2 focus:ring-signal/30 focus:border-signal transition-all resize-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink-soft font-semibold">
-                    Business type
-                  </label>
-                  <div className="mt-2 grid grid-cols-2 gap-2">
-                    {businessTypes.map((t) => (
-                      <button
-                        key={t}
-                        onClick={() => { setBusinessType(t); markDirty(); }}
-                        className={`rounded-xl border px-4 py-3 text-left text-[13.5px] font-medium transition-all ${
-                          businessType === t
-                            ? "border-signal bg-signal-soft ring-1 ring-signal/20 text-ink"
-                            : "border-line bg-paper text-ink-soft hover:border-ink/20"
-                        }`}
-                      >
-                        {t}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {step === "details" && (
-            <div className="animate-fade-up">
-              <div className="flex items-center gap-3 mb-6">
-                <span className="w-12 h-12 rounded-xl bg-signal-soft flex items-center justify-center">
-                  <Sparkles className="w-6 h-6 text-signal-dark" />
-                </span>
-                <div>
-                  <h1 className="text-2xl sm:text-3xl font-extrabold tracking-[-0.03em] text-ink">
-                    How should Valix handle calls?
-                  </h1>
-                  <p className="text-[14px] text-ink-soft mt-1">
-                    Set your hours and how your AI should sound.
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-8 space-y-6">
-                <div>
-                  <label className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink-soft font-semibold">
-                    Business hours
-                  </label>
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
-                      <button
-                        key={d}
-                        onClick={() => toggleDay(d)}
-                        className={`px-3 py-2 rounded-lg border text-[13px] font-semibold transition-all ${
-                          days.includes(d)
-                            ? "border-signal bg-signal-soft text-signal-dark"
-                            : "border-line bg-paper text-ink-soft hover:border-ink/20"
-                        }`}
-                      >
-                        {d}
-                      </button>
-                    ))}
-                  </div>
-                  <div className="mt-3 flex items-center gap-3">
-                    <div className="flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-ink-soft" />
-                      <input
-                        type="time"
-                        value={open}
-                        onChange={(e) => { setOpen(e.target.value); markDirty(); }}
-                        className="rounded-lg border border-line bg-paper px-3 py-2 text-[14px] text-ink focus:outline-none focus:ring-2 focus:ring-signal/30"
-                      />
-                    </div>
-                    <span className="text-ink-soft">to</span>
-                    <div className="flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-ink-soft" />
-                      <input
-                        type="time"
-                        value={close}
-                        onChange={(e) => { setClose(e.target.value); markDirty(); }}
-                        className="rounded-lg border border-line bg-paper px-3 py-2 text-[14px] text-ink focus:outline-none focus:ring-2 focus:ring-signal/30"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink-soft font-semibold">
-                    Tone
-                  </label>
-                  <div className="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-2">
-                    {tones.map((t) => (
-                      <button
-                        key={t.id}
-                        onClick={() => { setAiTone(t.id); markDirty(); }}
-                        className={`rounded-xl border px-4 py-3 text-left transition-all ${
-                          aiTone === t.id ? "border-signal bg-signal-soft ring-1 ring-signal/20" : "border-line bg-paper hover:border-ink/20"
-                        }`}
-                      >
-                        <p className={`text-[14px] font-semibold ${aiTone === t.id ? "text-signal-dark" : "text-ink"}`}>{t.label}</p>
-                        <p className="text-[12px] text-ink-soft">{t.desc}</p>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <label className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink-soft font-semibold">
-                    Anything Valix should know?
-                  </label>
-                  <textarea
-                    value={aiInstructions}
-                    onChange={(e) => { setAiInstructions(e.target.value); markDirty(); }}
-                    rows={3}
-                    placeholder="e.g. Always offer the next available appointment slot, mention our Saturday hours, and never quote prices before understanding the job."
-                    className="mt-2 w-full rounded-xl border border-line bg-paper px-4 py-3.5 text-[15px] text-ink placeholder:text-ink-soft/50 focus:outline-none focus:ring-2 focus:ring-signal/30 focus:border-signal transition-all resize-none"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div className="mt-10 flex items-center justify-between">
-            {currentIndex > 0 ? (
-              <button
-                onClick={() => setStep(stepOrder[currentIndex - 1])}
-                className="inline-flex items-center gap-2 text-[14px] font-medium text-ink-soft hover:text-ink transition-colors"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Back
-              </button>
-            ) : (
-              <div />
-            )}
-            <button
-              onClick={handleContinue}
-              disabled={!canNext || saving}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-signal text-white text-[14px] font-semibold hover:bg-signal-dark transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-[0_12px_28px_-10px_rgba(255,77,47,0.5)]"
+        {/* Segmented dots */}
+        <div className="max-w-xl mx-auto flex gap-2">
+          {Array.from({ length: total }).map((_, i) => (
+            <div
+              key={i}
+              className="flex-1 h-1 rounded-full overflow-hidden bg-mist/80"
             >
-              {step === "details" ? (
-                <>
-                  Finish setup
-                  <ArrowRight className="w-4 h-4" />
-                </>
-              ) : (
-                <>
-                  Continue
-                  <ArrowRight className="w-4 h-4" />
-                </>
-              )}
-            </button>
+              <div
+                className={`h-full rounded-full transition-all duration-500 ease-out ${
+                  i <= step ? "w-full bg-signal" : "w-0"
+                }`}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Main content */}
+      <div className="relative z-10 flex-1 flex items-center justify-center px-4 sm:px-6 py-8">
+        <div className="w-full max-w-lg">
+          <div
+            key={`${step}-${direction}`}
+            className={`${direction === "next" ? "animate-[slideIn_0.35s_cubic-bezier(0.16,1,0.3,1)]" : "animate-[slideInBack_0.35s_cubic-bezier(0.16,1,0.3,1)]"}`}
+          >
+            {/* Emoji */}
+            <div className="mb-5">
+              <span className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-paper border border-line shadow-sm text-2xl">
+                {current.emoji}
+              </span>
+            </div>
+
+            {/* Question */}
+            <h1 className="text-[28px] sm:text-[34px] font-extrabold tracking-[-0.035em] leading-[1.1] text-ink">
+              {current.label}
+            </h1>
+            {current.sub && (
+              <p className="mt-3 text-[15px] leading-relaxed text-ink-soft max-w-md">
+                {current.sub}
+              </p>
+            )}
+
+            {/* Text input */}
+            {current.type === "text" && (
+              <div className="mt-8">
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={textInput}
+                  onChange={(e) => setTextInput(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder={current.placeholder}
+                  className="w-full rounded-2xl border-2 border-line bg-paper px-5 py-4 text-[17px] font-medium text-ink placeholder:text-ink-soft/40 focus:outline-none focus:border-signal focus:ring-4 focus:ring-signal/10 transition-all duration-200"
+                />
+              </div>
+            )}
+
+            {/* Single select */}
+            {current.type === "single" && current.options && (
+              <div className="mt-8 grid gap-2.5">
+                {current.options.map((opt, i) => {
+                  const selected = answers[current.id] === opt.id;
+                  return (
+                    <button
+                      key={opt.id}
+                      onClick={() => setAnswers((prev) => ({ ...prev, [current.id]: opt.id }))}
+                      style={{ animationDelay: `${i * 40}ms` }}
+                      className={`group relative flex items-center gap-4 rounded-2xl border-2 px-5 py-4 text-left transition-all duration-200 animate-[optionIn_0.4s_cubic-bezier(0.16,1,0.3,1)_both] ${
+                        selected
+                          ? "border-signal bg-signal-soft shadow-[0_0_0_1px_rgba(255,77,47,0.1)]"
+                          : "border-line bg-paper hover:border-ink/15 hover:shadow-sm"
+                      }`}
+                    >
+                      <span className={`flex items-center justify-center w-6 h-6 shrink-0 rounded-full border-2 transition-all duration-200 ${
+                        selected ? "border-signal bg-signal scale-110" : "border-line group-hover:border-ink/30"
+                      }`}>
+                        {selected && <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />}
+                      </span>
+                      {opt.emoji && (
+                        <span className="text-lg shrink-0">{opt.emoji}</span>
+                      )}
+                      <span className={`text-[15.5px] font-semibold transition-colors ${
+                        selected ? "text-signal-dark" : "text-ink"
+                      }`}>
+                        {opt.label}
+                      </span>
+                      {selected && (
+                        <span className="ml-auto">
+                          <ChevronRight className="w-4 h-4 text-signal" />
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Multi select */}
+            {current.type === "multi" && current.options && (
+              <div className="mt-8">
+                <div className="grid grid-cols-2 gap-2.5">
+                  {current.options.map((opt, i) => {
+                    const selected = (multiSelects[current.id] || []).includes(opt.id);
+                    return (
+                      <button
+                        key={opt.id}
+                        onClick={() => handleMultiToggle(opt.id)}
+                        style={{ animationDelay: `${i * 35}ms` }}
+                        className={`group relative flex items-center gap-3 rounded-2xl border-2 px-4 py-3.5 text-left transition-all duration-200 animate-[optionIn_0.4s_cubic-bezier(0.16,1,0.3,1)_both] ${
+                          selected
+                            ? "border-signal bg-signal-soft shadow-[0_0_0_1px_rgba(255,77,47,0.1)]"
+                            : "border-line bg-paper hover:border-ink/15 hover:shadow-sm"
+                        }`}
+                      >
+                        <span className={`flex items-center justify-center w-5 h-5 shrink-0 rounded-lg border-2 transition-all duration-200 ${
+                          selected ? "border-signal bg-signal scale-110" : "border-line group-hover:border-ink/30"
+                        }`}>
+                          {selected && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
+                        </span>
+                        {opt.emoji && (
+                          <span className="text-base shrink-0">{opt.emoji}</span>
+                        )}
+                        <span className={`text-[13.5px] font-semibold transition-colors ${
+                          selected ? "text-signal-dark" : "text-ink"
+                        }`}>
+                          {opt.label}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+                {current.maxSelect && (
+                  <div className="mt-4 flex items-center gap-2">
+                    <div className="flex gap-1">
+                      {Array.from({ length: current.maxSelect }).map((_, i) => (
+                        <div
+                          key={i}
+                          className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                            i < (multiSelects[current.id] || []).length
+                              ? "bg-signal scale-110"
+                              : "bg-mist"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                    <span className="text-[12.5px] font-medium text-ink-soft">
+                      {(multiSelects[current.id] || []).length} of {current.maxSelect}
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
+
+      {/* Bottom bar */}
+      <div className="relative z-10 px-4 sm:px-6 pb-8 pt-4">
+        {error && (
+          <div className="max-w-xl mx-auto mb-4 flex items-center gap-3 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <span className="shrink-0 text-red-500">⚠</span>
+            <span className="flex-1">{error}</span>
+            <button onClick={() => setError(null)} className="shrink-0 text-red-400 hover:text-red-600 font-bold">✕</button>
+          </div>
+        )}
+        <div className="max-w-xl mx-auto flex items-center justify-between">
+          <button
+            onClick={handleBack}
+            disabled={step === 0}
+            className="inline-flex items-center gap-2 text-[14px] font-semibold text-ink-soft hover:text-ink transition-colors disabled:opacity-0 disabled:pointer-events-none"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back
+          </button>
+
+          <button
+            onClick={handleNext}
+            disabled={!canProceed() || saving || completing}
+            className="group inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-signal text-white text-[15px] font-bold hover:bg-signal-dark transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed shadow-[0_8px_30px_-8px_rgba(255,77,47,0.5)] hover:shadow-[0_8px_40px_-8px_rgba(255,77,47,0.6)] hover:scale-[1.02] active:scale-[0.98]"
+          >
+            {completing ? (
+              <>
+                <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                Finding your side hustle...
+              </>
+            ) : step === total - 1 ? (
+              <>
+                <Sparkles className="w-4 h-4" />
+                Find my side hustle
+              </>
+            ) : (
+              <>
+                Continue
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+
     </div>
   );
 }

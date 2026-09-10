@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/db";
 import User from "@/models/User";
 import Message from "@/models/Message";
-import Meeting from "@/models/Meeting";
 
 const ADMIN_COOKIE = "admin_auth";
 
@@ -15,43 +14,27 @@ async function getAdminData() {
   await connectDB();
 
   const users = await User.find({})
-    .select("email name createdAt hasPaid isEmailVerified")
+    .select("email name createdAt onboardingCompleted")
     .sort({ createdAt: -1 });
 
   const messages = await Message.find({}).sort({ createdAt: -1 });
 
-  const meetings = await Meeting.find({})
-    .sort({ date: 1, slot: 1 });
-
   const totalUsers = users.length;
-  const paidUsers = users.filter((u) => u.hasPaid).length;
-  const totalMeetings = meetings.filter((m) => m.status === "booked").length;
+  const onboardedUsers = users.filter((u) => u.onboardingCompleted).length;
 
   return {
     totalUsers,
-    paidUsers,
-    totalMeetings,
+    onboardedUsers,
     users: users.map((u) => ({
       email: u.email,
       name: u.name,
       createdAt: u.createdAt,
-      hasPaid: u.hasPaid,
-      isEmailVerified: u.isEmailVerified,
+      onboardingCompleted: u.onboardingCompleted,
     })),
     messages: messages.map((m) => ({
       name: m.name,
       email: m.email,
       message: m.message,
-      createdAt: m.createdAt,
-    })),
-    meetings: meetings.map((m) => ({
-      name: m.name,
-      email: m.email,
-      whatsapp: m.whatsapp,
-      date: m.date,
-      slot: m.slot,
-      topic: m.topic,
-      status: m.status,
       createdAt: m.createdAt,
     })),
   };

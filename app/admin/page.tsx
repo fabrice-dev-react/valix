@@ -2,24 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { formatDateLabel, formatSlotLabel } from "@/lib/meetings";
 
 type AdminUser = {
   email: string;
   name?: string | null;
   createdAt: string;
-  hasPaid: boolean;
-};
-
-type AdminMeeting = {
-  name: string;
-  email: string;
-  whatsapp: string;
-  date: string;
-  slot: string;
-  topic: string;
-  status: string;
-  createdAt: string;
+  onboardingCompleted: boolean;
 };
 
 type ContactMessage = {
@@ -31,11 +19,9 @@ type ContactMessage = {
 
 type AdminStats = {
   totalUsers: number;
-  paidUsers: number;
-  totalMeetings: number;
+  onboardedUsers: number;
   users: AdminUser[];
   messages: ContactMessage[];
-  meetings: AdminMeeting[];
 };
 
 export default function AdminPage() {
@@ -114,11 +100,11 @@ export default function AdminPage() {
               Everything happening at Valix
             </h2>
             <p className="mt-1 text-sm text-ink-soft">
-              Users, payments and booked meetings — all in one place.
+              Users and contact messages — all in one place.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
             <div className="bg-paper rounded-2xl p-6 border border-line">
               <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink-soft mb-2">
                 Total users
@@ -129,18 +115,10 @@ export default function AdminPage() {
             </div>
             <div className="bg-paper rounded-2xl p-6 border border-line">
               <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink-soft mb-2">
-                Paid users
+                Onboarded users
               </p>
               <p className="text-4xl font-semibold text-ink tracking-tight">
-                {stats.paidUsers}
-              </p>
-            </div>
-            <div className="bg-paper rounded-2xl p-6 border border-line">
-              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink-soft mb-2">
-                Booked meetings
-              </p>
-              <p className="text-4xl font-semibold text-ink tracking-tight">
-                {stats.totalMeetings}
+                {stats.onboardedUsers}
               </p>
             </div>
           </div>
@@ -163,7 +141,7 @@ export default function AdminPage() {
                       Joined
                     </th>
                     <th className="px-6 py-3 text-left font-mono text-[11px] uppercase tracking-[0.2em] text-ink-soft">
-                      Status
+                      Onboarded
                     </th>
                   </tr>
                 </thead>
@@ -180,13 +158,13 @@ export default function AdminPage() {
                         {new Date(user.createdAt).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        {user.hasPaid ? (
+                        {user.onboardingCompleted ? (
                           <span className="inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold bg-moss/15 text-moss">
-                            Paid
+                            Yes
                           </span>
                         ) : (
                           <span className="inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold bg-mist text-ink-soft">
-                            Free
+                            No
                           </span>
                         )}
                       </td>
@@ -195,37 +173,6 @@ export default function AdminPage() {
                 </tbody>
               </table>
             </div>
-          </div>
-
-          <div className="mt-8 bg-paper rounded-2xl border border-line overflow-hidden">
-            <div className="px-6 py-4 border-b border-line">
-              <h3 className="text-sm font-semibold text-ink">Booked meetings</h3>
-            </div>
-            {stats.meetings.length === 0 ? (
-              <p className="px-6 py-8 text-sm text-ink-soft">No meetings booked yet.</p>
-            ) : (
-              <ul className="divide-y divide-line">
-                {stats.meetings.map((m: AdminMeeting, index: number) => (
-                  <li key={index} className="px-6 py-4">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                      <span className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.15em] text-signal-dark font-semibold">
-                        <span className="w-1.5 h-1.5 rounded-full bg-signal" />
-                        {formatDateLabel(m.date)} · {formatSlotLabel(m.slot)}
-                      </span>
-                      <div className="text-sm">
-                        <span className="font-semibold text-ink">{m.name || "Anonymous"}</span>
-                        <span className="ml-2 text-ink-soft">{m.email}</span>
-                      </div>
-                    </div>
-                    {m.whatsapp && (
-                      <p className="mt-1.5 text-[13px] text-ink-soft">
-                        WhatsApp: <span className="font-medium text-ink">{m.whatsapp}</span>
-                      </p>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            )}
           </div>
 
           <div className="mt-8 bg-paper rounded-2xl border border-line overflow-hidden">

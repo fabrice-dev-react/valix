@@ -22,19 +22,6 @@ export async function GET() {
       name: user.name || "",
       email: user.email || "",
       picture: user.image || "",
-      businessName: user.businessName || "",
-      businessType: user.businessType || "",
-      services: user.services || [],
-      serviceArea: user.serviceArea || "",
-      address: user.address || "",
-      businessHours: user.businessHours || { open: "09:00", close: "17:00", days: [] },
-      emergencyService: user.emergencyService || false,
-      aiInstructions: user.aiInstructions || "",
-      aiTone: user.aiTone || "professional",
-      phoneNotifications: user.phoneNotifications || { callbacks: true, email: true },
-      phoneStatus: user.phoneStatus || "not_connected",
-      phoneNumber: user.phoneNumber || "",
-      hasPaid: user.hasPaid || false,
     });
   } catch (error: unknown) {
     console.error("Get profile error:", error instanceof Error ? error.message : error);
@@ -54,23 +41,8 @@ export async function PUT(request: Request) {
     const body = await request.json();
     await connectDB();
 
-    const allowed = [
-      "businessName",
-      "businessType",
-      "services",
-      "serviceArea",
-      "address",
-      "businessHours",
-      "emergencyService",
-      "aiInstructions",
-      "aiTone",
-      "phoneNotifications",
-    ];
-
     const updateData: Record<string, unknown> = {};
-    for (const f of allowed) {
-      if (body[f] !== undefined) updateData[f] = body[f];
-    }
+    if (typeof body.name === "string") updateData.name = body.name;
 
     await User.findByIdAndUpdate(authUser.id, updateData);
 

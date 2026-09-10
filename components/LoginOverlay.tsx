@@ -64,12 +64,11 @@ export default function LoginOverlay({
         </div>
 
         <h2 className="mt-5 text-3xl font-extrabold tracking-[-0.03em] text-ink leading-tight">
-          Recover your missed calls
+          Build your side hustle
         </h2>
         <p className="mt-3 text-[15px] leading-relaxed text-ink-soft">
-          One tap with Google creates your account. Add your business number and
-          Valix will start texting every missed caller back by SMS so they become
-          a qualified lead, not a lost customer.
+          One tap with Google creates your account. Answer a few quick questions
+          and Valix will build a step-by-step plan to launch your side hustle.
         </p>
 
         <button

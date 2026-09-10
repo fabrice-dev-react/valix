@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 const WHATSAPP_NUMBER = "250793242447";
-const WHATSAPP_MESSAGE = "Hi Valix! I'd like to know more about recovering my missed calls.";
+const WHATSAPP_MESSAGE = "Hi Valix! I'd like to know more about building my side hustle.";
 const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
 
 export default function ContactPage() {

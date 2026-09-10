@@ -126,6 +126,16 @@ const userSchema = new mongoose.Schema({
   alertDelivery: {
     type: String,
   },
+  sideHustleProfile: {
+    monthlyIncomeGoal: { type: String },
+    weeklyTimeCommitment: { type: String },
+    startupCapital: { type: String },
+    skills: [{ type: String }],
+    willingToLearn: { type: Boolean, default: false },
+    comfortableWithPeople: { type: String },
+    languages: [{ type: String }],
+    interests: [{ type: String }],
+  },
 });
 
 const User = mongoose.models.User || mongoose.model("User", userSchema);

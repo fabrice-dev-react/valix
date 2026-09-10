@@ -12,8 +12,8 @@ export default function PrivacyPage() {
             <p>
               Valix (&ldquo;we&rdquo;, &ldquo;our&rdquo;, &ldquo;us&rdquo;)
               respects your privacy. This policy explains what information we
-              collect when you use our AI missed-call recovery service, how we
-              use it, and the choices you have.
+              collect when you use our AI side-hustle builder, how we use it,
+              and the choices you have.
             </p>
           ),
         },
@@ -24,9 +24,8 @@ export default function PrivacyPage() {
               <p>We collect the following information:</p>
               <ul className="list-disc pl-5 space-y-1.5">
                 <li>Account details: your name, email address and profile picture when you sign in with Google.</li>
-                <li>Conversation data: the SMS conversations and lead details captured from your missed-call follow-ups.</li>
-                <li>Usage data: pages visited, features used and missed-call activity on your connected numbers.</li>
-                <li>Payment data: handled by our payment processor. We do not store your card details.</li>
+                <li>Profile data: your goals, skills, interests and availability that you share during onboarding.</li>
+                <li>Usage data: pages visited and features used.</li>
               </ul>
             </div>
           ),
@@ -35,32 +34,20 @@ export default function PrivacyPage() {
           heading: "How We Use Your Information",
           body: (
             <ul className="list-disc pl-5 space-y-1.5">
-              <li>To provide and operate the service, including sending SMS follow-ups and qualifying leads on your missed calls.</li>
-              <li>To manage your account, subscription and billing.</li>
+              <li>To provide and operate the service, including personalising your side-hustle plan.</li>
+              <li>To manage your account.</li>
               <li>To improve the service and understand how it is used.</li>
               <li>To communicate with you about your account and the service.</li>
             </ul>
           ),
         },
         {
-          heading: "Caller Conversations & Lead Data",
+          heading: "Your Profile Data",
           body: (
             <p>
-              The SMS conversations and details of the callers Valix follows up
-              with are collected on your behalf and used to qualify and present
-              leads to you. These are only used to provide the service, and are
-              not sold. You are responsible for handling any customer data you
-              act on in line with your own privacy obligations.
-            </p>
-          ),
-        },
-        {
-          heading: "Payment Information",
-          body: (
-            <p>
-              Payments are processed by our payment processor under their own
-              privacy and security practices. We receive confirmation of payment
-              status but never see or store your full card details.
+              The information you share during onboarding is used to tailor your
+              plan and recommendations. This data is not sold. You can review
+              and update it at any time from your settings.
             </p>
           ),
         },
@@ -71,8 +58,7 @@ export default function PrivacyPage() {
               <p>We use a limited set of third-party services to run the product:</p>
               <ul className="list-disc pl-5 space-y-1.5">
                 <li>Google for sign-in (OAuth).</li>
-                <li>Our SMS and AI model providers to run missed-call follow-ups and lead qualification.</li>
-                <li>Our payment processor for subscription billing.</li>
+                <li>AI model providers to power personalised guidance.</li>
                 <li>Google Analytics for aggregated usage insights.</li>
               </ul>
               <p>
@@ -107,8 +93,8 @@ export default function PrivacyPage() {
                 </a>.
               </p>
               <p>
-                You can also delete your saved lead and conversation data and
-                cancel your account at any time from your dashboard.
+                You can also delete your saved profile data and cancel your
+                account at any time.
               </p>
             </div>
           ),

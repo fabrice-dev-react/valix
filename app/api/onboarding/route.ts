@@ -16,6 +16,17 @@ const PROFILE_FIELDS = [
   "phoneNotifications",
 ];
 
+const SIDE_HUSTLE_FIELDS = [
+  "monthlyIncomeGoal",
+  "weeklyTimeCommitment",
+  "startupCapital",
+  "skills",
+  "willingToLearn",
+  "comfortableWithPeople",
+  "languages",
+  "interests",
+];
+
 export async function GET() {
   try {
     let authUser;
@@ -34,12 +45,17 @@ export async function GET() {
     const profile: Record<string, unknown> = {
       onboardingCompleted: user.onboardingCompleted || false,
       onboardingStep: user.onboardingStep ?? 0,
-      phoneStatus: user.phoneStatus || "not_connected",
-      phoneNumber: user.phoneNumber || "",
     };
     for (const f of PROFILE_FIELDS) {
       profile[f] = user[f] ?? (f === "services" ? [] : undefined);
     }
+
+    const sh = user.sideHustleProfile || {};
+    const shData: Record<string, unknown> = {};
+    for (const f of SIDE_HUSTLE_FIELDS) {
+      shData[f] = sh[f] ?? undefined;
+    }
+    profile.sideHustleProfile = shData;
 
     return NextResponse.json({ profile });
   } catch (error: unknown) {
@@ -66,6 +82,17 @@ export async function PUT(request: Request) {
         updateData[f] = body[f];
       }
     }
+
+    if (body.sideHustleProfile && typeof body.sideHustleProfile === "object") {
+      const shUpdate: Record<string, unknown> = {};
+      for (const f of SIDE_HUSTLE_FIELDS) {
+        if (body.sideHustleProfile[f] !== undefined) {
+          shUpdate[`sideHustleProfile.${f}`] = body.sideHustleProfile[f];
+        }
+      }
+      Object.assign(updateData, shUpdate);
+    }
+
     if (typeof body.onboardingStep === "number") {
       updateData.onboardingStep = body.onboardingStep;
     }
