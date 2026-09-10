@@ -4,18 +4,18 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import AuthProvider from "@/components/AuthProvider";
 
 export const metadata: Metadata = {
-  title: "Valix — AI Missed-Call Recovery for Service Businesses",
-  description: "Valix instantly texts every missed caller by SMS, qualifies them with AI, and shows you a list of qualified leads ready to call back. Don't lose a customer to a missed call again. Live in minutes, no CRM required.",
+  title: "Valix - Find and Start Your Perfect Online AI Side Hustle",
+  description: "AI guides you from zero to income through validated phases — market research, offer design, pricing, content planning, and daily tasks. Start your AI side hustle today.",
   openGraph: {
-    title: "Valix — Never lose a customer to a missed call again",
-    description: "Miss a call? Valix texts them back instantly, AI finds out what they need, and you get a qualified lead ready to call back—so you don't lose them to a competitor.",
+    title: "Valix — Find and Start Your Perfect Online AI Side Hustle",
+    description: "AI guides you from zero to income through validated phases — market research, offer design, pricing, content planning, and daily tasks.",
     type: "website",
     siteName: "Valix",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Valix — Never lose a customer to a missed call again",
-    description: "Valix texts missed callers by SMS, qualifies them with AI, and hands you a list of qualified leads ready to call back.",
+    title: "Valix — Find and Start Your Perfect Online AI Side Hustle",
+    description: "AI guides you from zero to income through validated phases — market research, offer design, pricing, content planning, and daily tasks.",
   },
 };
 
