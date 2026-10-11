@@ -32,13 +32,12 @@ export async function getAuthUser() {
     return null;
   }
 
-  const extUser = session.user as unknown as { id?: string; name?: string; email?: string; onboardingCompleted?: boolean };
+  const extUser = session.user as unknown as { id?: string; name?: string; email?: string };
 
   return {
     id: extUser.id || "",
     name: extUser.name || null,
     email: extUser.email || null,
-    onboardingCompleted: extUser.onboardingCompleted,
   };
 }
 

@@ -5,11 +5,6 @@ import { useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import { Check, Loader } from "lucide-react";
 
-type Profile = {
-  name: string;
-  email: string;
-};
-
 export default function SettingsPage() {
   return (
     <Suspense

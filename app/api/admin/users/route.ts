@@ -2,7 +2,6 @@ import { createHash } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/db";
 import User from "@/models/User";
-import Message from "@/models/Message";
 
 const ADMIN_COOKIE = "admin_auth";
 
@@ -14,28 +13,32 @@ async function getAdminData() {
   await connectDB();
 
   const users = await User.find({})
-    .select("email name createdAt onboardingCompleted")
+    .select("email name createdAt hasPaid saasProfile")
     .sort({ createdAt: -1 });
 
-  const messages = await Message.find({}).sort({ createdAt: -1 });
-
   const totalUsers = users.length;
-  const onboardedUsers = users.filter((u) => u.onboardingCompleted).length;
+  const briefsSubmitted = users.filter((u) => !!u.saasProfile?.submittedAt).length;
+  const payingUsers = users.filter((u) => u.hasPaid).length;
 
   return {
     totalUsers,
-    onboardedUsers,
+    briefsSubmitted,
+    payingUsers,
     users: users.map((u) => ({
       email: u.email,
       name: u.name,
       createdAt: u.createdAt,
-      onboardingCompleted: u.onboardingCompleted,
-    })),
-    messages: messages.map((m) => ({
-      name: m.name,
-      email: m.email,
-      message: m.message,
-      createdAt: m.createdAt,
+      hasPaid: u.hasPaid,
+      brief: u.saasProfile?.submittedAt
+        ? {
+            productName: u.saasProfile.productName || "",
+            websiteUrl: u.saasProfile.websiteUrl || "",
+            notes: u.saasProfile.notes || "",
+            contactMethod: u.saasProfile.contactMethod || "",
+            contactDetail: u.saasProfile.contactDetail || "",
+            submittedAt: u.saasProfile.submittedAt,
+          }
+        : null,
     })),
   };
 }

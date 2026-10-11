@@ -23,7 +23,7 @@ export async function POST() {
     }
 
     await connectDB();
-    const user = await User.findOne({ email: token.email }).select("name email onboardingCompleted");
+    const user = await User.findOne({ email: token.email }).select("name email productName");
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
@@ -31,7 +31,8 @@ export async function POST() {
 
     const updatedToken = {
       ...token,
-      onboardingCompleted: user.onboardingCompleted,
+      name: user.name,
+      productName: user.productName,
     };
 
     const encoded = await encode({
@@ -47,9 +48,9 @@ export async function POST() {
     });
 
     return NextResponse.json({
-      onboardingCompleted: user.onboardingCompleted,
       name: user.name,
       email: user.email,
+      productName: user.productName,
     });
   } catch (error: unknown) {
     console.error("Refresh session error:", error instanceof Error ? error.message : error);

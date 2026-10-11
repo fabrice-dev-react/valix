@@ -7,7 +7,6 @@ declare module "next-auth" {
   interface Session {
     user: {
       id: string;
-      onboardingCompleted?: boolean;
     } & DefaultSession["user"];
   }
 }
@@ -15,7 +14,6 @@ declare module "next-auth" {
 declare module "next-auth/jwt" {
   interface JWT {
     id: string;
-    onboardingCompleted?: boolean;
   }
 }
 
@@ -52,19 +50,16 @@ export const authOptions: NextAuthOptions = {
             email: token.email,
             image: token.picture,
             provider: "google",
-            onboardingCompleted: false,
           });
         }
 
         token.id = existingUser._id.toString();
-        token.onboardingCompleted = existingUser.onboardingCompleted;
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id;
-        session.user.onboardingCompleted = token.onboardingCompleted;
       }
       return session;
     },

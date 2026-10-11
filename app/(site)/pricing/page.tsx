@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { Check, Crown } from "lucide-react";
+import { Check, Clock, ShieldCheck } from "lucide-react";
 import { PricingCard } from "@/components/PricingCard";
 import { useLogin } from "@/components/LoginContext";
 
@@ -61,18 +61,18 @@ export default function PricingPage() {
               <span className="h-px w-8 bg-signal" />
             </div>
             <h1 className="mt-5 text-3xl sm:text-4xl lg:text-[44px] font-extrabold tracking-[-0.03em] leading-[1.05] text-ink">
-              One plan. Everything included.
+              One plan. Twelve videos. $97.
             </h1>
             <p className="mt-5 text-[15px] sm:text-base text-ink-soft max-w-xl mx-auto">
-              One sale pays for the entire year. Upgrade now to unlock unlimited AI guidance,
-              market research, offer design, and your full side-hustle roadmap.
+              Pay and your first fully edited video lands in 24 hours. Love it and we deliver 12 a
+              month. Don&apos;t like it and we refund every cent the same day — no questions asked.
             </p>
           </div>
 
           <div className="mt-14 flex justify-center">
             <PricingCard
               onUpgrade={onUpgrade}
-              ctaLabel="Upgrade — $19/mo"
+              ctaLabel="Get my first video in 24h — $97/mo"
               disabled={loading}
             />
           </div>
@@ -83,13 +83,13 @@ export default function PricingPage() {
 
           <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-[13px] text-ink-soft">
             <span className="flex items-center gap-1.5">
-              <Crown className="w-3.5 h-3.5 text-signal" /> Price locked for life
+              <Clock className="w-3.5 h-3.5 text-signal" /> First video in 24 hours
             </span>
             <span className="flex items-center gap-1.5">
-              <Check className="w-3.5 h-3.5 text-moss" /> No contracts, cancel anytime
+              <ShieldCheck className="w-3.5 h-3.5 text-moss" /> Full refund, no questions asked
             </span>
             <span className="flex items-center gap-1.5">
-              <Check className="w-3.5 h-3.5 text-moss" /> Instant access to all phases
+              <Check className="w-3.5 h-3.5 text-moss" /> You own every file
             </span>
           </div>
         </div>

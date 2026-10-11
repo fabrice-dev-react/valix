@@ -24,7 +24,7 @@ export default function PrivacyPage() {
               <p>We collect the following information:</p>
               <ul className="list-disc pl-5 space-y-1.5">
                 <li>Account details: your name, email address and profile picture when you sign in with Google.</li>
-                <li>Profile data: your goals, skills, interests and availability that you share during onboarding.</li>
+                <li>Brief data: the product, audience, features and delivery details you submit so we can edit your videos.</li>
                 <li>Usage data: pages visited and features used.</li>
               </ul>
             </div>
@@ -34,7 +34,7 @@ export default function PrivacyPage() {
           heading: "How We Use Your Information",
           body: (
             <ul className="list-disc pl-5 space-y-1.5">
-              <li>To provide and operate the service, including personalising your side-hustle plan.</li>
+              <li>To provide and operate the service, including editing the videos in your brief.</li>
               <li>To manage your account.</li>
               <li>To improve the service and understand how it is used.</li>
               <li>To communicate with you about your account and the service.</li>
@@ -42,12 +42,12 @@ export default function PrivacyPage() {
           ),
         },
         {
-          heading: "Your Profile Data",
+          heading: "Your Brief Data",
           body: (
             <p>
-              The information you share during onboarding is used to tailor your
-              plan and recommendations. This data is not sold. You can review
-              and update it at any time from your settings.
+              The information you submit in your brief is used to produce your
+              videos. This data is not sold. You can review and update it at any
+              time from your dashboard.
             </p>
           ),
         },

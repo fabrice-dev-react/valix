@@ -64,11 +64,11 @@ export default function LoginOverlay({
         </div>
 
         <h2 className="mt-5 text-3xl font-extrabold tracking-[-0.03em] text-ink leading-tight">
-          Build your side hustle
+          Get your first video in 24 hours
         </h2>
         <p className="mt-3 text-[15px] leading-relaxed text-ink-soft">
-          One tap with Google creates your account. Answer a few quick questions
-          and Valix will build a step-by-step plan to launch your side hustle.
+          One tap with Google creates your account. Tell us about your SaaS, we cut the first
+          video within 24 hours of payment — and refund every cent if you don&apos;t like it.
         </p>
 
         <button

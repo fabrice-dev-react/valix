@@ -7,21 +7,22 @@ type AdminUser = {
   email: string;
   name?: string | null;
   createdAt: string;
-  onboardingCompleted: boolean;
-};
-
-type ContactMessage = {
-  name: string;
-  email: string;
-  message: string;
-  createdAt: string;
+  hasPaid: boolean;
+  brief: {
+    productName: string;
+    websiteUrl: string;
+    notes: string;
+    contactMethod: string;
+    contactDetail: string;
+    submittedAt: string;
+  } | null;
 };
 
 type AdminStats = {
   totalUsers: number;
-  onboardedUsers: number;
+  briefsSubmitted: number;
+  payingUsers: number;
   users: AdminUser[];
-  messages: ContactMessage[];
 };
 
 export default function AdminPage() {
@@ -100,11 +101,11 @@ export default function AdminPage() {
               Everything happening at Valix
             </h2>
             <p className="mt-1 text-sm text-ink-soft">
-              Users and contact messages — all in one place.
+              Every client brief, newest first.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
             <div className="bg-paper rounded-2xl p-6 border border-line">
               <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink-soft mb-2">
                 Total users
@@ -115,93 +116,155 @@ export default function AdminPage() {
             </div>
             <div className="bg-paper rounded-2xl p-6 border border-line">
               <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink-soft mb-2">
-                Onboarded users
+                Paying clients
               </p>
               <p className="text-4xl font-semibold text-ink tracking-tight">
-                {stats.onboardedUsers}
+                {stats.payingUsers}
+              </p>
+            </div>
+            <div className="bg-paper rounded-2xl p-6 border border-line">
+              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink-soft mb-2">
+                Briefs submitted
+              </p>
+              <p className="text-4xl font-semibold text-ink tracking-tight">
+                {stats.briefsSubmitted}
               </p>
             </div>
           </div>
 
-          <div className="bg-paper rounded-2xl border border-line overflow-hidden">
-            <div className="px-6 py-4 border-b border-line">
-              <h3 className="text-sm font-semibold text-ink">All users</h3>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-mist/50 border-b border-line">
-                  <tr>
-                    <th className="px-6 py-3 text-left font-mono text-[11px] uppercase tracking-[0.2em] text-ink-soft">
-                      Email
-                    </th>
-                    <th className="px-6 py-3 text-left font-mono text-[11px] uppercase tracking-[0.2em] text-ink-soft">
-                      Name
-                    </th>
-                    <th className="px-6 py-3 text-left font-mono text-[11px] uppercase tracking-[0.2em] text-ink-soft">
-                      Joined
-                    </th>
-                    <th className="px-6 py-3 text-left font-mono text-[11px] uppercase tracking-[0.2em] text-ink-soft">
-                      Onboarded
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-line">
-                  {stats.users.map((user: AdminUser, index: number) => (
-                    <tr key={index} className="hover:bg-cream">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-ink">
-                        {user.email}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-ink">
-                        {user.name || "-"}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-ink-soft">
-                        {new Date(user.createdAt).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        {user.onboardingCompleted ? (
-                          <span className="inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold bg-moss/15 text-moss">
-                            Yes
-                          </span>
-                        ) : (
-                          <span className="inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold bg-mist text-ink-soft">
-                            No
-                          </span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+          <div className="flex items-center justify-between gap-4 mb-5">
+            <h3 className="text-sm font-semibold text-ink">
+              Submissions
+              <span className="ml-2 font-mono text-[11px] uppercase tracking-[0.18em] text-ink-soft/60">
+                {stats.users.length}
+              </span>
+            </h3>
+            <button
+              onClick={() => window.location.reload()}
+              className="text-xs font-medium text-ink-soft hover:text-signal transition-colors"
+            >
+              Refresh
+            </button>
           </div>
 
-          <div className="mt-8 bg-paper rounded-2xl border border-line overflow-hidden">
-            <div className="px-6 py-4 border-b border-line">
-              <h3 className="text-sm font-semibold text-ink">Contact messages</h3>
+          {stats.users.length === 0 ? (
+            <div className="bg-paper rounded-2xl border border-line px-6 py-12 text-center">
+              <p className="text-sm text-ink-soft">No submissions yet.</p>
             </div>
-            {stats.messages.length === 0 ? (
-              <p className="px-6 py-8 text-sm text-ink-soft">No messages yet.</p>
-            ) : (
-              <ul className="divide-y divide-line">
-                {stats.messages.map((msg: ContactMessage, index: number) => (
-                  <li key={index} className="px-6 py-4">
-                    <div className="flex items-center justify-between gap-4">
-                      <p className="text-sm font-semibold text-ink">
-                        {msg.name || "Anonymous"}
-                        {msg.email && (
-                          <span className="ml-2 font-normal text-ink-soft">· {msg.email}</span>
-                        )}
-                      </p>
-                      <p className="text-xs text-ink-soft whitespace-nowrap">
-                        {new Date(msg.createdAt).toLocaleString()}
+          ) : (
+            <div className="grid gap-4 sm:grid-cols-2">
+              {stats.users.map((user: AdminUser, index: number) => (
+                <article
+                  key={index}
+                  className={`rounded-2xl border bg-paper p-6 ${
+                    user.hasPaid ? "border-moss/30" : "border-line"
+                  }`}
+                >
+                  {/* Header */}
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <h4 className="text-[16px] font-bold text-ink truncate">
+                        {user.brief?.productName || user.name || "No SaaS name"}
+                      </h4>
+                      <p className="mt-0.5 text-[12.5px] text-ink-soft truncate">
+                        {user.email}
                       </p>
                     </div>
-                    <p className="mt-1.5 text-sm text-ink whitespace-pre-line">{msg.message}</p>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+                    {user.hasPaid ? (
+                      <span className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-moss/15 px-2.5 py-1 text-[11px] font-bold text-moss">
+                        <span className="w-1.5 h-1.5 rounded-full bg-moss" />
+                        Paid
+                      </span>
+                    ) : (
+                      <span className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-signal-soft px-2.5 py-1 text-[11px] font-bold text-signal-dark">
+                        <span className="w-1.5 h-1.5 rounded-full bg-signal" />
+                        Unpaid
+                      </span>
+                    )}
+                  </div>
+
+                  {/* SaaS URL */}
+                  <div className="mt-4">
+                    <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink-soft/60">
+                      SaaS URL
+                    </p>
+                    {user.brief?.websiteUrl ? (
+                      <a
+                        href={user.brief.websiteUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-1 block text-[13px] text-signal hover:text-signal-dark transition-colors break-all"
+                      >
+                        {user.brief.websiteUrl}
+                      </a>
+                    ) : (
+                      <p className="mt-1 text-[13px] text-ink-soft/60">—</p>
+                    )}
+                  </div>
+
+                  {/* Contact */}
+                  <div className="mt-4">
+                    <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink-soft/60">
+                      Contact
+                    </p>
+                    {user.brief?.contactDetail ? (
+                      <div className="mt-1 flex items-center gap-2 flex-wrap">
+                        <span className="rounded-full bg-cream border border-line px-2.5 py-0.5 text-[11px] font-semibold text-ink capitalize">
+                          {user.brief.contactMethod}
+                        </span>
+                        <span className="text-[13px] text-ink break-all">
+                          {user.brief.contactDetail}
+                        </span>
+                      </div>
+                    ) : (
+                      <p className="mt-1 text-[13px] text-ink-soft/60">
+                        Not provided yet
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Notes */}
+                  <div className="mt-4">
+                    <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink-soft/60">
+                      Notes
+                    </p>
+                    {user.brief?.notes ? (
+                      <p className="mt-1 text-[13px] leading-relaxed text-ink-soft whitespace-pre-line">
+                        {user.brief.notes}
+                      </p>
+                    ) : (
+                      <p className="mt-1 text-[13px] text-ink-soft/60">
+                        No notes added
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Footer */}
+                  <div className="mt-5 pt-4 border-t border-line flex items-center justify-between gap-3 text-[11.5px] text-ink-soft">
+                    <span>
+                      Submitted{" "}
+                      {user.brief?.submittedAt
+                        ? new Date(user.brief.submittedAt).toLocaleString(undefined, {
+                            day: "numeric",
+                            month: "short",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })
+                        : "—"}
+                    </span>
+                    <span>
+                      Joined{" "}
+                      {new Date(user.createdAt).toLocaleDateString(undefined, {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </span>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     );

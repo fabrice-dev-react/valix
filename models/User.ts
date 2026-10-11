@@ -25,10 +25,7 @@ const userSchema = new mongoose.Schema({
   onboardingCompleted: {
     type: Boolean,
     default: false,
-  },
-  onboardingStep: {
-    type: Number,
-    default: 0,
+    select: false,
   },
   businessName: {
     type: String,
@@ -126,15 +123,16 @@ const userSchema = new mongoose.Schema({
   alertDelivery: {
     type: String,
   },
-  sideHustleProfile: {
-    monthlyIncomeGoal: { type: String },
-    weeklyTimeCommitment: { type: String },
-    startupCapital: { type: String },
-    skills: [{ type: String }],
-    willingToLearn: { type: Boolean, default: false },
-    comfortableWithPeople: { type: String },
-    languages: [{ type: String }],
-    interests: [{ type: String }],
+  /* ---------- Video agency intake ---------- */
+  saasProfile: {
+    productName: { type: String, trim: true },
+    websiteUrl: { type: String, trim: true },
+    notes: { type: String, trim: true },
+    // Contact
+    contactMethod: { type: String, default: "whatsapp" },
+    contactDetail: { type: String, trim: true },
+    // Meta
+    submittedAt: { type: Date },
   },
 });
 

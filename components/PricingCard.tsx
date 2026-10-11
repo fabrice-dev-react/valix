@@ -4,20 +4,21 @@ import { Check, Loader2, Zap } from "lucide-react";
 
 export const plans = [
   {
-    name: "Everything included",
-    price: 19,
+    name: "The Full Month",
+    price: 97,
     oldPrice: 0,
-    annualTotal: 228,
-    tagline: "Everything you need to build and grow your AI side hustle — no add-ons, no tiers.",
+    annualTotal: 1164,
+    tagline:
+      "12 finished videos delivered every month. Every format, every hook variant, captions and thumbnails included — there is nothing else to buy.",
     features: [
-      "Unlimited AI business guidance",
-      "Market validation & research",
-      "Offer & pricing design",
-      "Content planning engine",
-      "Daily action task lists",
-      "Revenue & growth tracking",
-      "All business phases included",
-      "Priority email support",
+      "12 edited videos per month",
+      "3 ad-ready hook variants each",
+      "16:9 master + 9:16 vertical cut",
+      "Captions, thumbnails & post copy",
+      "Unlimited revisions for 7 days",
+      "You own everything, forever",
+      "First video within 24 hours",
+      "Full refund, no questions asked",
     ],
     highlight: true,
   },
@@ -25,7 +26,7 @@ export const plans = [
 
 export function PricingCard({
   onUpgrade,
-  ctaLabel = "Start my side hustle — $19/mo",
+  ctaLabel = "Get my first video in 24h — $97/mo",
   disabled = false,
 }: {
   onUpgrade: () => void;
@@ -69,7 +70,7 @@ export function PricingCard({
         )}
       </div>
       <p className={`mt-1 text-xs ${plan.highlight ? "text-white/50" : "text-ink-soft/80"}`}>
-        Billed annually at ${plan.annualTotal}/year · cancel anytime
+        $1,164 a year · first video within 24 hours · refund any time
       </p>
 
       <ul className="mt-7 space-y-3 flex-1 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:gap-y-3">

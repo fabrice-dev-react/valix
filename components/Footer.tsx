@@ -4,8 +4,12 @@ import Link from "next/link";
 
 const footerLinks = {
   product: [
-    { label: "Features", href: "/#features" },
+    { label: "Our Work", href: "/#work" },
     { label: "Pricing", href: "/#pricing" },
+    { label: "FAQ", href: "/#faq" },
+  ],
+  company: [
+    { label: "Contact", href: "/contact" },
   ],
   legal: [
     { label: "Privacy Policy", href: "/privacy" },
@@ -25,14 +29,14 @@ export default function Footer() {
               <span className="text-lg font-bold tracking-tight text-white">Valix</span>
             </Link>
             <p className="text-sm text-white/50 max-w-xs leading-relaxed">
-              AI-powered side hustle builder. From market validation to daily tasks, we guide you
-              through every phase of starting and growing your online business — so you never
-              have to guess what to do next.
+              A video editing studio for SaaS founders. 12 high-converting videos a month for $97 —
+              first one delivered in 24 hours, full refund instantly if it isn&apos;t for you.
             </p>
           </div>
 
           {[
             { title: "Product", links: footerLinks.product },
+            { title: "Company", links: footerLinks.company },
             { title: "Legal", links: footerLinks.legal },
           ].map((col) => (
             <div key={col.title} className="md:col-span-2 md:col-start-auto">
