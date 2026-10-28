@@ -6,12 +6,13 @@ import { useSession } from "next-auth/react";
 import { useLogin } from "@/components/LoginContext";
 
 const navLinks = [
-  { label: "Our Work", href: "/#work" },
-  { label: "Pricing", href: "/#pricing" },
-  { label: "FAQ", href: "/#faq" },
+  { label: "The Book", href: "/#the-book" },
+  { label: "Contents", href: "/#inside" },
+  { label: "Praise", href: "/#reviews" },
+  { label: "Questions", href: "/#faq" },
 ];
 
-const headerCta = "Get my first video";
+const headerCta = "Download the guide";
 
 export default function Header() {
   const { data: session, status } = useSession();

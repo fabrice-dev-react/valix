@@ -4,9 +4,11 @@ import Link from "next/link";
 
 const footerLinks = {
   product: [
-    { label: "Our Work", href: "/#work" },
-    { label: "Pricing", href: "/#pricing" },
-    { label: "FAQ", href: "/#faq" },
+    { label: "The Book", href: "/#the-book" },
+    { label: "Contents", href: "/#inside" },
+    { label: "Praise", href: "/#reviews" },
+    { label: "Order the Guide — $9", href: "/#pricing" },
+    { label: "Questions", href: "/#faq" },
   ],
   company: [
     { label: "Contact", href: "/contact" },
@@ -29,8 +31,8 @@ export default function Footer() {
               <span className="text-lg font-bold tracking-tight text-white">Valix</span>
             </Link>
             <p className="text-sm text-white/50 max-w-xs leading-relaxed">
-              A video editing studio for SaaS founders. 12 high-converting videos a month for $97 —
-              first one delivered in 24 hours, full refund instantly if it isn&apos;t for you.
+              The practical career guide for ambitious employees. Learn how to make your work
+              visible, build real trust with your manager, and ask for what you deserve — for $9.
             </p>
           </div>
 

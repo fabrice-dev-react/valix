@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useSyncExternalStore } from "react";
+import { usePathname } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import LoginOverlay from "@/components/LoginOverlay";
@@ -23,6 +24,8 @@ export default function SiteLayout({
     () => true,
     () => false
   );
+  const pathname = usePathname();
+  const isHome = pathname === "/";
 
   useEffect(() => {
     if (loginOpen) {
@@ -32,9 +35,9 @@ export default function SiteLayout({
 
   return (
     <LoginContext.Provider value={{ openLogin: () => setLoginOpen(true) }}>
-      <Header />
+      {!isHome && <Header />}
       <main>{children}</main>
-      <Footer />
+      {!isHome && <Footer />}
       <LoginOverlay open={loginOpen && mounted} onClose={() => setLoginOpen(false)} />
     </LoginContext.Provider>
   );

@@ -1,116 +1,80 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import {
+  ArrowRight,
+  BookOpen,
   Check,
   ChevronDown,
   Clock,
   CreditCard,
-  Globe,
+  Download,
+  FileText,
   Info,
-  Link2,
   Loader2,
   LogOut,
-  Mail,
-  MessageCircle,
-  Phone,
-  Send,
-  Settings2,
+  RefreshCw,
   ShieldCheck,
+  Sparkles,
+  Star,
   X,
 } from "lucide-react";
 
-const CONTACT_METHODS = [
-  { id: "whatsapp", label: "WhatsApp", icon: MessageCircle, placeholder: "+250 700 000 000" },
-  { id: "email", label: "Email", icon: Mail, placeholder: "you@company.com" },
-  { id: "phone", label: "Phone call", icon: Phone, placeholder: "+250 700 000 000" },
-  { id: "telegram", label: "Telegram", icon: Send, placeholder: "@yourhandle" },
-] as const;
-
-const inputClass =
-  "mt-2 w-full rounded-xl border border-line bg-paper px-4 py-3 text-[14.5px] text-ink placeholder:text-ink-soft/40 focus:outline-none focus:ring-2 focus:ring-signal/25 focus:border-signal transition-all";
-
-function Label({ children }: { children: React.ReactNode }) {
+function MiniBookCover() {
   return (
-    <label className="block font-mono text-[11px] uppercase tracking-[0.2em] text-ink-soft font-semibold">
-      {children}
-    </label>
+    <div className="relative w-[180px] sm:w-[220px] shrink-0 overflow-hidden rounded-[14px] ring-1 ring-ink/10">
+      <Image
+        src="/images/book-cover.jpg"
+        alt="30 Days to Becoming Your Manager's Favorite Employee book cover"
+        width={1275}
+        height={1650}
+        className="h-auto w-full"
+      />
+    </div>
   );
 }
 
-type Intake = {
-  productName: string;
-  websiteUrl: string;
-  notes: string;
-  contactMethod: string;
-  contactDetail: string;
-};
-
 export default function DashboardPage() {
-  const router = useRouter();
   const { data: session } = useSession();
-  const [form, setForm] = useState<Intake>({
-    productName: "",
-    websiteUrl: "",
-    notes: "",
-    contactMethod: "whatsapp",
-    contactDetail: "",
-  });
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [savedAt, setSavedAt] = useState<string | null>(null);
-  const [hasPaid, setHasPaid] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [hasPaid, setHasPaid] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const displayName = session?.user?.name || "";
   const firstName = displayName.split(" ")[0] || "";
 
-  useEffect(() => {
-    let active = true;
-    (async () => {
-      try {
-        const res = await fetch("/api/intake");
-        const data = await res.json();
-        if (!active) return;
-        const i = data?.intake || {};
-        const method = i.contactMethod || "whatsapp";
-        const detail = i.contactDetail || "";
-        setForm({
-          productName: i.productName || "",
-          websiteUrl: i.websiteUrl || "",
-          notes: i.notes || "",
-          contactMethod: method,
-          // Only pre-fill the login email when email is the chosen channel.
-          contactDetail: method === "email" ? detail || session?.user?.email || "" : detail,
-        });
-        setHasPaid(typeof data?.hasPaid === "boolean" ? data.hasPaid : true);
-        setSavedAt(data?.submittedAt || null);
-      } catch {
-        setForm((prev) => ({ ...prev }));
-      } finally {
-        if (active) setLoading(false);
+  const loadAccess = useCallback(async (showSpinner = true) => {
+    if (showSpinner) setRefreshing(true);
+    try {
+      const res = await fetch("/api/intake", { cache: "no-store" });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        setHasPaid(data?.hasPaid === true);
+      } else if (res.status !== 401) {
+        setError(data?.error || "We couldn't check your access. Please refresh.");
       }
-    })();
-    return () => {
-      active = false;
-    };
-  }, [session?.user?.email]);
+    } catch {
+      setError("We couldn't check your access. Please refresh.");
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, []);
 
-  const set = <K extends keyof Intake>(key: K, value: Intake[K]) => {
-    setForm((prev) => ({ ...prev, [key]: value }));
-  };
-
-  const activeContact =
-    CONTACT_METHODS.find((m) => m.id === form.contactMethod) ?? CONTACT_METHODS[0];
+  useEffect(() => {
+    loadAccess();
+  }, [loadAccess]);
 
   const startCheckout = async () => {
     if (checkoutLoading) return;
     setCheckoutLoading(true);
+    setError(null);
     try {
       const res = await fetch("/api/payments/checkout", { method: "POST" });
       const data = await res.json().catch(() => ({}));
@@ -130,51 +94,11 @@ export default function DashboardPage() {
     }
   };
 
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setSaving(true);
-    try {
-      const res = await fetch("/api/intake", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        setError(data?.error || "Couldn't send your details. Please try again.");
-        return;
-      }
-      setSavedAt(new Date().toISOString());
-
-      // First submission sends them straight to payment.
-      if (!hasPaid) {
-        router.push("/pricing");
-        return;
-      }
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    } catch {
-      setError("Couldn't send your details. Please try again.");
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const submittedLabel = savedAt
-    ? new Date(savedAt).toLocaleString(undefined, {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      })
-    : "";
-
   return (
     <div className="min-h-dvh bg-cream">
       {/* ============ TOP BAR ============ */}
       <header className="sticky top-0 z-40 bg-cream/90 backdrop-blur-xl border-b border-line">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-2.5 group">
             <img
               src="/logo.png"
@@ -211,21 +135,6 @@ export default function DashboardPage() {
                       {session?.user?.email}
                     </p>
                   </div>
-                  <Link
-                    href="/settings"
-                    onClick={() => setMenuOpen(false)}
-                    className="flex items-center gap-2.5 px-4 py-3 text-[13px] font-semibold text-ink hover:bg-mist/60 transition-colors"
-                  >
-                    <Settings2 className="w-4 h-4 text-ink-soft" />
-                    Settings
-                  </Link>
-                  <button
-                    onClick={() => setMenuOpen(false)}
-                    className="w-full flex items-center gap-2.5 px-4 py-3 text-[13px] font-semibold text-ink hover:bg-mist/60 transition-colors border-t border-line"
-                  >
-                    <CreditCard className="w-4 h-4 text-ink-soft" />
-                    Billing — $97/mo
-                  </button>
                   <button
                     onClick={() => signOut({ callbackUrl: "/" })}
                     className="w-full flex items-center gap-2.5 px-4 py-3 text-[13px] font-semibold text-signal hover:bg-signal-soft/50 transition-colors border-t border-line"
@@ -240,224 +149,214 @@ export default function DashboardPage() {
         </div>
       </header>
 
-      {/* ============ FORM ============ */}
-      <main className="max-w-2xl mx-auto px-4 sm:px-6 py-10 sm:py-14 pb-24">
-        <h1 className="text-[26px] sm:text-[34px] font-extrabold tracking-[-0.03em] leading-[1.1] text-ink">
-          {firstName ? `Hi ${firstName}, ` : ""}let&apos;s get your videos started.
-        </h1>
-        <p className="mt-3 text-[14.5px] leading-relaxed text-ink-soft">
-          Three quick details and you&apos;re done — we&apos;ll take it from there.
-        </p>
-
-        {!hasPaid && !loading && (
-          <div className="mt-7 flex flex-col sm:flex-row sm:items-center gap-4 rounded-2xl border border-signal/25 bg-signal-soft p-5">
-            <span className="w-11 h-11 shrink-0 rounded-xl bg-signal text-white flex items-center justify-center">
-              <CreditCard className="w-5 h-5" />
-            </span>
-            <div className="flex-1 min-w-0">
-              <p className="text-[14.5px] font-bold text-ink">Start your month to go live</p>
-              <p className="mt-0.5 text-[13px] text-ink-soft">
-                $97/mo for 12 videos. First edit within 24 hours of payment.
-              </p>
-            </div>
-            <button
-              onClick={startCheckout}
-              disabled={checkoutLoading}
-              className="shrink-0 inline-flex items-center justify-center gap-2 rounded-full bg-signal px-5 py-2.5 text-[14px] font-bold text-white hover:bg-signal-dark transition-colors disabled:opacity-60"
-            >
-              {checkoutLoading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" /> Redirecting…
-                </>
-              ) : (
-                <>
-                  Pay $97
-                  <CreditCard className="w-4 h-4" />
-                </>
-              )}
-            </button>
-          </div>
-        )}
-
-        {savedAt && (
-          <div className="mt-7 rounded-2xl border border-moss/25 bg-[#edf7ef] p-5 flex items-start gap-4">
-            <span className="w-11 h-11 shrink-0 rounded-xl bg-moss text-white flex items-center justify-center">
-              <Check className="w-5 h-5" />
-            </span>
-            <div className="min-w-0">
-              <p className="text-[14.5px] font-bold text-ink">We&apos;ve got it</p>
-              <p className="mt-0.5 text-[13px] leading-relaxed text-ink-soft">
-                Sent {submittedLabel}. We&apos;ll message you on{" "}
-                <span className="font-semibold text-ink">
-                  {activeContact.label.toLowerCase()}
-                </span>{" "}
-                within 24 hours with your first video link.
-              </p>
-            </div>
-          </div>
-        )}
-
-        {error && (
-          <div className="mt-7 flex items-center gap-3 rounded-2xl border border-signal/30 bg-signal-soft px-4 py-3 text-[13.5px] font-semibold text-signal-dark">
-            <Info className="w-4 h-4 shrink-0" />
-            <span className="flex-1">{error}</span>
-            <button
-              type="button"
-              onClick={() => setError(null)}
-              className="shrink-0 text-signal-dark/60 hover:text-signal-dark"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-        )}
-
+      {/* ============ MAIN ============ */}
+      <main className="max-w-3xl mx-auto px-4 sm:px-6 py-10 sm:py-14 pb-24">
         {loading ? (
-          <div className="mt-8 h-64 rounded-2xl border border-line bg-paper skeleton-bar" />
-        ) : (
-          <form
-            onSubmit={submit}
-            className="mt-8 rounded-2xl border border-line bg-paper p-6 sm:p-8"
-          >
-            <div className="space-y-6">
-              {/* SaaS name */}
-              <div>
-                <Label>SaaS name</Label>
-                <input
-                  value={form.productName}
-                  onChange={(e) => set("productName", e.target.value)}
-                  placeholder="Ventaz AI"
-                  required
-                  className={inputClass}
-                />
-              </div>
+          <div className="space-y-4">
+            <div className="h-8 w-2/3 rounded-xl skeleton-bar" />
+            <div className="h-56 rounded-3xl border border-line bg-paper skeleton-bar" />
+          </div>
+        ) : hasPaid ? (
+          <>
+            <div className="inline-flex items-center gap-2 rounded-full border border-moss/25 bg-[#edf7ef] px-3.5 py-1.5">
+              <Check className="w-3.5 h-3.5 text-moss" strokeWidth={3} />
+              <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-moss font-bold">
+                You own the guide
+              </span>
+            </div>
 
-              {/* SaaS URL */}
-              <div>
-                <Label>SaaS URL</Label>
-                <div className="relative">
-                  <Globe className="absolute left-4 top-1/2 mt-1 -translate-y-1/2 w-4 h-4 text-ink-soft/50" />
-                  <input
-                    value={form.websiteUrl}
-                    onChange={(e) => set("websiteUrl", e.target.value)}
-                    placeholder="https://yourproduct.com"
-                    required
-                    className={`${inputClass} pl-11`}
-                  />
+            <h1 className="mt-5 text-[28px] sm:text-[36px] font-extrabold tracking-[-0.03em] leading-[1.1] text-ink">
+              {firstName ? `It's yours, ${firstName}.` : "It's yours."}
+            </h1>
+            <p className="mt-3 text-[14.5px] leading-relaxed text-ink-soft">
+              Download your PDF below, then start with chapter 10 — the ten scripts. That is the
+              fastest way to feel the difference.
+            </p>
+
+            <div className="mt-8 rounded-3xl border border-line bg-paper p-6 sm:p-8">
+              <div className="flex flex-col sm:flex-row gap-7 sm:items-center">
+                <MiniBookCover />
+                <div className="flex-1 min-w-0">
+                  <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-signal-dark font-bold">
+                    Your purchase
+                  </p>
+                  <h2 className="mt-2 text-[20px] font-extrabold tracking-[-0.02em] leading-tight text-ink">
+                    Guide to Becoming Your Manager&apos;s Favorite Employee
+                  </h2>
+                  <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5 text-[12.5px] text-ink-soft">
+                    <span className="flex items-center gap-1.5">
+                      <FileText className="w-3.5 h-3.5 text-signal" /> 24-page PDF
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <Clock className="w-3.5 h-3.5 text-moss" /> ~90 min read
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <ShieldCheck className="w-3.5 h-3.5 text-moss" /> Lifetime access
+                    </span>
+                  </div>
+
+                  <a
+                    href="/api/book/download"
+                    className="group mt-6 inline-flex w-full sm:w-auto items-center justify-center gap-3 px-5 pr-2.5 py-2 rounded-full bg-signal text-white text-[15px] font-bold hover:bg-signal-dark transition-all duration-300 shadow-[0_20px_50px_-12px_rgba(255,77,47,0.55)]"
+                  >
+                    <span>Download your PDF</span>
+                    <span className="w-9 h-9 shrink-0 rounded-full bg-white flex items-center justify-center">
+                      <Download className="w-4 h-4 text-signal transition-transform duration-300 group-hover:translate-y-0.5" />
+                    </span>
+                  </a>
+                  <p className="mt-3 text-[11.5px] text-ink-soft">
+                    Can&apos;t download? Check your browser settings or reply to your receipt.
+                  </p>
                 </div>
-              </div>
-
-              {/* Notes — optional */}
-              <div>
-                <Label>Anything else we should know?</Label>
-                <textarea
-                  value={form.notes}
-                  onChange={(e) => set("notes", e.target.value)}
-                  rows={3}
-                  maxLength={4000}
-                  placeholder="Optional — links to footage, a tone you like, deadlines, or anything you want to tell us."
-                  className={`${inputClass} resize-none`}
-                />
-              </div>
-
-              {/* Contact method */}
-              <div>
-                <Label>How should we reach you?</Label>
-                <div className="mt-2 grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  {CONTACT_METHODS.map((m) => {
-                    const on = form.contactMethod === m.id;
-                    const Icon = m.icon;
-                    return (
-                      <button
-                        key={m.id}
-                        type="button"
-                        onClick={() => {
-                          set("contactMethod", m.id);
-                          if (m.id === "email") {
-                            // Seed with their login email, but let them overwrite it.
-                            set("contactDetail", session?.user?.email || "");
-                          } else if (
-                            form.contactDetail === session?.user?.email
-                          ) {
-                            // Don't leave a stale email sitting in a phone field.
-                            set("contactDetail", "");
-                          }
-                        }}
-                        className={`flex flex-col items-center gap-1.5 rounded-xl border-2 px-3 py-3 transition-all duration-200 ${
-                          on
-                            ? "border-signal bg-signal-soft text-signal-dark"
-                            : "border-line bg-paper text-ink-soft hover:border-ink/15"
-                        }`}
-                      >
-                        <Icon className="w-4.5 h-4.5" />
-                        <span className="text-[12.5px] font-semibold">{m.label}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-                <input
-                  value={form.contactDetail}
-                  onChange={(e) => set("contactDetail", e.target.value)}
-                  placeholder={activeContact.placeholder}
-                  required
-                  className={inputClass}
-                />
               </div>
             </div>
 
-            {/* How it works */}
-            <div className="mt-7 rounded-xl bg-cream border border-line p-5">
-              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-soft/70">
-                What happens next
-              </p>
-              <ol className="mt-3 space-y-2.5">
+            <div className="mt-8 rounded-2xl border border-line bg-paper p-6 sm:p-7">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-signal" />
+                <h3 className="text-[15px] font-bold text-ink">What to do next</h3>
+              </div>
+              <ol className="mt-5 space-y-4">
                 {[
-                  "We message you on the number above to confirm the brief.",
-                  "We send you a private Google Drive folder — every video lands there.",
-                  "Your first edit lands within 24 hours of payment.",
-                ].map((line, i) => (
-                  <li key={line} className="flex items-start gap-3">
-                    <span className="mt-0.5 w-5 h-5 shrink-0 rounded-full bg-ink text-white flex items-center justify-center text-[10px] font-bold">
+                  {
+                    title: "Read chapter 10 first",
+                    body: "Use one of the ten scripts this week. The four-line update is the easiest win.",
+                  },
+                  {
+                    title: "Run the 30-day plan",
+                    body: "One principle per week. Do not try all nine at once — consistency beats intensity.",
+                  },
+                  {
+                    title: "Check in every Friday",
+                    body: "The 10-minute checklist keeps your reputation compounding, even on hard weeks.",
+                  },
+                ].map((step, i) => (
+                  <li key={step.title} className="flex items-start gap-3.5">
+                    <span className="mt-0.5 w-6 h-6 shrink-0 rounded-full bg-ink text-white flex items-center justify-center text-[10px] font-bold">
                       {i + 1}
                     </span>
-                    <span className="text-[13px] leading-relaxed text-ink-soft">{line}</span>
+                    <div>
+                      <p className="text-[14px] font-semibold text-ink">{step.title}</p>
+                      <p className="mt-0.5 text-[13px] leading-relaxed text-ink-soft">{step.body}</p>
+                    </div>
                   </li>
                 ))}
               </ol>
-              <p className="mt-4 pt-4 border-t border-line flex items-start gap-2 text-[12.5px] leading-relaxed text-ink-soft/80">
-                <Link2 className="w-3.5 h-3.5 shrink-0 mt-0.5 text-signal" />
-                You don&apos;t need to set up Drive or upload anything — we create the folder and
-                share it with you.
-              </p>
             </div>
 
-            {/* Submit */}
-            <div className="mt-7">
-              <button
-                type="submit"
-                disabled={saving}
-                className="group w-full inline-flex items-center justify-center gap-3 px-6 pr-3 py-3 rounded-full bg-signal text-white text-[15px] font-bold hover:bg-signal-dark transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed shadow-[0_20px_50px_-14px_rgba(255,77,47,0.6)]"
-              >
-                {saving ? (
-                  <>
-                    <Loader2 className="w-4.5 h-4.5 animate-spin" />
-                    Sending…
-                  </>
-                ) : (
-                  <>
-                    <span>{savedAt ? "Update details" : "Send details"}</span>
-                    <span className="w-8 h-8 shrink-0 rounded-full bg-white flex items-center justify-center">
-                      <Check className="w-4 h-4 text-signal" />
-                    </span>
-                  </>
-                )}
-              </button>
-              <p className="mt-4 flex items-center justify-center gap-1.5 text-[12px] text-ink-soft">
-                <ShieldCheck className="w-3.5 h-3.5 text-moss" />
-                <Clock className="w-3.5 h-3.5 text-moss" />
-                First edit within 24 hours — refundable if it&apos;s not right
+            <div className="mt-8 flex items-start gap-3 rounded-2xl border border-moss/20 bg-[#edf7ef] p-5">
+              <ShieldCheck className="w-5 h-5 shrink-0 text-moss mt-0.5" />
+              <p className="text-[13px] leading-relaxed text-ink-soft">
+                <span className="font-semibold text-ink">30-day guarantee.</span> If the guide is
+                not useful, reply to your receipt and we will refund your $9. You keep the PDF.
               </p>
             </div>
-          </form>
+          </>
+        ) : (
+          <>
+            <div className="inline-flex items-center gap-2 rounded-full border border-line bg-paper px-3.5 py-1.5">
+              <BookOpen className="w-3.5 h-3.5 text-signal" />
+              <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink-soft font-bold">
+                One guide · $9 · instant download
+              </span>
+            </div>
+
+            <h1 className="mt-5 text-[28px] sm:text-[36px] font-extrabold tracking-[-0.03em] leading-[1.1] text-ink">
+              Unlock your copy of the guide.
+            </h1>
+            <p className="mt-3 text-[14.5px] leading-relaxed text-ink-soft">
+              You are one click away. Pay $9 once and the PDF appears here immediately — yours to
+              keep, with a 30-day money-back guarantee.
+            </p>
+
+            {error && (
+              <div className="mt-6 flex items-center gap-3 rounded-2xl border border-signal/30 bg-signal-soft px-4 py-3 text-[13.5px] font-semibold text-signal-dark">
+                <Info className="w-4 h-4 shrink-0" />
+                <span className="flex-1">{error}</span>
+                <button
+                  type="button"
+                  onClick={() => setError(null)}
+                  className="shrink-0 text-signal-dark/60 hover:text-signal-dark"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+
+            <div className="mt-8 rounded-3xl border border-line bg-paper p-6 sm:p-8">
+              <div className="flex flex-col sm:flex-row gap-7 sm:items-center">
+                <MiniBookCover />
+                <div className="flex-1 min-w-0">
+                  <h2 className="text-[20px] font-extrabold tracking-[-0.02em] leading-tight text-ink">
+                    Guide to Becoming Your Manager&apos;s Favorite Employee
+                  </h2>
+                  <p className="mt-2 text-[13.5px] leading-relaxed text-ink-soft">
+                    Nine practical principles, ten word-for-word scripts, a 30-day plan and a
+                    weekly checklist.
+                  </p>
+
+                  <div className="mt-4 flex items-baseline gap-2.5">
+                    <span className="text-[36px] font-extrabold tracking-tight leading-none text-ink">
+                      $9
+                    </span>
+                    <span className="text-[13px] text-ink-soft">one-time</span>
+                    <span className="text-[13px] text-ink-soft/50 line-through">$27</span>
+                  </div>
+
+                  <ul className="mt-4 space-y-2">
+                    {["Instant PDF download", "Lifetime access", "30-day refund guarantee"].map((item) => (
+                      <li key={item} className="flex items-center gap-2 text-[13px] text-ink">
+                        <Check className="w-3.5 h-3.5 text-moss" strokeWidth={3} />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <button
+                    onClick={startCheckout}
+                    disabled={checkoutLoading}
+                    className="group mt-6 inline-flex w-full sm:w-auto items-center justify-center gap-3 px-5 pr-2.5 py-2 rounded-full bg-signal text-white text-[15px] font-bold hover:bg-signal-dark transition-all duration-300 disabled:opacity-60 disabled:cursor-wait shadow-[0_20px_50px_-12px_rgba(255,77,47,0.55)]"
+                  >
+                    <span>{checkoutLoading ? "Opening checkout…" : "Get the guide — $9"}</span>
+                    <span className="w-9 h-9 shrink-0 rounded-full bg-white flex items-center justify-center">
+                      {checkoutLoading ? (
+                        <Loader2 className="w-4 h-4 text-signal animate-spin" />
+                      ) : (
+                        <CreditCard className="w-4 h-4 text-signal" />
+                      )}
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 flex items-center justify-center gap-3 text-[12.5px] text-ink-soft">
+              <span className="flex items-center gap-1.5">
+                <Star className="w-3.5 h-3.5 text-signal fill-current" /> Loved by ambitious employees
+              </span>
+              <span className="text-line">·</span>
+              <span className="flex items-center gap-1.5">
+                <ShieldCheck className="w-3.5 h-3.5 text-moss" /> Secure checkout
+              </span>
+            </div>
+
+            <button
+              onClick={() => loadAccess()}
+              disabled={refreshing}
+              className="mx-auto mt-6 flex items-center justify-center gap-2 text-[12.5px] font-semibold text-ink-soft hover:text-ink transition-colors disabled:opacity-60"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? "animate-spin" : ""}`} />
+              Already paid? Refresh access
+            </button>
+
+            <Link
+              href="/#inside"
+              className="mx-auto mt-3 flex items-center justify-center gap-1.5 text-[12.5px] font-semibold text-signal hover:text-signal-dark transition-colors"
+            >
+              See what&apos;s inside
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </>
         )}
       </main>
     </div>

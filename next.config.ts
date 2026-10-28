@@ -7,6 +7,9 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [],
   },
+  outputFileTracingIncludes: {
+    "/api/book/download": ["./private/**/*.pdf"],
+  },
 };
 
 export default nextConfig;

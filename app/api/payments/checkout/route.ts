@@ -40,7 +40,7 @@ export async function POST() {
         name: user.name || user.businessName || undefined,
       },
       return_url: `${baseUrl}/payment-processing`,
-      cancel_url: `${baseUrl}/pricing`,
+      cancel_url: `${baseUrl}/#pricing`,
       metadata: {
         user_id: user._id.toString(),
         email: user.email,

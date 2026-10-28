@@ -64,11 +64,11 @@ export default function LoginOverlay({
         </div>
 
         <h2 className="mt-5 text-3xl font-extrabold tracking-[-0.03em] text-ink leading-tight">
-          Get your first video in 24 hours
+          Get instant access to the guide
         </h2>
         <p className="mt-3 text-[15px] leading-relaxed text-ink-soft">
-          One tap with Google creates your account. Tell us about your SaaS, we cut the first
-          video within 24 hours of payment — and refund every cent if you don&apos;t like it.
+          One tap with Google creates your account. Pay $9 once and the PDF appears in your
+          dashboard immediately — keep it forever, or get a full refund within 30 days.
         </p>
 
         <button
@@ -96,7 +96,7 @@ export default function LoginOverlay({
           </div>
           <div className="relative flex justify-center">
             <span className="bg-paper px-3 font-mono text-[11px] uppercase tracking-[0.18em] text-ink-soft">
-              from $97/month · cancel anytime
+              $9 one-time · instant PDF download
             </span>
           </div>
         </div>

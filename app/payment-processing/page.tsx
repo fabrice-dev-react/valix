@@ -28,7 +28,7 @@ function ProcessingCard({
           </span>
           <h1 className="mt-5 text-2xl font-extrabold tracking-[-0.02em] text-ink">Payment confirmed</h1>
           <p className="mt-2 text-[14px] text-ink-soft">
-            Your side-hustle blueprint is unlocked. Taking you to your dashboard…
+            Your guide is unlocked. Taking you to your dashboard to download the PDF…
           </p>
         </>
       )}
@@ -44,10 +44,10 @@ function ProcessingCard({
           <p className="mt-2 text-[14px] text-ink-soft">{errorMessage}</p>
           <div className="mt-7 flex flex-col gap-2.5">
             <Link
-              href="/pricing"
+              href="/#pricing"
               className="w-full py-3 rounded-full bg-signal text-white text-[14px] font-semibold hover:bg-signal-dark transition-colors"
             >
-              Back to pricing
+              Back to the book
             </Link>
             <Link
               href="/dashboard"
