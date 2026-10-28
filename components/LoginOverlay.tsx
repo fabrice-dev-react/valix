@@ -68,7 +68,7 @@ export default function LoginOverlay({
         </h2>
         <p className="mt-3 text-[15px] leading-relaxed text-ink-soft">
           One tap with Google creates your account. Pay $9 once and the PDF appears in your
-          dashboard immediately — keep it forever, or get a full refund within 30 days.
+          dashboard immediately — yours to keep forever.
         </p>
 
         <button

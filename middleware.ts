@@ -18,6 +18,17 @@ const matches = (pathname: string, paths: string[]) =>
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
+  let decodedPath = pathname;
+  try {
+    decodedPath = decodeURIComponent(pathname);
+  } catch {
+    // Keep the raw path if it contains malformed encoding.
+  }
+
+  if (decodedPath.startsWith("/30_Days_to_Becoming_Your_Manager")) {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
+
   const token = await getToken({
     req: request,
     secret: process.env.NEXTAUTH_SECRET,
